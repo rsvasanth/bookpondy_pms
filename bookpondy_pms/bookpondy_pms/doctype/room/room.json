@@ -1,0 +1,138 @@
+{
+    "actions": [],
+    "allow_rename": 1,
+    "autoname": "naming_series:",
+    "creation": "2024-12-20 20:00:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "naming_series",
+        "room_no",
+        "property",
+        "room_type",
+        "status",
+        "column_break_1",
+        "floor",
+        "wing",
+        "section_break_details",
+        "bed_configuration",
+        "total_square_feet",
+        "column_break_2",
+        "last_inspection_date",
+        "notes"
+    ],
+    "fields": [
+        {
+            "fieldname": "naming_series",
+            "fieldtype": "Select",
+            "label": "Series",
+            "options": "RM-.YYYY.-.#####",
+            "reqd": 1
+        },
+        {
+            "fieldname": "room_no",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Room Number",
+            "reqd": 1
+        },
+        {
+            "fieldname": "property",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Property",
+            "options": "Property",
+            "reqd": 1
+        },
+        {
+            "fieldname": "room_type",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Room Type",
+            "options": "Room Type",
+            "reqd": 1
+        },
+        {
+            "fieldname": "status",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Status",
+            "options": "Active\nOut-of-Service\nUnder-Maintenance",
+            "default": "Active"
+        },
+        {
+            "fieldname": "column_break_1",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "floor",
+            "fieldtype": "Int",
+            "label": "Floor"
+        },
+        {
+            "fieldname": "wing",
+            "fieldtype": "Data",
+            "label": "Wing"
+        },
+        {
+            "fieldname": "section_break_details",
+            "fieldtype": "Section Break",
+            "label": "Details"
+        },
+        {
+            "fieldname": "bed_configuration",
+            "fieldtype": "Small Text",
+            "label": "Bed Configuration"
+        },
+        {
+            "fieldname": "total_square_feet",
+            "fieldtype": "Float",
+            "label": "Total Square Feet"
+        },
+        {
+            "fieldname": "column_break_2",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "last_inspection_date",
+            "fieldtype": "Date",
+            "label": "Last Inspection Date"
+        },
+        {
+            "fieldname": "notes",
+            "fieldtype": "Small Text",
+            "label": "Notes"
+        }
+    ],
+    "index_web_pages_for_search": 1,
+    "links": [],
+    "modified": "2024-12-20 20:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "Bookpondy Pms",
+    "name": "Room",
+    "naming_rule": "By \"Naming Series\" field",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "System Manager",
+            "share": 1,
+            "write": 1
+        }
+    ],
+    "sort_field": "creation",
+    "sort_order": "DESC",
+    "states": [],
+    "title_field": "room_no",
+    "track_changes": 1
+}

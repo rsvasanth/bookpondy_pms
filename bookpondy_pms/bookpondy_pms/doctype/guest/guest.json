@@ -1,0 +1,256 @@
+{
+    "actions": [],
+    "allow_rename": 1,
+    "autoname": "naming_series:",
+    "creation": "2024-12-20 20:00:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "naming_series",
+        "guest_name",
+        "email",
+        "phone",
+        "status",
+        "column_break_1",
+        "gender",
+        "date_of_birth",
+        "nationality",
+        "vip_status",
+        "section_break_address",
+        "address",
+        "city",
+        "state",
+        "country",
+        "section_break_id",
+        "id_type",
+        "id_number",
+        "id_expiry_date",
+        "column_break_3",
+        "primary_language",
+        "section_break_stats",
+        "total_visits",
+        "total_spend",
+        "last_visit_date",
+        "return_guest",
+        "column_break_4",
+        "average_rating_given",
+        "section_break_preferences",
+        "guest_notes",
+        "do_not_disturb_preference",
+        "newsletter_opt_in"
+    ],
+    "fields": [
+        {
+            "fieldname": "naming_series",
+            "fieldtype": "Select",
+            "label": "Series",
+            "options": "GST-.YYYY.-.#####",
+            "reqd": 1
+        },
+        {
+            "fieldname": "guest_name",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Guest Name",
+            "reqd": 1
+        },
+        {
+            "fieldname": "email",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Email",
+            "options": "Email",
+            "reqd": 1
+        },
+        {
+            "fieldname": "phone",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "Phone",
+            "options": "Phone",
+            "reqd": 1
+        },
+        {
+            "fieldname": "status",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Status",
+            "options": "Active\nBlacklisted\nInactive",
+            "default": "Active"
+        },
+        {
+            "fieldname": "column_break_1",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "gender",
+            "fieldtype": "Select",
+            "label": "Gender",
+            "options": "\nMale\nFemale\nOther"
+        },
+        {
+            "fieldname": "date_of_birth",
+            "fieldtype": "Date",
+            "label": "Date of Birth"
+        },
+        {
+            "fieldname": "nationality",
+            "fieldtype": "Data",
+            "label": "Nationality"
+        },
+        {
+            "fieldname": "vip_status",
+            "fieldtype": "Select",
+            "label": "VIP Status",
+            "options": "Regular\nSilver\nGold\nPlatinum",
+            "default": "Regular"
+        },
+        {
+            "fieldname": "section_break_address",
+            "fieldtype": "Section Break",
+            "label": "Address"
+        },
+        {
+            "fieldname": "address",
+            "fieldtype": "Small Text",
+            "label": "Address"
+        },
+        {
+            "fieldname": "city",
+            "fieldtype": "Data",
+            "label": "City"
+        },
+        {
+            "fieldname": "state",
+            "fieldtype": "Data",
+            "label": "State"
+        },
+        {
+            "fieldname": "country",
+            "fieldtype": "Link",
+            "label": "Country",
+            "options": "Country"
+        },
+        {
+            "fieldname": "section_break_id",
+            "fieldtype": "Section Break",
+            "label": "ID Verification"
+        },
+        {
+            "fieldname": "id_type",
+            "fieldtype": "Select",
+            "label": "ID Type",
+            "options": "\nPassport\nAadhar\nDriving License\nVisa"
+        },
+        {
+            "fieldname": "id_number",
+            "fieldtype": "Data",
+            "label": "ID Number"
+        },
+        {
+            "fieldname": "id_expiry_date",
+            "fieldtype": "Date",
+            "label": "ID Expiry Date"
+        },
+        {
+            "fieldname": "column_break_3",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "primary_language",
+            "fieldtype": "Select",
+            "label": "Primary Language",
+            "options": "\nEnglish\nHindi\nTamil\nTelugu\nKannada\nMalayalam"
+        },
+        {
+            "fieldname": "section_break_stats",
+            "fieldtype": "Section Break",
+            "label": "Guest Statistics"
+        },
+        {
+            "fieldname": "total_visits",
+            "fieldtype": "Int",
+            "label": "Total Visits",
+            "read_only": 1,
+            "default": 0
+        },
+        {
+            "fieldname": "total_spend",
+            "fieldtype": "Currency",
+            "label": "Total Spend",
+            "read_only": 1
+        },
+        {
+            "fieldname": "last_visit_date",
+            "fieldtype": "Date",
+            "label": "Last Visit Date",
+            "read_only": 1
+        },
+        {
+            "fieldname": "return_guest",
+            "fieldtype": "Check",
+            "label": "Return Guest",
+            "read_only": 1
+        },
+        {
+            "fieldname": "column_break_4",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "average_rating_given",
+            "fieldtype": "Float",
+            "label": "Average Rating Given",
+            "read_only": 1
+        },
+        {
+            "fieldname": "section_break_preferences",
+            "fieldtype": "Section Break",
+            "label": "Preferences"
+        },
+        {
+            "fieldname": "guest_notes",
+            "fieldtype": "Small Text",
+            "label": "Guest Notes"
+        },
+        {
+            "fieldname": "do_not_disturb_preference",
+            "fieldtype": "Check",
+            "label": "Do Not Disturb Preference"
+        },
+        {
+            "fieldname": "newsletter_opt_in",
+            "fieldtype": "Check",
+            "label": "Newsletter Opt-In"
+        }
+    ],
+    "index_web_pages_for_search": 1,
+    "links": [],
+    "modified": "2024-12-20 20:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "Bookpondy Pms",
+    "name": "Guest",
+    "naming_rule": "By \"Naming Series\" field",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "System Manager",
+            "share": 1,
+            "write": 1
+        }
+    ],
+    "sort_field": "creation",
+    "sort_order": "DESC",
+    "states": [],
+    "title_field": "guest_name",
+    "track_changes": 1
+}

@@ -35,22 +35,24 @@ interface BookingDetailsSheetProps {
     nights: number
     guests: number
     totalAmount: number
-    status: "confirmed" | "pending" | "cancelled" | "completed"
-    paymentStatus: "paid" | "partial" | "pending"
+    status: "Confirmed" | "Pending" | "Cancelled" | "Completed" | "Checked-In"
+    paymentStatus: "Paid" | "Partial" | "Pending" | "Unpaid"
   } | null
 }
 
-const statusConfig = {
-  confirmed: { label: "Confirmed", className: "bg-green-500/10 text-green-600" },
-  pending: { label: "Pending", className: "bg-yellow-500/10 text-yellow-600" },
-  cancelled: { label: "Cancelled", className: "bg-red-500/10 text-red-600" },
-  completed: { label: "Completed", className: "bg-blue-500/10 text-blue-600" },
+const statusConfig: Record<string, { label: string; className: string }> = {
+  Confirmed: { label: "Confirmed", className: "bg-green-500/10 text-green-600" },
+  Pending: { label: "Pending", className: "bg-yellow-500/10 text-yellow-600" },
+  Cancelled: { label: "Cancelled", className: "bg-red-500/10 text-red-600" },
+  Completed: { label: "Completed", className: "bg-blue-500/10 text-blue-600" },
+  "Checked-In": { label: "Checked-In", className: "bg-blue-500/10 text-blue-600" },
 }
 
-const paymentStatusConfig = {
-  paid: { label: "Paid", className: "bg-green-500/10 text-green-600" },
-  partial: { label: "Partial", className: "bg-orange-500/10 text-orange-600" },
-  pending: { label: "Pending", className: "bg-yellow-500/10 text-yellow-600" },
+const paymentStatusConfig: Record<string, { label: string; className: string }> = {
+  Paid: { label: "Paid", className: "bg-green-500/10 text-green-600" },
+  Partial: { label: "Partial", className: "bg-orange-500/10 text-orange-600" },
+  Pending: { label: "Pending", className: "bg-yellow-500/10 text-yellow-600" },
+  Unpaid: { label: "Unpaid", className: "bg-red-500/10 text-red-600" },
 }
 
 export function BookingDetailsSheet({ open, onOpenChange, booking }: BookingDetailsSheetProps) {
@@ -65,13 +67,16 @@ export function BookingDetailsSheet({ open, onOpenChange, booking }: BookingDeta
     })
   }
 
+  const getStatus = (status: string) => statusConfig[status] || statusConfig.Pending
+  const getPaymentStatus = (status: string) => paymentStatusConfig[status] || paymentStatusConfig.Pending
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full overflow-y-auto sm:max-w-lg">
         <SheetHeader>
           <div className="flex items-center justify-between">
             <SheetTitle>Booking #{booking.id}</SheetTitle>
-            <Badge className={statusConfig[booking.status].className}>{statusConfig[booking.status].label}</Badge>
+            <Badge className={getStatus(booking.status).className}>{getStatus(booking.status).label}</Badge>
           </div>
         </SheetHeader>
 
@@ -167,8 +172,8 @@ export function BookingDetailsSheet({ open, onOpenChange, booking }: BookingDeta
           <TabsContent value="payment" className="mt-4 space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">Payment Status</span>
-              <Badge className={paymentStatusConfig[booking.paymentStatus].className}>
-                {paymentStatusConfig[booking.paymentStatus].label}
+              <Badge className={getPaymentStatus(booking.paymentStatus).className}>
+                {getPaymentStatus(booking.paymentStatus).label}
               </Badge>
             </div>
 
@@ -198,7 +203,7 @@ export function BookingDetailsSheet({ open, onOpenChange, booking }: BookingDeta
               </div>
             </div>
 
-            {booking.paymentStatus !== "paid" && (
+            {booking.paymentStatus !== "Paid" && (
               <Button className="w-full bg-[#E68B47] hover:bg-[#c97339]">
                 <CreditCard className="mr-2 h-4 w-4" />
                 Record Payment

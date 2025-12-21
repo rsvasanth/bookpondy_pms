@@ -28,7 +28,12 @@ import {
 import { AddBookingSheet } from "@/components/bookings/add-booking-sheet"
 import { BookingDetailsSheet } from "@/components/bookings/booking-details-sheet"
 import { CalendarView } from "@/components/bookings/calendar-view"
+import { useFrappeGetDocList } from "frappe-react-sdk"
+import { useFiltersStore, useSelectionStore } from "@/stores"
 
+// .. (Imports remain the same)
+
+// Interface (make sure it matches mapping)
 interface Booking {
   id: string
   guestName: string
@@ -41,151 +46,91 @@ interface Booking {
   nights: number
   guests: number
   totalAmount: number
-  status: "confirmed" | "pending" | "cancelled" | "completed"
-  paymentStatus: "paid" | "partial" | "pending"
+  status: "Confirmed" | "Pending" | "Cancelled" | "Completed" | "Checked-In"
+  paymentStatus: "Paid" | "Partial" | "Pending" | "Unpaid"
   createdAt: string
 }
 
-const bookings: Booking[] = [
-  {
-    id: "BK2401",
-    guestName: "Priya Sharma",
-    guestEmail: "priya.sharma@email.com",
-    guestPhone: "+91 98765 43210",
-    property: "Ocean View Villa",
-    roomType: "Deluxe Suite",
-    checkIn: "2025-12-18",
-    checkOut: "2025-12-22",
-    nights: 4,
-    guests: 2,
-    totalAmount: 32000,
-    status: "confirmed",
-    paymentStatus: "paid",
-    createdAt: "2025-12-10",
-  },
-  {
-    id: "BK2402",
-    guestName: "Amit Patel",
-    guestEmail: "amit.patel@email.com",
-    guestPhone: "+91 87654 32109",
-    property: "Beach House Resort",
-    roomType: "Ocean View Room",
-    checkIn: "2025-12-19",
-    checkOut: "2025-12-21",
-    nights: 2,
-    guests: 3,
-    totalAmount: 18500,
-    status: "confirmed",
-    paymentStatus: "partial",
-    createdAt: "2025-12-12",
-  },
-  {
-    id: "BK2403",
-    guestName: "Sneha Reddy",
-    guestEmail: "sneha.r@email.com",
-    guestPhone: "+91 76543 21098",
-    property: "Heritage Homestay",
-    roomType: "Heritage Room",
-    checkIn: "2025-12-20",
-    checkOut: "2025-12-25",
-    nights: 5,
-    guests: 4,
-    totalAmount: 45000,
-    status: "pending",
-    paymentStatus: "pending",
-    createdAt: "2025-12-15",
-  },
-  {
-    id: "BK2404",
-    guestName: "Vikram Singh",
-    guestEmail: "vikram.s@email.com",
-    guestPhone: "+91 65432 10987",
-    property: "Ocean View Villa",
-    roomType: "Presidential Suite",
-    checkIn: "2025-12-23",
-    checkOut: "2025-12-27",
-    nights: 4,
-    guests: 2,
-    totalAmount: 56000,
-    status: "confirmed",
-    paymentStatus: "paid",
-    createdAt: "2025-12-14",
-  },
-  {
-    id: "BK2405",
-    guestName: "Meera Nair",
-    guestEmail: "meera.nair@email.com",
-    guestPhone: "+91 54321 09876",
-    property: "Hill View Retreat",
-    roomType: "Mountain Suite",
-    checkIn: "2025-12-24",
-    checkOut: "2025-12-28",
-    nights: 4,
-    guests: 2,
-    totalAmount: 38000,
-    status: "pending",
-    paymentStatus: "pending",
-    createdAt: "2025-12-16",
-  },
-  {
-    id: "BK2406",
-    guestName: "Rahul Verma",
-    guestEmail: "rahul.v@email.com",
-    guestPhone: "+91 43210 98765",
-    property: "Royal Heritage Palace",
-    roomType: "Royal Chamber",
-    checkIn: "2025-12-15",
-    checkOut: "2025-12-17",
-    nights: 2,
-    guests: 2,
-    totalAmount: 28000,
-    status: "completed",
-    paymentStatus: "paid",
-    createdAt: "2025-12-08",
-  },
-  {
-    id: "BK2407",
-    guestName: "Anita Desai",
-    guestEmail: "anita.d@email.com",
-    guestPhone: "+91 32109 87654",
-    property: "Backwater Houseboat",
-    roomType: "Houseboat Suite",
-    checkIn: "2025-12-22",
-    checkOut: "2025-12-24",
-    nights: 2,
-    guests: 4,
-    totalAmount: 25000,
-    status: "cancelled",
-    paymentStatus: "pending",
-    createdAt: "2025-12-11",
-  },
-]
+// const bookings = [] // Removed placeholder
 
 const statusConfig = {
-  confirmed: { label: "Confirmed", className: "bg-green-500/10 text-green-600" },
-  pending: { label: "Pending", className: "bg-yellow-500/10 text-yellow-600" },
-  cancelled: { label: "Cancelled", className: "bg-red-500/10 text-red-600" },
-  completed: { label: "Completed", className: "bg-blue-500/10 text-blue-600" },
+  Confirmed: { label: "Confirmed", className: "bg-green-500/10 text-green-600" },
+  Pending: { label: "Pending", className: "bg-yellow-500/10 text-yellow-600" },
+  Cancelled: { label: "Cancelled", className: "bg-red-500/10 text-red-600" },
+  "Checked-In": { label: "Checked-In", className: "bg-blue-500/10 text-blue-600" },
+  "Completed": { label: "Completed", className: "bg-gray-500/10 text-gray-600" },
 }
 
 const paymentStatusConfig = {
-  paid: { label: "Paid", className: "bg-green-500/10 text-green-600" },
-  partial: { label: "Partial", className: "bg-orange-500/10 text-orange-600" },
-  pending: { label: "Pending", className: "bg-yellow-500/10 text-yellow-600" },
+  Paid: { label: "Paid", className: "bg-green-500/10 text-green-600" },
+  Partial: { label: "Partial", className: "bg-orange-500/10 text-orange-600" },
+  Pending: { label: "Pending", className: "bg-yellow-500/10 text-yellow-600" },
+  Unpaid: { label: "Unpaid", className: "bg-red-500/10 text-red-600" }
 }
 
 export default function BookingsPage() {
-  const [searchQuery, setSearchQuery] = useState("")
+  // Global state from Zustand stores
+  const {
+    bookingSearch,
+    bookingStatus,
+    bookingProperty,
+    setBookingSearch,
+    setBookingStatus,
+    setBookingProperty
+  } = useFiltersStore()
+
+  const {
+    activeBookingId,
+    setActiveBookingId,
+  } = useSelectionStore()
+
+  // Local UI state (modals, sheets)
   const [addBookingOpen, setAddBookingOpen] = useState(false)
-  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
   const [detailsOpen, setDetailsOpen] = useState(false)
 
-  const filteredBookings = bookings.filter(
-    (b) =>
-      b.guestName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      b.property.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      b.id.toLowerCase().includes(searchQuery.toLowerCase()),
-  )
+  const { data: reservationsList } = useFrappeGetDocList("Reservation", {
+    fields: ["name", "guest_name", "guest_email", "guest_phone", "property", "room_type", "check_in_date", "check_out_date", "nights", "number_of_guests", "total_amount", "reservation_status", "payment_status", "creation"],
+    limit: 100,
+    orderBy: { field: "creation", order: "desc" }
+  })
+
+  const bookings: Booking[] = reservationsList?.map(r => ({
+    id: r.name,
+    guestName: r.guest_name,
+    guestEmail: r.guest_email || "",
+    guestPhone: r.guest_phone || "",
+    property: r.property,
+    roomType: r.room_type,
+    checkIn: r.check_in_date,
+    checkOut: r.check_out_date,
+    nights: r.nights || 0,
+    guests: r.number_of_guests || 1,
+    totalAmount: r.total_amount || 0,
+    // Cast appropriately or handle case sensitivity if backend returns "Confirmed" vs "confirmed"
+    status: r.reservation_status as any,
+    paymentStatus: r.payment_status as any,
+    createdAt: r.creation
+  })) || []
+
+
+  // Apply filters from global state
+  const filteredBookings = bookings.filter((b) => {
+    const matchesSearch =
+      !bookingSearch ||
+      b.guestName.toLowerCase().includes(bookingSearch.toLowerCase()) ||
+      b.property.toLowerCase().includes(bookingSearch.toLowerCase()) ||
+      b.id.toLowerCase().includes(bookingSearch.toLowerCase())
+
+    const matchesStatus = bookingStatus === 'all' || b.status === bookingStatus
+    const matchesProperty = bookingProperty === 'all' || b.property === bookingProperty
+
+    return matchesSearch && matchesStatus && matchesProperty
+  })
+
+  // Find selected booking from global state
+  const selectedBooking = activeBookingId
+    ? bookings.find(b => b.id === activeBookingId) || null
+    : null
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-IN", {
@@ -196,7 +141,7 @@ export default function BookingsPage() {
   }
 
   const handleViewBooking = (booking: Booking) => {
-    setSelectedBooking(booking)
+    setActiveBookingId(booking.id)
     setDetailsOpen(true)
   }
 
@@ -206,13 +151,21 @@ export default function BookingsPage() {
     property: string
     checkIn: Date
     checkOut: Date
-    status: "confirmed" | "pending" | "cancelled"
+    status: "Confirmed" | "Pending" | "Cancelled"
   }) => {
     // Find matching booking from our data
     const booking = bookings.find((b) => b.id === calendarBooking.id)
     if (booking) {
       handleViewBooking(booking)
     }
+  }
+
+  const getStatusConfig = (status: string) => {
+    return statusConfig[status as keyof typeof statusConfig] || statusConfig.Pending
+  }
+
+  const getPaymentStatusConfig = (status: string) => {
+    return paymentStatusConfig[status as keyof typeof paymentStatusConfig] || paymentStatusConfig.Pending
   }
 
   return (
@@ -236,7 +189,7 @@ export default function BookingsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Total Bookings</p>
-                <p className="text-2xl font-bold">156</p>
+                <p className="text-2xl font-bold">{bookings.length}</p>
               </div>
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
                 <CalendarIcon className="h-5 w-5 text-primary" />
@@ -249,7 +202,7 @@ export default function BookingsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Confirmed</p>
-                <p className="text-2xl font-bold text-green-600">98</p>
+                <p className="text-2xl font-bold text-green-600">{bookings.filter(b => b.status === "Confirmed").length}</p>
               </div>
               <Badge className="bg-green-500/10 text-green-600">63%</Badge>
             </div>
@@ -260,7 +213,7 @@ export default function BookingsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Pending</p>
-                <p className="text-2xl font-bold text-yellow-600">24</p>
+                <p className="text-2xl font-bold text-yellow-600">{bookings.filter(b => b.status === "Pending").length}</p>
               </div>
               <Badge className="bg-yellow-500/10 text-yellow-600">15%</Badge>
             </div>
@@ -271,7 +224,7 @@ export default function BookingsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">This Month Revenue</p>
-                <p className="text-2xl font-bold">₹5.2L</p>
+                <p className="text-2xl font-bold">₹{bookings.reduce((acc, b) => acc + b.totalAmount, 0).toLocaleString("en-IN")}</p>
               </div>
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
                 <IndianRupee className="h-5 w-5 text-primary" />
@@ -302,11 +255,11 @@ export default function BookingsPage() {
               <Input
                 placeholder="Search bookings..."
                 className="pl-9"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={bookingSearch}
+                onChange={(e) => setBookingSearch(e.target.value)}
               />
             </div>
-            <Select>
+            <Select value={bookingProperty} onValueChange={setBookingProperty}>
               <SelectTrigger className="w-[140px]">
                 <SelectValue placeholder="Property" />
               </SelectTrigger>
@@ -317,15 +270,15 @@ export default function BookingsPage() {
                 <SelectItem value="heritage">Heritage Homestay</SelectItem>
               </SelectContent>
             </Select>
-            <Select>
+            <Select value={bookingStatus} onValueChange={setBookingStatus}>
               <SelectTrigger className="w-[140px]">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="confirmed">Confirmed</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="cancelled">Cancelled</SelectItem>
+                <SelectItem value="Confirmed">Confirmed</SelectItem>
+                <SelectItem value="Pending">Pending</SelectItem>
+                <SelectItem value="Cancelled">Cancelled</SelectItem>
               </SelectContent>
             </Select>
             <Button variant="outline" size="icon">
@@ -386,13 +339,13 @@ export default function BookingsPage() {
                       ₹{booking.totalAmount.toLocaleString("en-IN")}
                     </TableCell>
                     <TableCell>
-                      <Badge className={statusConfig[booking.status].className}>
-                        {statusConfig[booking.status].label}
+                      <Badge className={getStatusConfig(booking.status).className}>
+                        {getStatusConfig(booking.status).label}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge className={paymentStatusConfig[booking.paymentStatus].className}>
-                        {paymentStatusConfig[booking.paymentStatus].label}
+                      <Badge className={getPaymentStatusConfig(booking.paymentStatus).className}>
+                        {getPaymentStatusConfig(booking.paymentStatus).label}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
@@ -430,7 +383,21 @@ export default function BookingsPage() {
         </TabsContent>
 
         <TabsContent value="calendar">
-          <CalendarView onAddBooking={() => setAddBookingOpen(true)} onSelectBooking={handleCalendarBookingSelect} />
+          <CalendarView
+            bookings={bookings.map(b => ({
+              ...b,
+              checkIn: new Date(b.checkIn),
+              checkOut: new Date(b.checkOut),
+              // Filter out Checked-In or Completed if CalendarView only supports specific statuses, 
+              // or ensure CalendarView supports all. 
+              // CalendarView interface currently supports: "Confirmed" | "Pending" | "Cancelled"
+              // We might need to map others or leave them if CalendarView handles extra strings gracefully (it does via 'status' prop but type might complain).
+              // Let's cast status to any if needed or map Checked-In to Confirmed for calendar visualization purposes if strictly typed.
+              status: b.status as any
+            }))}
+            onAddBooking={() => setAddBookingOpen(true)}
+            onSelectBooking={handleCalendarBookingSelect}
+          />
         </TabsContent>
       </Tabs>
 

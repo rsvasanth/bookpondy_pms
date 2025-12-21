@@ -1,5 +1,4 @@
 "use client"
-
 import { useState } from "react"
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { Button } from "@/components/ui/button"
@@ -27,7 +26,9 @@ import {
   MapPin,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { Image } from "react"
+// import { Image } from "react" // Not used often, maybe redundant
+
+import { useFrappeGetDocList } from "frappe-react-sdk"
 
 interface Property {
   id: string
@@ -43,113 +44,11 @@ interface Property {
   image: string
 }
 
-const properties: Property[] = [
-  {
-    id: "1",
-    name: "Ocean View Villa",
-    location: "Pondicherry",
-    type: "Villa",
-    rooms: 5,
-    monthlyRevenue: 185000,
-    occupancy: 85,
-    rating: 4.8,
-    reviews: 124,
-    status: "active",
-    image: "/luxury-ocean-view-villa-pondicherry.jpg",
-  },
-  {
-    id: "2",
-    name: "Beach House Resort",
-    location: "Chennai",
-    type: "Resort",
-    rooms: 12,
-    monthlyRevenue: 320000,
-    occupancy: 72,
-    rating: 4.6,
-    reviews: 89,
-    status: "active",
-    image: "/beach-house-resort-chennai.jpg",
-  },
-  {
-    id: "3",
-    name: "Heritage Homestay",
-    location: "Mahabalipuram",
-    type: "Homestay",
-    rooms: 3,
-    monthlyRevenue: 78000,
-    occupancy: 90,
-    rating: 4.9,
-    reviews: 56,
-    status: "active",
-    image: "/heritage-homestay-mahabalipuram.jpg",
-  },
-  {
-    id: "4",
-    name: "Lakeside Cottage",
-    location: "Kodaikanal",
-    type: "Cottage",
-    rooms: 2,
-    monthlyRevenue: 0,
-    occupancy: 0,
-    rating: 4.5,
-    reviews: 34,
-    status: "maintenance",
-    image: "/lakeside-cottage-kodaikanal.jpg",
-  },
-  {
-    id: "5",
-    name: "Hill View Retreat",
-    location: "Ooty",
-    type: "Resort",
-    rooms: 8,
-    monthlyRevenue: 245000,
-    occupancy: 68,
-    rating: 4.7,
-    reviews: 98,
-    status: "active",
-    image: "/hill-view-retreat-ooty.jpg",
-  },
-  {
-    id: "6",
-    name: "Royal Heritage Palace",
-    location: "Mysore",
-    type: "Heritage Hotel",
-    rooms: 15,
-    monthlyRevenue: 450000,
-    occupancy: 82,
-    rating: 4.9,
-    reviews: 212,
-    status: "active",
-    image: "/royal-heritage-palace-mysore.jpg",
-  },
-  {
-    id: "7",
-    name: "Backwater Houseboat",
-    location: "Alleppey",
-    type: "Houseboat",
-    rooms: 2,
-    monthlyRevenue: 95000,
-    occupancy: 78,
-    rating: 4.6,
-    reviews: 67,
-    status: "active",
-    image: "/backwater-houseboat-alleppey.jpg",
-  },
-  {
-    id: "8",
-    name: "Garden View Apartment",
-    location: "Bangalore",
-    type: "Apartment",
-    rooms: 2,
-    monthlyRevenue: 0,
-    occupancy: 0,
-    rating: 4.3,
-    reviews: 23,
-    status: "inactive",
-    image: "/garden-view-apartment-bangalore.jpg",
-  },
-]
+// const properties = [] // Removed placeholder
 
+
+
+// Status config (unchanged)
 const statusConfig = {
   active: { label: "Active", className: "bg-green-500/10 text-green-600" },
   inactive: { label: "Inactive", className: "bg-gray-500/10 text-gray-600" },
@@ -161,6 +60,33 @@ export default function PropertiesPage() {
   const [selectedProperties, setSelectedProperties] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [addPropertyOpen, setAddPropertyOpen] = useState(false)
+
+  // Fetch Properties
+  const { data: propertiesList, isLoading } = useFrappeGetDocList("Property", {
+    fields: ["name", "property_name", "location_description", "property_type", "total_rooms", "status", "banner_image", "average_rating"],
+    limit: 100
+  })
+
+  // Map to interface
+  const properties: Property[] = propertiesList?.map(p => ({
+    id: p.name,
+    name: p.property_name,
+    location: p.location_description || "Not specified",
+    type: p.property_type,
+    rooms: p.total_rooms || 0,
+    monthlyRevenue: 0, // Placeholder
+    occupancy: 0, // Placeholder
+    rating: p.average_rating || 0,
+    reviews: 0, // Placeholder
+    status: p.status.toLowerCase() as any, // Cast to match literla type if needed
+    image: p.banner_image || "/placeholder.svg"
+  })) || []
+
+  // Ensure status is valid for config lookup
+  const getStatusConfig = (status: string) => {
+    const s = status.toLowerCase()
+    return statusConfig[s as keyof typeof statusConfig] || statusConfig.inactive
+  }
 
   const toggleSelectAll = () => {
     if (selectedProperties.length === properties.length) {
@@ -179,6 +105,7 @@ export default function PropertiesPage() {
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.location.toLowerCase().includes(searchQuery.toLowerCase()),
   )
+
 
   return (
     <DashboardLayout>
@@ -318,7 +245,7 @@ export default function PropertiesPage() {
                         <img
                           src={property.image || "/placeholder.svg"}
                           alt={property.name}
-                           
+
                           className="object-cover"
                         />
                       </div>
@@ -362,8 +289,8 @@ export default function PropertiesPage() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge className={statusConfig[property.status].className}>
-                      {statusConfig[property.status].label}
+                    <Badge className={getStatusConfig(property.status).className}>
+                      {getStatusConfig(property.status).label}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
@@ -410,9 +337,9 @@ export default function PropertiesPage() {
           {filteredProperties.map((property) => (
             <Card key={property.id} className="overflow-hidden">
               <div className="relative h-40">
-                <img src={property.image || "/placeholder.svg"} alt={property.name}   className="object-cover" />
-                <Badge className={cn("absolute right-2 top-2", statusConfig[property.status].className)}>
-                  {statusConfig[property.status].label}
+                <img src={property.image || "/placeholder.svg"} alt={property.name} className="object-cover" />
+                <Badge className={cn("absolute right-2 top-2", getStatusConfig(property.status).className)}>
+                  {getStatusConfig(property.status).label}
                 </Badge>
                 <Checkbox
                   className="absolute left-2 top-2 bg-white"

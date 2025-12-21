@@ -1,0 +1,325 @@
+{
+    "actions": [],
+    "allow_rename": 1,
+    "autoname": "naming_series:",
+    "creation": "2024-12-20 20:00:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "naming_series",
+        "property",
+        "guest",
+        "guest_name",
+        "reservation_status",
+        "column_break_1",
+        "guest_phone",
+        "guest_email",
+        "reservation_source",
+        "marketplace_booking_id",
+        "section_break_booking",
+        "room_type",
+        "allocated_room",
+        "check_in_date",
+        "check_out_date",
+        "nights",
+        "column_break_2",
+        "number_of_guests",
+        "adults",
+        "children",
+        "pet_friendly_option",
+        "section_break_requests",
+        "special_requests",
+        "notes",
+        "section_break_financials",
+        "room_rate_per_night",
+        "subtotal_room_charges",
+        "extras_and_services",
+        "discount_amount",
+        "total_amount",
+        "column_break_3",
+        "payment_status",
+        "payment_method",
+        "remarks",
+        "section_break_cancellation",
+        "cancellation_reason",
+        "cancellation_date",
+        "refund_status",
+        "section_break_housekeeping",
+        "housekeeping_task_auto_create"
+    ],
+    "fields": [
+        {
+            "fieldname": "naming_series",
+            "fieldtype": "Select",
+            "label": "Series",
+            "options": "RES-.YYYY.-.#####",
+            "reqd": 1
+        },
+        {
+            "fieldname": "property",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Property",
+            "options": "Property",
+            "reqd": 1
+        },
+        {
+            "fieldname": "guest",
+            "fieldtype": "Link",
+            "in_standard_filter": 1,
+            "label": "Guest",
+            "options": "Guest"
+        },
+        {
+            "fieldname": "guest_name",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "Guest Name",
+            "fetch_from": "guest.guest_name",
+            "read_only": 1
+        },
+        {
+            "fieldname": "reservation_status",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Reservation Status",
+            "options": "Enquiry\nTentative\nConfirmed\nChecked-In\nChecked-Out\nNo-Show\nCancelled",
+            "default": "Enquiry",
+            "reqd": 1
+        },
+        {
+            "fieldname": "column_break_1",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "guest_phone",
+            "fieldtype": "Data",
+            "label": "Guest Phone",
+            "fetch_from": "guest.phone",
+            "read_only": 1
+        },
+        {
+            "fieldname": "guest_email",
+            "fieldtype": "Data",
+            "label": "Guest Email",
+            "fetch_from": "guest.email",
+            "read_only": 1
+        },
+        {
+            "fieldname": "reservation_source",
+            "fieldtype": "Select",
+            "label": "Reservation Source",
+            "options": "\nBookPondi\nDirect\nWhatsApp\nPhone",
+            "default": "Direct"
+        },
+        {
+            "fieldname": "marketplace_booking_id",
+            "fieldtype": "Data",
+            "label": "Marketplace Booking ID"
+        },
+        {
+            "fieldname": "section_break_booking",
+            "fieldtype": "Section Break",
+            "label": "Booking Details"
+        },
+        {
+            "fieldname": "room_type",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Room Type",
+            "options": "Room Type",
+            "reqd": 1
+        },
+        {
+            "fieldname": "allocated_room",
+            "fieldtype": "Link",
+            "label": "Allocated Room",
+            "options": "Room"
+        },
+        {
+            "fieldname": "check_in_date",
+            "fieldtype": "Date",
+            "in_list_view": 1,
+            "label": "Check-In Date",
+            "reqd": 1
+        },
+        {
+            "fieldname": "check_out_date",
+            "fieldtype": "Date",
+            "in_list_view": 1,
+            "label": "Check-Out Date",
+            "reqd": 1
+        },
+        {
+            "fieldname": "nights",
+            "fieldtype": "Int",
+            "label": "Nights",
+            "read_only": 1
+        },
+        {
+            "fieldname": "column_break_2",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "number_of_guests",
+            "fieldtype": "Int",
+            "label": "Number of Guests",
+            "default": 1
+        },
+        {
+            "fieldname": "adults",
+            "fieldtype": "Int",
+            "label": "Adults",
+            "default": 1
+        },
+        {
+            "fieldname": "children",
+            "fieldtype": "Int",
+            "label": "Children",
+            "default": 0
+        },
+        {
+            "fieldname": "pet_friendly_option",
+            "fieldtype": "Check",
+            "label": "Pet Friendly Option"
+        },
+        {
+            "fieldname": "section_break_requests",
+            "fieldtype": "Section Break",
+            "label": "Requests & Notes"
+        },
+        {
+            "fieldname": "special_requests",
+            "fieldtype": "Small Text",
+            "label": "Special Requests"
+        },
+        {
+            "fieldname": "notes",
+            "fieldtype": "Small Text",
+            "label": "Internal Notes"
+        },
+        {
+            "fieldname": "section_break_financials",
+            "fieldtype": "Section Break",
+            "label": "Financials"
+        },
+        {
+            "fieldname": "room_rate_per_night",
+            "fieldtype": "Currency",
+            "label": "Room Rate Per Night"
+        },
+        {
+            "fieldname": "subtotal_room_charges",
+            "fieldtype": "Currency",
+            "label": "Subtotal Room Charges",
+            "read_only": 1
+        },
+        {
+            "fieldname": "extras_and_services",
+            "fieldtype": "Currency",
+            "label": "Extras & Services",
+            "read_only": 1
+        },
+        {
+            "fieldname": "discount_amount",
+            "fieldtype": "Currency",
+            "label": "Discount Amount"
+        },
+        {
+            "fieldname": "total_amount",
+            "fieldtype": "Currency",
+            "label": "Total Amount",
+            "read_only": 1
+        },
+        {
+            "fieldname": "column_break_3",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "payment_status",
+            "fieldtype": "Select",
+            "label": "Payment Status",
+            "options": "Pending\nPartial\nReceived\nRefunded",
+            "default": "Pending"
+        },
+        {
+            "fieldname": "payment_method",
+            "fieldtype": "Select",
+            "label": "Payment Method",
+            "options": "\nOnline\nCash\nCheck\nBank Transfer\nUPI"
+        },
+        {
+            "fieldname": "remarks",
+            "fieldtype": "Small Text",
+            "label": "Remarks"
+        },
+        {
+            "fieldname": "section_break_cancellation",
+            "fieldtype": "Section Break",
+            "label": "Cancellation",
+            "collapsible": 1
+        },
+        {
+            "fieldname": "cancellation_reason",
+            "fieldtype": "Small Text",
+            "label": "Cancellation Reason",
+            "depends_on": "eval:doc.reservation_status=='Cancelled'"
+        },
+        {
+            "fieldname": "cancellation_date",
+            "fieldtype": "Date",
+            "label": "Cancellation Date",
+            "depends_on": "eval:doc.reservation_status=='Cancelled'"
+        },
+        {
+            "fieldname": "refund_status",
+            "fieldtype": "Select",
+            "label": "Refund Status",
+            "options": "Not-Applicable\nPending\nPartial\nFull",
+            "default": "Not-Applicable",
+            "depends_on": "eval:doc.reservation_status=='Cancelled'"
+        },
+        {
+            "fieldname": "section_break_housekeeping",
+            "fieldtype": "Section Break",
+            "label": "Housekeeping",
+            "collapsible": 1
+        },
+        {
+            "fieldname": "housekeeping_task_auto_create",
+            "fieldtype": "Check",
+            "label": "Auto-Create Housekeeping Tasks",
+            "default": 1
+        }
+    ],
+    "index_web_pages_for_search": 1,
+    "links": [],
+    "modified": "2024-12-20 20:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "Bookpondy Pms",
+    "name": "Reservation",
+    "naming_rule": "By \"Naming Series\" field",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "System Manager",
+            "share": 1,
+            "write": 1
+        }
+    ],
+    "sort_field": "creation",
+    "sort_order": "DESC",
+    "states": [],
+    "title_field": "guest_name",
+    "track_changes": 1
+}

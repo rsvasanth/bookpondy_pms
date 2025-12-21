@@ -24,53 +24,70 @@ import {
 } from "lucide-react"
 import { Link } from "react-router-dom"
 
-const properties = [
-  {
-    name: "Ocean View Villa",
-    location: "Pondicherry",
-    image: "/luxury-ocean-view-villa-pondicherry.jpg",
-    status: "active" as const,
-    occupancy: 85,
-    rating: 4.8,
-    nextBooking: "Dec 18",
-  },
-  {
-    name: "Beach House Resort",
-    location: "Chennai",
-    image: "/beach-house-resort-chennai.jpg",
-    status: "active" as const,
-    occupancy: 72,
-    rating: 4.6,
-    nextBooking: "Dec 19",
-  },
-  {
-    name: "Heritage Homestay",
-    location: "Mahabalipuram",
-    image: "/heritage-homestay-mahabalipuram.jpg",
-    status: "active" as const,
-    occupancy: 90,
-    rating: 4.9,
-    nextBooking: "Dec 20",
-  },
-  {
-    name: "Lakeside Cottage",
-    location: "Kodaikanal",
-    image: "/lakeside-cottage-kodaikanal.jpg",
-    status: "maintenance" as const,
-    occupancy: 0,
-    rating: 4.5,
-    nextBooking: undefined,
-  },
-]
+import { useFrappeGetDocList, useFrappeAuth } from "frappe-react-sdk"
 
 export default function DashboardPage() {
+  const { currentUser } = useFrappeAuth()
+
+  const { data: propertiesList, isLoading: propertiesLoading } = useFrappeGetDocList("Property", {
+    fields: ["name", "property_name", "location_description", "banner_image", "status", "average_rating", "total_rooms"],
+    limit: 4
+  })
+
+  // We would ideally fetch occupancy and next booking via a custom API call or a complex query.
+  // For now, we'll derive what we can or use placeholders.
+  const properties = propertiesList?.map(p => ({
+    name: p.property_name,
+    location: p.location_description || "Not specified",
+    image: p.banner_image || "/placeholder.svg", // Ensure you have a placeholder or handle null
+    status: p.status.toLowerCase(),
+    occupancy: 0, // Placeholder: needs calculation backend side
+    rating: p.average_rating || 0,
+    nextBooking: "None" // Placeholder
+  })) || []
+
+  // Fetch KPI Data & Timeline Data
+  const { data: reservations } = useFrappeGetDocList("Reservation", {
+    fields: ["name", "total_amount", "reservation_status", "guest_name", "property", "check_in_date", "check_out_date"],
+    limit: 1000
+  })
+
+  const totalRevenue = reservations?.reduce((acc, curr) => acc + (curr.total_amount || 0), 0) || 0
+  const activeBookings = reservations?.filter(r => ["Confirmed", "Checked-In"].includes(r.reservation_status)).length || 0
+
+  // Fetch Maintenance Tasks
+  const { data: maintenanceTasks } = useFrappeGetDocList("Maintenance Ticket", {
+    fields: ["name", "issue_title", "room", "priority", "creation"],
+    filters: [["ticket_status", "!=", "Closed"]],
+    limit: 5
+  })
+
+  // Combine into alerts (Simple mapping)
+  const alerts = [
+    ...(maintenanceTasks?.map(t => ({
+      id: t.name,
+      type: "maintenance",
+      title: t.issue_title,
+      description: `Room ${t.room} - Priority: ${t.priority}`,
+      time: t.creation?.split(" ")[0] || "Today"
+    })) || []),
+    // Add payment alerts based on reservations if needed, e.g. pending ones
+    ...(reservations?.filter(r => r.total_amount > 0 && r.reservation_status === "Confirmed").slice(0, 2).map(r => ({
+      id: r.name,
+      type: "payment",
+      title: "Payment Follow-up",
+      description: `Rs ${r.total_amount} - ${r.guest_name}`,
+      time: r.check_in_date
+    })) || [])
+  ] as any[]
+
   return (
     <DashboardLayout>
       {/* Page Header */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground">Welcome back, Rajesh! Here&apos;s your property overview.</p>
+          <p className="text-muted-foreground">Welcome back, {currentUser}! Here&apos;s your property overview.</p>
         </div>
         <Button className="bg-[#E68B47] hover:bg-[#c97339]">
           <Plus className="mr-2 h-4 w-4" />
@@ -87,7 +104,7 @@ export default function DashboardPage() {
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KPICard
           title="Total Revenue (Dec)"
-          value="₹5,23,000"
+          value={`₹${totalRevenue.toLocaleString('en-IN')}`}
           change={12.5}
           changeLabel="vs last month"
           trend="up"
@@ -103,7 +120,7 @@ export default function DashboardPage() {
         />
         <KPICard
           title="Active Bookings"
-          value="24"
+          value={activeBookings.toString()}
           change={-2}
           changeLabel="vs last week"
           trend="down"
@@ -258,13 +275,13 @@ export default function DashboardPage() {
       {/* Charts and Timeline */}
       <div className="mb-6 grid gap-6 lg:grid-cols-2">
         <RevenueChart />
-        <BookingTimeline />
+        <BookingTimeline bookings={reservations as any} />
       </div>
 
       {/* Reviews and Alerts */}
       <div className="grid gap-6 lg:grid-cols-2">
         <RecentReviews />
-        <AlertsPanel />
+        <AlertsPanel alerts={alerts} />
       </div>
     </DashboardLayout>
   )

@@ -10,79 +10,39 @@ import { ChevronLeft, ChevronRight, Plus } from "lucide-react"
 import { format, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns"
 import { cn } from "@/lib/utils"
 
+// Status colors mapping
+const statusColors: Record<string, string> = {
+  Confirmed: "bg-green-500",
+  Pending: "bg-yellow-500",
+  Cancelled: "bg-red-500",
+}
+
 interface CalendarBooking {
   id: string
   guestName: string
   property: string
   checkIn: Date
   checkOut: Date
-  status: "confirmed" | "pending" | "cancelled"
-}
-
-const bookings: CalendarBooking[] = [
-  {
-    id: "BK2401",
-    guestName: "Priya Sharma",
-    property: "Ocean View Villa",
-    checkIn: new Date(2025, 11, 18),
-    checkOut: new Date(2025, 11, 22),
-    status: "confirmed",
-  },
-  {
-    id: "BK2402",
-    guestName: "Amit Patel",
-    property: "Beach House Resort",
-    checkIn: new Date(2025, 11, 19),
-    checkOut: new Date(2025, 11, 21),
-    status: "confirmed",
-  },
-  {
-    id: "BK2403",
-    guestName: "Sneha Reddy",
-    property: "Heritage Homestay",
-    checkIn: new Date(2025, 11, 20),
-    checkOut: new Date(2025, 11, 25),
-    status: "pending",
-  },
-  {
-    id: "BK2404",
-    guestName: "Vikram Singh",
-    property: "Ocean View Villa",
-    checkIn: new Date(2025, 11, 23),
-    checkOut: new Date(2025, 11, 27),
-    status: "confirmed",
-  },
-  {
-    id: "BK2405",
-    guestName: "Meera Nair",
-    property: "Hill View Retreat",
-    checkIn: new Date(2025, 11, 24),
-    checkOut: new Date(2025, 11, 28),
-    status: "pending",
-  },
-]
-
-const statusColors = {
-  confirmed: "bg-green-500",
-  pending: "bg-yellow-500",
-  cancelled: "bg-red-500",
+  status: "Confirmed" | "Pending" | "Cancelled"
 }
 
 interface CalendarViewProps {
+  bookings?: CalendarBooking[]
   onAddBooking: () => void
   onSelectBooking: (booking: CalendarBooking) => void
 }
 
-export function CalendarView({ onAddBooking, onSelectBooking }: CalendarViewProps) {
+
+export function CalendarView({ bookings = [], onAddBooking, onSelectBooking }: CalendarViewProps) {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
   const [currentMonth, setCurrentMonth] = useState(new Date())
 
   // Get bookings for selected date
   const selectedDateBookings = selectedDate
     ? bookings.filter((booking) => {
-        const days = eachDayOfInterval({ start: booking.checkIn, end: booking.checkOut })
-        return days.some((day) => isSameDay(day, selectedDate))
-      })
+      const days = eachDayOfInterval({ start: booking.checkIn, end: booking.checkOut })
+      return days.some((day) => isSameDay(day, selectedDate))
+    })
     : []
 
   // Get all days with bookings for the current month
@@ -91,9 +51,18 @@ export function CalendarView({ onAddBooking, onSelectBooking }: CalendarViewProp
   const bookedDays = new Map<string, CalendarBooking[]>()
 
   bookings.forEach((booking) => {
+    // Basic validation to ensure checkIn/checkOut are valid dates
+    if (!booking.checkIn || !booking.checkOut) return
+
+    const start = booking.checkIn < monthStart ? monthStart : booking.checkIn
+    const end = booking.checkOut > monthEnd ? monthEnd : booking.checkOut
+
+    // Safety check if start > end (which shouldn't happen if data is valid)
+    if (start > end) return;
+
     const days = eachDayOfInterval({
-      start: booking.checkIn < monthStart ? monthStart : booking.checkIn,
-      end: booking.checkOut > monthEnd ? monthEnd : booking.checkOut,
+      start,
+      end,
     })
     days.forEach((day) => {
       const key = format(day, "yyyy-MM-dd")
@@ -173,7 +142,7 @@ export function CalendarView({ onAddBooking, onSelectBooking }: CalendarViewProp
                     {dayBookings.length > 0 && (
                       <div className="mt-0.5 flex gap-0.5">
                         {dayBookings.slice(0, 3).map((booking, idx) => (
-                          <div key={idx} className={cn("h-1.5 w-1.5 rounded-full", statusColors[booking.status])} />
+                          <div key={idx} className={cn("h-1.5 w-1.5 rounded-full", statusColors[booking.status] || "bg-gray-400")} />
                         ))}
                         {dayBookings.length > 3 && (
                           <span className="text-[10px] text-muted-foreground">+{dayBookings.length - 3}</span>
@@ -226,9 +195,9 @@ export function CalendarView({ onAddBooking, onSelectBooking }: CalendarViewProp
                       </div>
                       <Badge
                         className={cn(
-                          booking.status === "confirmed" && "bg-green-500/10 text-green-600",
-                          booking.status === "pending" && "bg-yellow-500/10 text-yellow-600",
-                          booking.status === "cancelled" && "bg-red-500/10 text-red-600",
+                          booking.status === "Confirmed" && "bg-green-500/10 text-green-600",
+                          booking.status === "Pending" && "bg-yellow-500/10 text-yellow-600",
+                          booking.status === "Cancelled" && "bg-red-500/10 text-red-600",
                         )}
                       >
                         {booking.status}

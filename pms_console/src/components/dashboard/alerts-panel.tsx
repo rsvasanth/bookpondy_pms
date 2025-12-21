@@ -2,44 +2,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { AlertTriangle, Clock, CreditCard, Wrench } from "lucide-react"
 
-interface Alert {
+// Re-using the interface or defining it if not exported
+export interface Alert {
   id: string
   type: "maintenance" | "payment" | "booking" | "urgent"
   title: string
   description: string
   time: string
 }
-
-const alerts: Alert[] = [
-  {
-    id: "1",
-    type: "urgent",
-    title: "AC not working",
-    description: "Ocean View Villa - Room 201 reported AC issue",
-    time: "2 hours ago",
-  },
-  {
-    id: "2",
-    type: "payment",
-    title: "Payment overdue",
-    description: "Rs 15,000 pending from booking #BK2341",
-    time: "1 day ago",
-  },
-  {
-    id: "3",
-    type: "maintenance",
-    title: "Scheduled maintenance",
-    description: "Pool cleaning due for Beach House Resort",
-    time: "Tomorrow",
-  },
-  {
-    id: "4",
-    type: "booking",
-    title: "Check-in reminder",
-    description: "3 guests checking in today across properties",
-    time: "Today",
-  },
-]
 
 const alertConfig = {
   urgent: {
@@ -64,7 +34,7 @@ const alertConfig = {
   },
 }
 
-export function AlertsPanel() {
+export function AlertsPanel({ alerts = [] }: { alerts?: Alert[] }) {
   return (
     <Card>
       <CardHeader>

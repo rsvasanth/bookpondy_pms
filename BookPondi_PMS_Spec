@@ -1,0 +1,482 @@
+# BookPondi_PMS: Complete Technical Specification & Data Model
+
+## Executive Summary
+
+BookPondi_PMS is a **lightweight, multi-property Frappe application** designed for India's hospitality SaaS marketplace. It provides modern property management, reservations, housekeeping workflows, and operational intelligence—without heavy accounting overhead (GST/invoicing delegates to central ERPNext).
+
+**Target Users:**
+- Property owners (homestays, villas, hostels, small hotels)
+- Service partners (surf schools, tour operators)
+- 250-500 room properties at launch
+- Distributed across India with focus on Pondicherry tourism
+
+**Key Philosophy:**
+- One Frappe site per property (lightweight, isolated)
+- Clean sync APIs to central BookPondi.in marketplace
+- Operational focus (guests, rooms, staff, schedules)
+- Financial data syncs to central ERPNext for GST/reporting
+
+---
+
+## Part 1: Core Data Modules
+
+### Module 1: Property Management
+
+#### 1.1 Property DocType
+Represents the hospitality asset (homestay, villa, hostel, hotel).
+
+**Fields:**
+- `name` (doctype id): e.g., "PROP-0001"
+- `property_name` (string, required): "Pondicherry Homestay A"
+- `property_type` (select): Homestay / Villa / Hotel / Hostel / Resort / Guesthouse
+- `location_description` (text): Address, landmarks, directions
+- `latitude`, `longitude` (float): Map pinning
+- `total_rooms` (integer): Computed from Room count
+- `total_units` (integer): For serviced apartments
+- `check_in_time` (time): Default 2:00 PM
+- `check_out_time` (time): Default 11:00 AM
+- `amenities` (text): WiFi, AC, Pool, Parking, etc.
+- `house_rules` (text): Pet policy, noise restrictions, etc.
+- `contact_person` (link to User)
+- `email`, `phone` (contact)
+- `status` (select): Active / Inactive / Maintenance
+- `description` (markdown): Rich text, for listing
+- `banner_image` (image): Main property photo
+- `images` (table): Gallery of photos
+
+**Permissions:**
+- Owner (property contact_person) can edit all fields
+- Staff can view except financial fields
+- API read-only for marketplace
+
+---
+
+#### 1.2 Room Type DocType
+Categories of rooms (Deluxe, Suite, Dormitory) within a property.
+
+**Fields:**
+- `name` (doctype id): e.g., "DORM-001"
+- `property` (link to Property, required)
+- `room_type_name` (string): "Deluxe Double"
+- `description` (text): Features, bed type, etc.
+- `room_category` (select): Single / Double / Dormitory / Suite / Apartment
+- `occupancy_max_adults` (integer): 2
+- `occupancy_max_children` (integer): 1
+- `occupancy_max_total` (integer): Computed
+- `base_rate_per_night` (currency): ₹2,500
+- `cancellation_policy` (select): Flexible / Moderate / Strict
+- `min_stay_nights` (integer): Minimum booking length
+- `amenities` (table): AC, WiFi, TV, etc.
+- `images` (table): Photos of room type
+- `status` (select): Active / Inactive
+- `is_bookable_on_marketplace` (checkbox): Visible on BookPondi.in
+
+---
+
+#### 1.3 Room / Unit DocType
+Individual room inventory (one record per physical room).
+
+**Fields:**
+- `name` (doctype id): e.g., "RM-101"
+- `property` (link to Property)
+- `room_type` (link to Room Type)
+- `room_no` / `unit_id` (string): "101", "Villa-A", "Dorm-Bed-5"
+- `floor` (integer): 1, 2, 3
+- `wing` (string): North / South / East
+- `total_square_feet` (decimal)
+- `bed_configuration` (text): "1 King + 1 Single"
+- `status` (select): Active / Out-of-Service / Under-Maintenance
+- `last_inspection_date` (date)
+- `notes` (text): Special features, issues
+
+**Relationships:**
+- 1 Room Type → N Rooms
+- 1 Property → N Rooms (via Room Type)
+
+**Computed Fields:**
+- `available_count` (daily): rooms − booked − out-of-service
+- `status_display` (color-coded dashboard)
+
+---
+
+### Module 2: Reservation & Booking
+
+#### 2.1 Reservation DocType
+Central entity linking guest, property, room type, and dates. Core of the PMS.
+
+**Fields:**
+- `name` (doctype id): e.g., "RES-250001"
+- `property` (link to Property, required)
+- `guest` (link to Guest DocType)
+- `guest_name` (string auto-fill from Guest)
+- `guest_phone`, `guest_email` (auto-fill)
+- `room_type` (link to Room Type, required)
+- `allocated_room` (link to Room, optional): Pre-assigned room number
+- `check_in_date` (date, required)
+- `check_out_date` (date, required)
+- `nights` (integer, computed): check_out − check_in
+- `number_of_guests` (integer): Total guests
+- `adults`, `children` (integer breakdown)
+- `pet_friendly_option` (checkbox)
+- `special_requests` (text): High floor, late arrival, etc.
+- `reservation_status` (select, required):
+  - Enquiry: Initial interest
+  - Tentative: Awaiting confirmation
+  - Confirmed: Booking locked
+  - Checked-In: Guest arrived
+  - Checked-Out: Stay complete
+  - No-Show: Guest did not arrive
+  - Cancelled: Booking cancelled
+- `cancellation_reason` (text, conditional)
+- `cancellation_date` (date, conditional)
+- `refund_status` (select): Not-Applicable / Pending / Partial / Full
+- `reservation_source` (select): BookPondi / Direct / WhatsApp / Phone
+- `marketplace_booking_id` (string): Links to bookpondi.in order
+- `notes` (text): Internal comments
+
+**Financial Fields:**
+- `room_rate_per_night` (currency): Locked rate on booking
+- `number_of_nights` (integer)
+- `subtotal_room_charges` (currency, computed)
+- `extras_and_services` (decimal, sum from Charge table)
+- `discount_amount` (currency)
+- `total_amount` (currency, computed)
+- `payment_status` (select): Pending / Partial / Received / Refunded
+- `payment_method` (select): Online / Cash / Check / Bank Transfer / UPI
+- `remarks` (text)
+
+**Housekeeping Link:**
+- `housekeeping_task_auto_create` (checkbox): Auto-create tasks on check-in/out
+
+**Workflow:**
+Enquiry → Tentative → Confirmed → Checked-In → Checked-Out
+           ↓(cancel)               ↓(no-show)
+         Cancelled               No-Show
+
+---
+
+#### 2.2 Guest DocType
+Guest profile and communication history.
+
+**Fields:**
+- `name` (doctype id / email): Primary key
+- `guest_name` (string, required)
+- `email` (email, required)
+- `phone` (string, required)
+- `gender` (select): Male / Female / Other
+- `date_of_birth` (date): Optional
+- `nationality` (string): Optional
+- `address` (text): Permanent address
+- `city`, `state`, `country` (links)
+- `id_type` (select): Passport / Aadhar / DL / Visa
+- `id_number` (string)
+- `id_expiry_date` (date)
+- `primary_language` (select): English / Hindi / Tamil
+- `vip_status` (select): Regular / Silver / Gold / Platinum
+- `total_visits` (integer, computed)
+- `total_spend` (currency, computed): Sum of all Folio amounts
+- `average_rating_given` (float): Guest's review ratings
+- `last_visit_date` (date)
+- `return_guest` (checkbox, computed)
+- `guest_notes` (text): Preferences, allergies, special needs
+- `do_not_disturb_preference` (checkbox)
+- `newsletter_opt_in` (checkbox)
+- `status` (select): Active / Blacklisted / Inactive
+
+---
+
+### Module 3: Pricing & Yield
+
+#### 3.1 Rate Plan DocType
+Pricing templates for room types (Standard, Non-Refundable, Long-Stay).
+
+**Fields:**
+- `name` (doctype id): "STD-001-RP"
+- `property` (link to Property)
+- `room_type` (link to Room Type)
+- `plan_name` (string): "Standard", "Non-Refundable", "Corporate"
+- `base_rate` (currency): Starting rate
+- `included_guests` (integer): 2 (included in base rate)
+- `extra_guest_charge` (currency): Per additional guest
+- `plan_description` (text): "Free cancellation 5 days before"
+- `is_active` (checkbox): Default true
+- `validity_from`, `validity_to` (date): Plan period
+
+**Rate Modifiers (table):**
+| Modifier | Type | Value | Notes |
+|----------|------|-------|-------|
+| Early Bird | % | 10 | If booked 30+ days ahead |
+| Last Minute | % | -15 | Within 7 days |
+| Long Stay | % | -10 | 7+ nights |
+| Weekend | % | 20 | Fri/Sat surcharge |
+
+---
+
+#### 3.2 Seasonal Rate DocType
+Override base rates for specific date ranges (peak season, holidays).
+
+**Fields:**
+- `name` (doctype id): "SR-001"
+- `property` (link)
+- `room_type` (link)
+- `from_date`, `to_date` (date)
+- `season_name` (string): "Diwali 2025", "Summer Peak"
+- `rate_override` (currency): Exact rate during period
+- `rate_increase_percent` (percent): Or % increase on base
+- `notes` (text)
+
+**Example:**
+| Season | Dates | Override Rate |
+|--------|-------|---------------|
+| Diwali | Oct 20 - Nov 5 | ₹4,500 |
+| New Year | Dec 20 - Jan 3 | ₹5,000 |
+| Summer | May 1 - Jun 30 | ₹2,000 |
+
+---
+
+#### 3.3 Discount Rule DocType
+Coupon codes, promotional discounts, group discounts.
+
+**Fields:**
+- `name` (doctype id): "DISC-EARLY2025"
+- `property` (link)
+- `discount_code` (string): "EARLY2025", "PONDICHERRY10"
+- `discount_type` (select): Fixed-Amount / Percentage / BOGO (Buy-One-Get-One)
+- `discount_value` (decimal)
+- `min_booking_value` (currency): Minimum order to apply
+- `max_discount_amount` (currency): Cap on discount
+- `valid_from`, `valid_to` (date)
+- `usage_limit` (integer): Max total uses
+- `usage_count` (integer, computed)
+- `per_guest_limit` (integer): Max uses per guest
+- `room_types` (table): Applicable room types (blank = all)
+- `description` (text)
+- `is_active` (checkbox)
+
+---
+
+### Module 4: Housekeeping & Operations
+
+#### 4.1 Housekeeping Task DocType
+Daily cleaning and maintenance tasks, auto-generated or manual.
+
+**Fields:**
+- `name` (doctype id): "HK-RM-101-20251220"
+- `property` (link, required)
+- `room` (link to Room, required)
+- `reservation` (link to Reservation, optional)
+- `task_type` (select, required):
+  - Checkout Cleaning: Deep clean after guest leaves
+  - Stayover: Quick tidy during multi-night stay
+  - Deep Clean: Monthly/quarterly
+  - Maintenance Clean: After repair
+  - Turnover: Between guests
+- `priority` (select): Low / Medium / High / Urgent
+- `status` (select, required):
+  - Pending: Assigned, not started
+  - In-Progress: Staff actively working
+  - Done: Completed, pending QA
+  - Verified: QA approved
+  - Blocked: Cannot complete (needs repair, etc.)
+- `scheduled_date` (date)
+- `scheduled_time` (time): e.g., 11:00 AM
+- `assigned_to` (link to User/Staff)
+- `assigned_date` (date, auto)
+- `start_time` (time): When staff started
+- `end_time` (time): When staff finished
+- `duration_minutes` (integer, computed): end − start
+- `task_checklist` (table)
+- `issues_found` (table): Any problems noted
+- `photos` (image table): Before/after photos
+- `notes` (text): General remarks
+- `qc_verified_by` (link to User): QA staff
+- `qc_verified_date` (date)
+- `is_urgent` (checkbox): Escalate if overdue
+
+---
+
+#### 4.2 Room Status DocType
+Live status tracking of rooms (real-time dashboard).
+
+**Fields:**
+- `name` (doctype id): "RS-RM-101"
+- `property` (link)
+- `room` (link to Room)
+- `current_status` (select, read-only, computed):
+  - Vacant: Room empty, ready for guests
+  - Occupied: Guest checked in
+  - Dirty: Guest checked out, needs cleaning
+  - Cleaning: Housekeeping in progress
+  - Out-of-Service: Room unavailable
+- `last_status_change_time` (datetime, auto)
+- `occupied_by_reservation` (link to Reservation)
+- `time_in_current_status` (computed): Minutes/hours
+- `status_display_color` (computed): Green / Blue / Yellow / Red
+
+---
+
+#### 4.3 Maintenance Ticket DocType
+Issues, repairs, preventive maintenance tracking.
+
+**Fields:**
+- `name` (doctype id): "MNT-001"
+- `property` (link, required)
+- `room` (link to Room, optional): Null if property-level
+- `issue_title` (string, required): "AC not cooling"
+- `issue_description` (text)
+- `issue_category` (select): AC / Plumbing / Electrical / Furniture / Appliance / General
+- `priority` (select): Low / Medium / High / Critical
+- `severity` (select): Minor / Major / Critical
+- `reported_by` (link to User)
+- `reported_date` (date, auto)
+- `assigned_to` (link to Staff/User): Maintenance person
+- `assigned_date` (date)
+- `estimated_cost` (currency)
+- `actual_cost` (currency, optional)
+- `ticket_status` (select):
+  - Open: Reported, awaiting assignment
+  - Assigned: Work assigned
+  - In-Progress: Actively being worked on
+  - On-Hold: Waiting for parts/approval
+  - Completed: Repair finished
+  - Closed: Verified, resolved
+- `resolution_notes` (text)
+- `resolved_date` (date)
+- `resolution_time_hours` (computed)
+- `parts_used` (table)
+- `impact_on_bookings` (select): None / Current Guest / Next 24hrs / Multiple days
+- `guest_impacted` (checkbox): Affects staying guest
+- `photos` (table): Photos of issue & resolution
+- `sla_status` (computed): On-Time / Overdue
+
+---
+
+### Module 5: Billing & Transactions
+
+#### 5.1 Charge DocType
+Individual line items that accumulate during a stay (room + extras).
+
+**Fields:**
+- `name` (doctype id): "CHG-RES-250001-001"
+- `reservation` (link to Reservation, required)
+- `charge_type` (select, required):
+  - Room: Base room charge per night
+  - Extra Guest: Additional guest surcharge
+  - F&B: Food & beverage (if in-house dining)
+  - Activity: Tours, water sports
+  - Parking: Vehicle parking fee
+  - Pet: Pet accommodation
+  - Laundry: Laundry service
+  - Late Checkout: Late checkout fee
+  - Amenity: Mini bar, spa, etc.
+  - Other: Miscellaneous
+- `description` (text): "Room charge - Deluxe Double - 2 nights"
+- `quantity` (decimal): 2 (nights) or 1 (service)
+- `unit_rate` (currency): ₹2,500 per night
+- `tax_template` (select): GST 5% / GST 12% / GST 18% (maps to ERPNext later)
+- `tax_amount` (currency, computed)
+- `total_amount` (currency, computed): (qty × rate) + tax
+- `charged_on` (date, auto)
+- `notes` (text)
+
+---
+
+#### 5.2 Folio / Bill DocType
+Guest invoice/folio aggregating all charges from a reservation.
+
+**Fields:**
+- `name` (doctype id): "FLO-RES-250001"
+- `reservation` (link to Reservation, required, unique)
+- `guest_name` (string, auto-fill)
+- `guest_email`, `guest_phone` (auto-fill)
+- `property` (link, auto-fill)
+- `room_type` (link, auto-fill)
+- `check_in_date`, `check_out_date` (date, auto-fill)
+- `charges` (table link to Charge): All charges for stay
+- `subtotal` (currency, computed): Sum of charges before tax
+- `tax_summary` (table, computed)
+- `total_tax` (currency, computed)
+- `discount_code_applied` (link to Discount Rule, optional)
+- `discount_amount` (currency, auto-fill from discount)
+- `grand_total` (currency, computed): subtotal + tax − discount
+- `folio_status` (select):
+  - Draft: Still adding charges
+  - Posted: Final, ready for payment
+  - Paid: Payment received
+  - Partial: Partial payment received
+  - Refund-Pending: Refund being processed
+  - Closed: Archival
+- `payment_method` (select): Online / Cash / Card / Check / UPI / Bank Transfer
+- `payment_date` (date, conditional)
+- `transaction_id` (string, conditional): Razorpay ref
+- `payment_notes` (text)
+- `refund_amount` (currency, optional): If cancellation
+- `refund_date` (date, optional)
+- `refund_notes` (text, optional)
+- `printed_count` (integer, auto): How many times printed
+- `sent_to_guest` (checkbox): Email sent?
+- `sent_date` (datetime)
+
+---
+
+#### 5.3 Transaction DocType
+Individual payment records.
+
+**Fields:**
+- `name` (doctype id): "TXN-RES-250001-001"
+- `folio` (link to Folio)
+- `reservation` (link to Reservation, for easy linking)
+- `guest_name` (string, auto-fill)
+- `payment_date` (date, required)
+- `payment_method` (select): Online / Cash / Card / Check / UPI / Bank Transfer
+- `payment_mode_details` (string): E.g., "Razorpay Order ID: ..."
+- `amount_received` (currency, required)
+- `currency` (select): INR (default)
+- `transaction_id` (string): Payment gateway ref
+- `transaction_status` (select): Success / Failed / Pending
+- `payment_notes` (text)
+- `received_by` (link to User): Staff who received payment
+- `deposit_date` (date): When deposited to bank (if cash)
+- `bank_reference` (string): Bank deposit slip ref
+
+---
+
+### Module 6-12: Additional Modules
+
+This document includes:
+- Module 6: Guest Communications
+- Module 7: Staff & Roles
+- Module 8: Inventory & Assets
+- Module 9: Generic Tasks & Workflow
+- Module 10: Analytics & KPIs
+- Module 11: Review & Rating System
+- Module 12: Expense & Cost Tracking
+
+---
+
+## Part 2: Integration Points
+
+### 2.1 Marketplace Integration (BookPondi.in)
+### 2.2 Central ERPNext Sync
+### 2.3 Mobile App & PWA
+
+---
+
+## Part 3: Implementation Roadmap
+
+### Phase 1: MVP (Weeks 1-4)
+### Phase 2: Operations (Weeks 5-8)
+### Phase 3: Advanced Features (Weeks 9-12)
+### Phase 4: Refinement & Go-Live (Weeks 13+)
+
+---
+
+## Conclusion
+
+**BookPondi_PMS** is a complete, modular property management system designed for India's hospitality SaaS marketplace with:
+- **Simplicity** for small property owners (one Frappe site per property)
+- **Completeness** with core PMS features
+- **Integration** with central ERPNext and BookPondi.in
+- **Scalability** to thousands of properties across India
+
+Your expertise in Frappe + ERP gives you a 6-12 month competitive advantage. Next step: Start scaffolding DocTypes and build MVP in 4 weeks. 🚀

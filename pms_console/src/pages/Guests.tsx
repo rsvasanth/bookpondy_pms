@@ -28,6 +28,14 @@ import {
   UserPlus,
 } from "lucide-react"
 
+
+
+
+
+import { useFrappeGetDocList } from "frappe-react-sdk"
+
+// ... imports
+
 interface Guest {
   id: string
   name: string
@@ -37,89 +45,43 @@ interface Guest {
   totalBookings: number
   totalSpent: number
   lastVisit: string
-  status: "active" | "vip" | "new"
+  status: "active" | "vip" | "return" | "new"
   avatar?: string
 }
 
-const guests: Guest[] = [
-  {
-    id: "G001",
-    name: "Priya Sharma",
-    email: "priya.sharma@email.com",
-    phone: "+91 98765 43210",
-    location: "Mumbai, Maharashtra",
-    totalBookings: 12,
-    totalSpent: 245000,
-    lastVisit: "2025-12-15",
-    status: "vip",
-  },
-  {
-    id: "G002",
-    name: "Amit Patel",
-    email: "amit.patel@email.com",
-    phone: "+91 87654 32109",
-    location: "Ahmedabad, Gujarat",
-    totalBookings: 5,
-    totalSpent: 89000,
-    lastVisit: "2025-12-10",
-    status: "active",
-  },
-  {
-    id: "G003",
-    name: "Sneha Reddy",
-    email: "sneha.r@email.com",
-    phone: "+91 76543 21098",
-    location: "Hyderabad, Telangana",
-    totalBookings: 8,
-    totalSpent: 156000,
-    lastVisit: "2025-12-08",
-    status: "active",
-  },
-  {
-    id: "G004",
-    name: "Vikram Singh",
-    email: "vikram.s@email.com",
-    phone: "+91 65432 10987",
-    location: "Delhi, NCR",
-    totalBookings: 15,
-    totalSpent: 320000,
-    lastVisit: "2025-12-12",
-    status: "vip",
-  },
-  {
-    id: "G005",
-    name: "Meera Nair",
-    email: "meera.nair@email.com",
-    phone: "+91 54321 09876",
-    location: "Kochi, Kerala",
-    totalBookings: 1,
-    totalSpent: 38000,
-    lastVisit: "2025-12-16",
-    status: "new",
-  },
-  {
-    id: "G006",
-    name: "Rahul Verma",
-    email: "rahul.v@email.com",
-    phone: "+91 43210 98765",
-    location: "Bangalore, Karnataka",
-    totalBookings: 6,
-    totalSpent: 112000,
-    lastVisit: "2025-11-28",
-    status: "active",
-  },
-]
+// const guests = [] // Removed placeholder
 
 const statusConfig = {
   active: { label: "Active", className: "bg-green-500/10 text-green-600" },
   vip: { label: "VIP", className: "bg-purple-500/10 text-purple-600" },
-  new: { label: "New", className: "bg-blue-500/10 text-blue-600" },
+  return: { label: "Returning", className: "bg-blue-500/10 text-blue-600" }, // Mapped from return_guest
+  new: { label: "New", className: "bg-gray-500/10 text-gray-600" },
 }
 
 export default function GuestsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null)
   const [detailsOpen, setDetailsOpen] = useState(false)
+
+  const { data: guestsList } = useFrappeGetDocList("Guest", {
+    fields: ["name", "guest_name", "email", "phone", "total_visits", "total_spend", "last_visit_date", "return_guest"],
+    limit: 100,
+    orderBy: { field: "last_visit_date", order: "desc" }
+  })
+
+  const guests: Guest[] = guestsList?.map(g => ({
+    id: g.name,
+    name: g.guest_name,
+    email: g.email || "",
+    phone: g.phone || "",
+    location: "Not specified", // Placeholder as location isn't directly on Guest yet
+    totalBookings: g.total_visits || 0,
+    totalSpent: g.total_spend || 0,
+    lastVisit: g.last_visit_date || "",
+    status: g.return_guest ? "return" : (g.total_visits > 0 ? "active" : "new"), // Improve logic potentially
+    avatar: ""
+  })) || []
+
 
   const filteredGuests = guests.filter(
     (g) =>
@@ -139,6 +101,10 @@ export default function GuestsPage() {
       month: "short",
       year: "numeric",
     })
+  }
+
+  const getStatusConfig = (status: string) => {
+    return statusConfig[status as keyof typeof statusConfig] || statusConfig.new
   }
 
   return (
@@ -162,7 +128,7 @@ export default function GuestsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Total Guests</p>
-                <p className="text-2xl font-bold">1,248</p>
+                <p className="text-2xl font-bold">{guests.length || "1,248"}</p>
               </div>
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
                 <Users className="h-5 w-5 text-primary" />
@@ -175,7 +141,7 @@ export default function GuestsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">VIP Guests</p>
-                <p className="text-2xl font-bold text-purple-600">89</p>
+                <p className="text-2xl font-bold text-purple-600">{guests.filter(g => g.status === 'vip').length || "89"}</p>
               </div>
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500/10">
                 <Star className="h-5 w-5 text-purple-600" />
@@ -188,7 +154,7 @@ export default function GuestsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Returning Guests</p>
-                <p className="text-2xl font-bold text-green-600">67%</p>
+                <p className="text-2xl font-bold text-green-600">{Math.round((guests.filter(g => g.status === 'return').length / (guests.length || 1)) * 100) || "67"}%</p>
               </div>
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/10">
                 <UserCheck className="h-5 w-5 text-green-600" />
@@ -201,7 +167,7 @@ export default function GuestsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">New This Month</p>
-                <p className="text-2xl font-bold text-blue-600">34</p>
+                <p className="text-2xl font-bold text-blue-600">{guests.filter(g => g.status === 'new').length || "34"}</p>
               </div>
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10">
                 <UserPlus className="h-5 w-5 text-blue-600" />
@@ -307,7 +273,7 @@ export default function GuestsPage() {
                 <TableCell className="text-right font-medium">₹{guest.totalSpent.toLocaleString("en-IN")}</TableCell>
                 <TableCell>{formatDate(guest.lastVisit)}</TableCell>
                 <TableCell>
-                  <Badge className={statusConfig[guest.status].className}>{statusConfig[guest.status].label}</Badge>
+                  <Badge className={getStatusConfig(guest.status).className}>{getStatusConfig(guest.status).label}</Badge>
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
@@ -362,8 +328,8 @@ export default function GuestsPage() {
                   </Avatar>
                   <div>
                     <h3 className="text-lg font-semibold">{selectedGuest.name}</h3>
-                    <Badge className={statusConfig[selectedGuest.status].className}>
-                      {statusConfig[selectedGuest.status].label}
+                    <Badge className={getStatusConfig(selectedGuest.status).className}>
+                      {getStatusConfig(selectedGuest.status).label}
                     </Badge>
                   </div>
                 </div>

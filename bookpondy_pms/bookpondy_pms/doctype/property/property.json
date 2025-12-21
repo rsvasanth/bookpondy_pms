@@ -1,0 +1,217 @@
+{
+    "actions": [],
+    "allow_rename": 1,
+    "autoname": "naming_series:",
+    "creation": "2024-12-20 20:00:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "property_name",
+        "property_type",
+        "status",
+        "column_break_1",
+        "naming_series",
+        "contact_person",
+        "average_rating",
+        "section_break_location",
+        "location_description",
+        "latitude",
+        "longitude",
+        "column_break_2",
+        "email",
+        "phone",
+        "section_break_details",
+        "description",
+        "amenities",
+        "house_rules",
+        "section_break_operations",
+        "total_rooms",
+        "total_units",
+        "column_break_3",
+        "check_in_time",
+        "check_out_time",
+        "section_break_images",
+        "banner_image"
+    ],
+    "fields": [
+        {
+            "fieldname": "naming_series",
+            "fieldtype": "Select",
+            "label": "Series",
+            "options": "PROP-.YYYY.-.#####",
+            "reqd": 1,
+            "hidden": 0
+        },
+        {
+            "fieldname": "property_name",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Property Name",
+            "reqd": 1
+        },
+        {
+            "fieldname": "property_type",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Property Type",
+            "options": "Homestay\nVilla\nHotel\nHostel\nResort\nGuesthouse\nApartment",
+            "reqd": 1
+        },
+        {
+            "fieldname": "status",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Status",
+            "options": "Active\nInactive\nMaintenance",
+            "default": "Active"
+        },
+        {
+            "fieldname": "column_break_1",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "contact_person",
+            "fieldtype": "Link",
+            "label": "Contact Person",
+            "options": "User"
+        },
+        {
+            "fieldname": "average_rating",
+            "fieldtype": "Float",
+            "label": "Average Rating",
+            "read_only": 1,
+            "default": 0
+        },
+        {
+            "fieldname": "section_break_location",
+            "fieldtype": "Section Break",
+            "label": "Location"
+        },
+        {
+            "fieldname": "location_description",
+            "fieldtype": "Small Text",
+            "label": "Address / Location Description"
+        },
+        {
+            "fieldname": "latitude",
+            "fieldtype": "Float",
+            "label": "Latitude",
+            "precision": "6"
+        },
+        {
+            "fieldname": "longitude",
+            "fieldtype": "Float",
+            "label": "Longitude",
+            "precision": "6"
+        },
+        {
+            "fieldname": "column_break_2",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "email",
+            "fieldtype": "Data",
+            "label": "Email",
+            "options": "Email"
+        },
+        {
+            "fieldname": "phone",
+            "fieldtype": "Data",
+            "label": "Phone",
+            "options": "Phone"
+        },
+        {
+            "fieldname": "section_break_details",
+            "fieldtype": "Section Break",
+            "label": "Details"
+        },
+        {
+            "fieldname": "description",
+            "fieldtype": "Text Editor",
+            "label": "Description"
+        },
+        {
+            "fieldname": "amenities",
+            "fieldtype": "Small Text",
+            "label": "Amenities"
+        },
+        {
+            "fieldname": "house_rules",
+            "fieldtype": "Small Text",
+            "label": "House Rules"
+        },
+        {
+            "fieldname": "section_break_operations",
+            "fieldtype": "Section Break",
+            "label": "Operations"
+        },
+        {
+            "fieldname": "total_rooms",
+            "fieldtype": "Int",
+            "label": "Total Rooms",
+            "read_only": 1
+        },
+        {
+            "fieldname": "total_units",
+            "fieldtype": "Int",
+            "label": "Total Units"
+        },
+        {
+            "fieldname": "column_break_3",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "check_in_time",
+            "fieldtype": "Time",
+            "label": "Check-In Time",
+            "default": "14:00:00"
+        },
+        {
+            "fieldname": "check_out_time",
+            "fieldtype": "Time",
+            "label": "Check-Out Time",
+            "default": "11:00:00"
+        },
+        {
+            "fieldname": "section_break_images",
+            "fieldtype": "Section Break",
+            "label": "Images"
+        },
+        {
+            "fieldname": "banner_image",
+            "fieldtype": "Attach Image",
+            "label": "Banner Image"
+        }
+    ],
+    "image_field": "banner_image",
+    "index_web_pages_for_search": 1,
+    "links": [],
+    "modified": "2024-12-20 20:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "Bookpondy Pms",
+    "name": "Property",
+    "naming_rule": "By \"Naming Series\" field",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "System Manager",
+            "share": 1,
+            "write": 1
+        }
+    ],
+    "sort_field": "creation",
+    "sort_order": "DESC",
+    "states": [],
+    "title_field": "property_name",
+    "track_changes": 1
+}

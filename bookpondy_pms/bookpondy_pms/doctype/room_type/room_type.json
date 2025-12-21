@@ -1,0 +1,173 @@
+{
+    "actions": [],
+    "allow_rename": 1,
+    "autoname": "naming_series:",
+    "creation": "2024-12-20 20:00:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "naming_series",
+        "room_type_name",
+        "property",
+        "status",
+        "column_break_1",
+        "room_category",
+        "is_bookable_on_marketplace",
+        "section_break_occupancy",
+        "occupancy_max_adults",
+        "occupancy_max_children",
+        "occupancy_max_total",
+        "column_break_2",
+        "min_stay_nights",
+        "section_break_pricing",
+        "base_rate_per_night",
+        "cancellation_policy",
+        "section_break_details",
+        "description",
+        "amenities"
+    ],
+    "fields": [
+        {
+            "fieldname": "naming_series",
+            "fieldtype": "Select",
+            "label": "Series",
+            "options": "RT-.YYYY.-.#####",
+            "reqd": 1
+        },
+        {
+            "fieldname": "room_type_name",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Room Type Name",
+            "reqd": 1
+        },
+        {
+            "fieldname": "property",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Property",
+            "options": "Property",
+            "reqd": 1
+        },
+        {
+            "fieldname": "status",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "label": "Status",
+            "options": "Active\nInactive",
+            "default": "Active"
+        },
+        {
+            "fieldname": "column_break_1",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "room_category",
+            "fieldtype": "Select",
+            "label": "Room Category",
+            "options": "\nSingle\nDouble\nDormitory\nSuite\nApartment",
+            "reqd": 1
+        },
+        {
+            "fieldname": "is_bookable_on_marketplace",
+            "fieldtype": "Check",
+            "label": "Bookable on Marketplace",
+            "default": 1
+        },
+        {
+            "fieldname": "section_break_occupancy",
+            "fieldtype": "Section Break",
+            "label": "Occupancy"
+        },
+        {
+            "fieldname": "occupancy_max_adults",
+            "fieldtype": "Int",
+            "label": "Max Adults",
+            "default": 2
+        },
+        {
+            "fieldname": "occupancy_max_children",
+            "fieldtype": "Int",
+            "label": "Max Children",
+            "default": 1
+        },
+        {
+            "fieldname": "occupancy_max_total",
+            "fieldtype": "Int",
+            "label": "Max Total Occupancy",
+            "read_only": 1
+        },
+        {
+            "fieldname": "column_break_2",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "min_stay_nights",
+            "fieldtype": "Int",
+            "label": "Minimum Stay (Nights)",
+            "default": 1
+        },
+        {
+            "fieldname": "section_break_pricing",
+            "fieldtype": "Section Break",
+            "label": "Pricing"
+        },
+        {
+            "fieldname": "base_rate_per_night",
+            "fieldtype": "Currency",
+            "label": "Base Rate Per Night",
+            "reqd": 1
+        },
+        {
+            "fieldname": "cancellation_policy",
+            "fieldtype": "Select",
+            "label": "Cancellation Policy",
+            "options": "\nFlexible\nModerate\nStrict",
+            "default": "Flexible"
+        },
+        {
+            "fieldname": "section_break_details",
+            "fieldtype": "Section Break",
+            "label": "Details"
+        },
+        {
+            "fieldname": "description",
+            "fieldtype": "Small Text",
+            "label": "Description"
+        },
+        {
+            "fieldname": "amenities",
+            "fieldtype": "Small Text",
+            "label": "Amenities"
+        }
+    ],
+    "index_web_pages_for_search": 1,
+    "links": [],
+    "modified": "2024-12-20 20:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "Bookpondy Pms",
+    "name": "Room Type",
+    "naming_rule": "By \"Naming Series\" field",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "System Manager",
+            "share": 1,
+            "write": 1
+        }
+    ],
+    "sort_field": "creation",
+    "sort_order": "DESC",
+    "states": [],
+    "title_field": "room_type_name",
+    "track_changes": 1
+}
