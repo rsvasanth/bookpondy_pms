@@ -58,10 +58,13 @@ const statusConfig = {
   new: { label: "New", className: "bg-gray-500/10 text-gray-600" },
 }
 
+import { AddGuestDialog } from "@/components/guests/add-guest-dialog"
+
 export default function GuestsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null)
   const [detailsOpen, setDetailsOpen] = useState(false)
+  const [addGuestOpen, setAddGuestOpen] = useState(false)
 
   const { data: guestsList } = useFrappeGetDocList("Guest", {
     fields: ["name", "guest_name", "email", "phone", "total_visits", "total_spend", "last_visit_date", "return_guest"],
@@ -115,7 +118,7 @@ export default function GuestsPage() {
           <h1 className="text-2xl font-bold tracking-tight">Guest Management</h1>
           <p className="text-muted-foreground">Manage your guest database and relationships</p>
         </div>
-        <Button className="bg-[#E68B47] hover:bg-[#c97339]">
+        <Button className="bg-[#E68B47] hover:bg-[#c97339]" onClick={() => setAddGuestOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
           Add Guest
         </Button>
@@ -410,6 +413,7 @@ export default function GuestsPage() {
           )}
         </SheetContent>
       </Sheet>
+      <AddGuestDialog open={addGuestOpen} onOpenChange={setAddGuestOpen} />
     </DashboardLayout>
   )
 }

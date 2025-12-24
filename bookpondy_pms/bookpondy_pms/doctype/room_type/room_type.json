@@ -24,7 +24,8 @@
         "cancellation_policy",
         "section_break_details",
         "description",
-        "amenities"
+        "amenities",
+        "images"
     ],
     "fields": [
         {
@@ -139,8 +140,15 @@
         },
         {
             "fieldname": "amenities",
-            "fieldtype": "Small Text",
-            "label": "Amenities"
+            "fieldtype": "Table",
+            "label": "Amenities",
+            "options": "Room Type Amenity"
+        },
+        {
+            "fieldname": "images",
+            "fieldtype": "Table",
+            "label": "Gallery Images",
+            "options": "Room Type Image"
         }
     ],
     "index_web_pages_for_search": 1,

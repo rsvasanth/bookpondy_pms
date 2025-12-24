@@ -3,6 +3,8 @@ import DashboardPage from "@/pages/Dashboard"
 import PropertiesPage from "@/pages/Properties"
 import BookingsPage from "@/pages/Bookings"
 import GuestsPage from "@/pages/Guests"
+import StaffPage from "@/pages/Staff"
+import CommunicationsPage from "@/pages/Communications"
 import LoginPage from "@/pages/Login"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { FrappeProvider, useFrappeAuth } from "frappe-react-sdk"
@@ -69,6 +71,22 @@ function App() {
 							element={
 								<ProtectedRoute>
 									<GuestsPage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/staff"
+							element={
+								<ProtectedRoute>
+									<StaffPage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/communications"
+							element={
+								<ProtectedRoute>
+									<CommunicationsPage />
 								</ProtectedRoute>
 							}
 						/>

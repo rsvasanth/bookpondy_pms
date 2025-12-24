@@ -1,0 +1,46 @@
+{
+    "actions": [],
+    "allow_rename": 1,
+    "creation": "2024-12-22 18:40:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "name1",
+        "type",
+        "amount"
+    ],
+    "fields": [
+        {
+            "fieldname": "name1",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "Name",
+            "reqd": 1
+        },
+        {
+            "fieldname": "type",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "label": "Type",
+            "options": "Discount\nSurcharge",
+            "reqd": 1
+        },
+        {
+            "fieldname": "amount",
+            "fieldtype": "Currency",
+            "in_list_view": 1,
+            "label": "Amount",
+            "reqd": 1
+        }
+    ],
+    "istable": 1,
+    "modified": "2024-12-22 18:40:00.000000",
+    "modified_by": "Administrator",
+    "module": "Bookpondy Pms",
+    "name": "Rate Plan Modifier",
+    "owner": "Administrator",
+    "permissions": [],
+    "sort_field": "modified",
+    "sort_order": "DESC",
+    "states": []
+}

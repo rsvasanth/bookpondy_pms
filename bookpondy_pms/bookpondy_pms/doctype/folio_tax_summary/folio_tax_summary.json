@@ -1,0 +1,45 @@
+{
+    "actions": [],
+    "allow_rename": 1,
+    "creation": "2024-12-22 18:40:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "tax_type",
+        "rate",
+        "amount"
+    ],
+    "fields": [
+        {
+            "fieldname": "tax_type",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "Tax Type",
+            "reqd": 1
+        },
+        {
+            "fieldname": "rate",
+            "fieldtype": "Percent",
+            "in_list_view": 1,
+            "label": "Rate",
+            "reqd": 1
+        },
+        {
+            "fieldname": "amount",
+            "fieldtype": "Currency",
+            "in_list_view": 1,
+            "label": "Amount",
+            "reqd": 1
+        }
+    ],
+    "istable": 1,
+    "modified": "2024-12-22 18:40:00.000000",
+    "modified_by": "Administrator",
+    "module": "Bookpondy Pms",
+    "name": "Folio Tax Summary",
+    "owner": "Administrator",
+    "permissions": [],
+    "sort_field": "modified",
+    "sort_order": "DESC",
+    "states": []
+}

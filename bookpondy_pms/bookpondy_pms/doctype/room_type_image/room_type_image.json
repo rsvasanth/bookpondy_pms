@@ -1,0 +1,36 @@
+{
+    "actions": [],
+    "allow_rename": 1,
+    "creation": "2024-12-22 18:35:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "image",
+        "label"
+    ],
+    "fields": [
+        {
+            "fieldname": "image",
+            "fieldtype": "Attach Image",
+            "in_list_view": 1,
+            "label": "Image",
+            "reqd": 1
+        },
+        {
+            "fieldname": "label",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "Label"
+        }
+    ],
+    "istable": 1,
+    "modified": "2024-12-22 18:35:00.000000",
+    "modified_by": "Administrator",
+    "module": "Bookpondy Pms",
+    "name": "Room Type Image",
+    "owner": "Administrator",
+    "permissions": [],
+    "sort_field": "modified",
+    "sort_order": "DESC",
+    "states": []
+}

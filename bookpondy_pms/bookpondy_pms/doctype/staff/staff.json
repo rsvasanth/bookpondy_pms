@@ -1,0 +1,113 @@
+{
+  "actions": [],
+  "allow_rename": 1,
+  "autoname": "naming_series:",
+  "creation": "2024-12-24 10:30:00.000000",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "naming_series",
+    "staff_name",
+    "designation",
+    "status",
+    "column_break_1",
+    "property",
+    "user",
+    "section_break_contact",
+    "email",
+    "phone"
+  ],
+  "fields": [
+    {
+      "fieldname": "naming_series",
+      "fieldtype": "Select",
+      "label": "Series",
+      "options": "STF-.YYYY.-.#####",
+      "reqd": 1
+    },
+    {
+      "fieldname": "staff_name",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "Staff Name",
+      "reqd": 1
+    },
+    {
+      "fieldname": "designation",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Designation",
+      "options": "Manager\nHousekeeping\nReceptionist\nMaintenance\nChef\nSecurity",
+      "reqd": 1
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Status",
+      "options": "Active\nInactive",
+      "default": "Active"
+    },
+    {
+      "fieldname": "column_break_1",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "property",
+      "fieldtype": "Link",
+      "label": "Property",
+      "options": "Property",
+      "reqd": 1
+    },
+    {
+      "fieldname": "user",
+      "fieldtype": "Link",
+      "label": "Linked User",
+      "options": "User"
+    },
+    {
+      "fieldname": "section_break_contact",
+      "fieldtype": "Section Break",
+      "label": "Contact Info"
+    },
+    {
+      "fieldname": "email",
+      "fieldtype": "Data",
+      "label": "Email",
+      "options": "Email"
+    },
+    {
+      "fieldname": "phone",
+      "fieldtype": "Data",
+      "label": "Phone",
+      "options": "Phone"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2024-12-24 10:30:00.000000",
+  "modified_by": "Administrator",
+  "module": "Bookpondy Pms",
+  "name": "Staff",
+  "naming_rule": "By \"Naming Series\" field",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "creation",
+  "sort_order": "DESC",
+  "states": [],
+  "title_field": "staff_name",
+  "track_changes": 1
+}

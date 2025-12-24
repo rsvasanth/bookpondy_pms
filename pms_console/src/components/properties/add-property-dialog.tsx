@@ -40,7 +40,10 @@ const amenities = [
   "Sea View",
 ]
 
+import { useFrappeCreateDoc } from "frappe-react-sdk"
+
 export function AddPropertyDialog({ open, onOpenChange }: AddPropertyDialogProps) {
+  const { createDoc, loading, error } = useFrappeCreateDoc()
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
   const [propertyName, setPropertyName] = useState("")
   const [propertyType, setPropertyType] = useState("")
@@ -54,18 +57,33 @@ export function AddPropertyDialog({ open, onOpenChange }: AddPropertyDialogProps
     setSelectedAmenities((prev) => (prev.includes(amenity) ? prev.filter((a) => a !== amenity) : [...prev, amenity]))
   }
 
-  const handleSubmit = () => {
-    console.log({
-      propertyName,
-      propertyType,
-      location,
-      address,
-      rooms,
-      description,
-      basePrice,
-      amenities: selectedAmenities,
-    })
-    onOpenChange(false)
+  const handleSubmit = async () => {
+    try {
+      await createDoc("Property", {
+        naming_series: "PROP-.YYYY.-.#####", // Assuming default series
+        property_name: propertyName,
+        property_type: propertyType.charAt(0).toUpperCase() + propertyType.slice(1), // Map to Title Case if needed
+        location_description: `${location}\n${address}`,
+        description: description,
+        total_units: parseInt(rooms) || 0,
+        status: "Active",
+        amenities: selectedAmenities.map(a => ({
+          doctype: "Property Amenity",
+          amenity: a
+        }))
+      })
+      onOpenChange(false)
+      // Reset fields
+      setPropertyName("")
+      setPropertyType("")
+      setLocation("")
+      setAddress("")
+      setRooms("")
+      setDescription("")
+      setSelectedAmenities([])
+    } catch (e) {
+      console.error("Failed to create property:", e)
+    }
   }
 
   return (
@@ -243,8 +261,8 @@ export function AddPropertyDialog({ open, onOpenChange }: AddPropertyDialogProps
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button className="bg-[#E68B47] hover:bg-[#c97339]" onClick={handleSubmit} disabled={!propertyName}>
-            Create Property
+          <Button className="bg-[#E68B47] hover:bg-[#c97339]" onClick={handleSubmit} disabled={!propertyName || loading}>
+            {loading ? "Creating..." : "Create Property"}
           </Button>
         </DialogFooter>
       </DialogContent>

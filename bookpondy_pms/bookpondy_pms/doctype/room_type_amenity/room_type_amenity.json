@@ -1,0 +1,29 @@
+{
+    "actions": [],
+    "allow_rename": 1,
+    "creation": "2024-12-22 18:35:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "amenity"
+    ],
+    "fields": [
+        {
+            "fieldname": "amenity",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "Amenity",
+            "reqd": 1
+        }
+    ],
+    "istable": 1,
+    "modified": "2024-12-22 18:35:00.000000",
+    "modified_by": "Administrator",
+    "module": "Bookpondy Pms",
+    "name": "Room Type Amenity",
+    "owner": "Administrator",
+    "permissions": [],
+    "sort_field": "modified",
+    "sort_order": "DESC",
+    "states": []
+}

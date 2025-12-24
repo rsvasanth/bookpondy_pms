@@ -28,35 +28,73 @@ const properties = [
   { id: "5", name: "Royal Heritage Palace", roomTypes: ["Royal Chamber", "Maharaja Suite", "Standard Room"] },
 ]
 
+import { useFrappeCreateDoc, useFrappeGetDocList } from "frappe-react-sdk"
+
 export function AddBookingSheet({ open, onOpenChange }: AddBookingSheetProps) {
+  const { createDoc, loading: creating } = useFrappeCreateDoc()
+
+  // Fetch real properties
+  const { data: propertiesList } = useFrappeGetDocList("Property", {
+    fields: ["name", "property_name"],
+    limit: 100
+  })
+
   const [dateRange, setDateRange] = useState<DateRange | undefined>()
   const [selectedProperty, setSelectedProperty] = useState<string>("")
   const [selectedRoom, setSelectedRoom] = useState<string>("")
+
+  // Fetch room types for selected property
+  const { data: roomTypesList } = useFrappeGetDocList("Room Type", {
+    fields: ["name", "room_type_name", "base_rate_per_night"],
+    filters: [["property", "=", selectedProperty]],
+    limit: 100
+  }, selectedProperty ? undefined : null)
+
   const [guests, setGuests] = useState("2")
   const [guestName, setGuestName] = useState("")
   const [guestEmail, setGuestEmail] = useState("")
   const [guestPhone, setGuestPhone] = useState("")
   const [specialRequests, setSpecialRequests] = useState("")
 
-  const selectedPropertyData = properties.find((p) => p.id === selectedProperty)
   const nights = dateRange?.from && dateRange?.to ? differenceInDays(dateRange.to, dateRange.from) : 0
-  const baseRate = 8000 // Per night rate
+
+  // Find selected room type details
+  const selectedRoomType = roomTypesList?.find(rt => rt.name === selectedRoom)
+  const baseRate = selectedRoomType?.base_rate_per_night || 0
   const totalAmount = nights * baseRate
 
-  const handleSubmit = () => {
-    // Handle booking submission
-    console.log({
-      guestName,
-      guestEmail,
-      guestPhone,
-      property: selectedProperty,
-      roomType: selectedRoom,
-      dateRange,
-      guests,
-      specialRequests,
-      totalAmount,
-    })
-    onOpenChange(false)
+  const handleSubmit = async () => {
+    try {
+      // 1. Create/Find Guest (Simplified: always create or link by email if possible)
+      // For now, let's assume we create a reservation and the backend might handle guest creation 
+      // or we do it here. The spec says guest is a Link field.
+
+      await createDoc("Reservation", {
+        naming_series: "RES-.YYYY.-.#####",
+        property: selectedProperty,
+        guest_name: guestName,
+        guest_email: guestEmail,
+        guest_phone: guestPhone,
+        room_type: selectedRoom,
+        check_in_date: dateRange?.from ? format(dateRange.from, "yyyy-MM-dd") : "",
+        check_out_date: dateRange?.to ? format(dateRange.to, "yyyy-MM-dd") : "",
+        number_of_guests: parseInt(guests) || 1,
+        special_requests: specialRequests,
+        room_rate_per_night: baseRate,
+        reservation_status: "Confirmed"
+      })
+
+      onOpenChange(false)
+      // Reset
+      setGuestName("")
+      setGuestEmail("")
+      setGuestPhone("")
+      setSelectedProperty("")
+      setSelectedRoom("")
+      setDateRange(undefined)
+    } catch (e) {
+      console.error("Failed to create booking:", e)
+    }
   }
 
   return (
@@ -136,9 +174,9 @@ export function AddBookingSheet({ open, onOpenChange }: AddBookingSheetProps) {
                     <SelectValue placeholder="Select a property" />
                   </SelectTrigger>
                   <SelectContent>
-                    {properties.map((property) => (
-                      <SelectItem key={property.id} value={property.id}>
-                        {property.name}
+                    {propertiesList?.map((property) => (
+                      <SelectItem key={property.name} value={property.name}>
+                        {property.property_name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -152,9 +190,9 @@ export function AddBookingSheet({ open, onOpenChange }: AddBookingSheetProps) {
                     <SelectValue placeholder="Select room type" />
                   </SelectTrigger>
                   <SelectContent>
-                    {selectedPropertyData?.roomTypes.map((room) => (
-                      <SelectItem key={room} value={room}>
-                        {room}
+                    {roomTypesList?.map((room) => (
+                      <SelectItem key={room.name} value={room.name}>
+                        {room.room_type_name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -274,9 +312,9 @@ export function AddBookingSheet({ open, onOpenChange }: AddBookingSheetProps) {
           <Button
             className="bg-[#E68B47] hover:bg-[#c97339]"
             onClick={handleSubmit}
-            disabled={!guestName || !selectedProperty || !dateRange?.from || !dateRange?.to}
+            disabled={!guestName || !selectedProperty || !dateRange?.from || !dateRange?.to || creating}
           >
-            Create Booking
+            {creating ? "Creating..." : "Create Booking"}
           </Button>
         </SheetFooter>
       </SheetContent>

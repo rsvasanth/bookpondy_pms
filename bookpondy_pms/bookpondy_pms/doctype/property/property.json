@@ -31,7 +31,8 @@
         "check_in_time",
         "check_out_time",
         "section_break_images",
-        "banner_image"
+        "banner_image",
+        "images"
     ],
     "fields": [
         {
@@ -135,8 +136,9 @@
         },
         {
             "fieldname": "amenities",
-            "fieldtype": "Small Text",
-            "label": "Amenities"
+            "fieldtype": "Table",
+            "label": "Amenities",
+            "options": "Property Amenity"
         },
         {
             "fieldname": "house_rules",
@@ -184,6 +186,12 @@
             "fieldname": "banner_image",
             "fieldtype": "Attach Image",
             "label": "Banner Image"
+        },
+        {
+            "fieldname": "images",
+            "fieldtype": "Table",
+            "label": "Gallery Images",
+            "options": "Property Image"
         }
     ],
     "image_field": "banner_image",
