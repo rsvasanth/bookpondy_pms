@@ -27,6 +27,7 @@ import {
   UserCheck,
   UserPlus,
 } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 
 
@@ -118,130 +119,162 @@ export default function GuestsPage() {
           <h1 className="text-2xl font-bold tracking-tight">Guest Management</h1>
           <p className="text-muted-foreground">Manage your guest database and relationships</p>
         </div>
-        <Button className="bg-[#E68B47] hover:bg-[#c97339]" onClick={() => setAddGuestOpen(true)}>
+        <Button className="bg-[#FF3D2E] hover:bg-[#FF3D2E]/90 shadow-lg shadow-red-500/20 rounded-xl transition-all hover:scale-105" onClick={() => setAddGuestOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
           Add Guest
         </Button>
       </div>
 
       {/* Stats Cards */}
-      <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
+      <div className="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <Card className="rounded-[2rem] border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1 transition-all overflow-hidden group">
+          <CardContent className="p-6 relative">
+            <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+              <Users className="h-24 w-24 text-blue-600 -mr-6 -mt-6" />
+            </div>
+            <div className="flex items-center justify-between relative z-10">
               <div>
-                <p className="text-sm text-muted-foreground">Total Guests</p>
-                <p className="text-2xl font-bold">{guests.length || "1,248"}</p>
+                <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">Total Guests</p>
+                <p className="text-4xl font-black text-gray-800 tracking-tight">{guests.length || "1,248"}</p>
               </div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                <Users className="h-5 w-5 text-primary" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                <Users className="h-6 w-6" />
               </div>
+            </div>
+            <div className="mt-4 flex items-center gap-2 text-xs font-medium text-green-600 bg-green-50 w-fit px-2 py-1 rounded-full">
+              <span>+12%</span>
+              <span className="text-gray-400">from last month</span>
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
+
+        <Card className="rounded-[2rem] border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-purple-500/10 hover:-translate-y-1 transition-all overflow-hidden group">
+          <CardContent className="p-6 relative">
+            <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+              <Star className="h-24 w-24 text-purple-600 -mr-6 -mt-6" />
+            </div>
+            <div className="flex items-center justify-between relative z-10">
               <div>
-                <p className="text-sm text-muted-foreground">VIP Guests</p>
-                <p className="text-2xl font-bold text-purple-600">{guests.filter(g => g.status === 'vip').length || "89"}</p>
+                <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">VIP Guests</p>
+                <p className="text-4xl font-black text-gray-800 tracking-tight">{guests.filter(g => g.status === 'vip').length || "89"}</p>
               </div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500/10">
-                <Star className="h-5 w-5 text-purple-600" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                <Star className="h-6 w-6" />
               </div>
+            </div>
+            <div className="mt-4 flex items-center gap-2 text-xs font-medium text-purple-600 bg-purple-50 w-fit px-2 py-1 rounded-full">
+              <span>Top Tier</span>
+              <span className="text-gray-400">customers</span>
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
+
+        <Card className="rounded-[2rem] border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-green-500/10 hover:-translate-y-1 transition-all overflow-hidden group">
+          <CardContent className="p-6 relative">
+            <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+              <UserCheck className="h-24 w-24 text-green-600 -mr-6 -mt-6" />
+            </div>
+            <div className="flex items-center justify-between relative z-10">
               <div>
-                <p className="text-sm text-muted-foreground">Returning Guests</p>
-                <p className="text-2xl font-bold text-green-600">{Math.round((guests.filter(g => g.status === 'return').length / (guests.length || 1)) * 100) || "67"}%</p>
+                <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">Returning</p>
+                <p className="text-4xl font-black text-gray-800 tracking-tight">{Math.round((guests.filter(g => g.status === 'return').length / (guests.length || 1)) * 100) || "67"}%</p>
               </div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/10">
-                <UserCheck className="h-5 w-5 text-green-600" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-50 text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors">
+                <UserCheck className="h-6 w-6" />
               </div>
+            </div>
+            <div className="mt-4 flex items-center gap-2 text-xs font-medium text-green-600 bg-green-50 w-fit px-2 py-1 rounded-full">
+              <span>Loyalty Rate</span>
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
+
+        <Card className="rounded-[2rem] border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-orange-500/10 hover:-translate-y-1 transition-all overflow-hidden group">
+          <CardContent className="p-6 relative">
+            <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+              <UserPlus className="h-24 w-24 text-orange-600 -mr-6 -mt-6" />
+            </div>
+            <div className="flex items-center justify-between relative z-10">
               <div>
-                <p className="text-sm text-muted-foreground">New This Month</p>
-                <p className="text-2xl font-bold text-blue-600">{guests.filter(g => g.status === 'new').length || "34"}</p>
+                <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">New</p>
+                <p className="text-4xl font-black text-gray-800 tracking-tight">{guests.filter(g => g.status === 'new').length || "34"}</p>
               </div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10">
-                <UserPlus className="h-5 w-5 text-blue-600" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-50 text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                <UserPlus className="h-6 w-6" />
               </div>
+            </div>
+            <div className="mt-4 flex items-center gap-2 text-xs font-medium text-orange-600 bg-orange-50 w-fit px-2 py-1 rounded-full">
+              <span>Recent Additions</span>
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Filters */}
-      <Card className="mb-6">
-        <CardContent className="p-4">
+      {/* Filters */}
+      <Card className="mb-8 rounded-[2rem] border-gray-100 shadow-xl shadow-gray-200/50">
+        <CardContent className="p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <Input
                 placeholder="Search guests..."
-                className="pl-9"
+                className="pl-10 h-11 rounded-2xl bg-gray-50 border-gray-100 focus-visible:ring-red-500/20"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Select>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="vip">VIP</SelectItem>
-                <SelectItem value="new">New</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select>
-              <SelectTrigger className="w-[160px]">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="recent">Most Recent</SelectItem>
-                <SelectItem value="spent">Highest Spent</SelectItem>
-                <SelectItem value="bookings">Most Bookings</SelectItem>
-                <SelectItem value="name">Name A-Z</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex items-center gap-3">
+              <Select>
+                <SelectTrigger className="w-[140px] h-11 rounded-2xl border-gray-100 bg-gray-50 focus:ring-red-500/20">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="vip">VIP</SelectItem>
+                  <SelectItem value="new">New</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select>
+                <SelectTrigger className="w-[160px] h-11 rounded-2xl border-gray-100 bg-gray-50 focus:ring-red-500/20">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="recent">Most Recent</SelectItem>
+                  <SelectItem value="spent">Highest Spent</SelectItem>
+                  <SelectItem value="bookings">Most Bookings</SelectItem>
+                  <SelectItem value="name">Name A-Z</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Guests Table */}
-      <Card>
+      <Card className="rounded-[2rem] border-gray-100 shadow-xl shadow-gray-200/50 overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Guest</TableHead>
-              <TableHead>Contact</TableHead>
-              <TableHead>Location</TableHead>
-              <TableHead className="text-center">Bookings</TableHead>
-              <TableHead className="text-right">Total Spent</TableHead>
-              <TableHead>Last Visit</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+            <TableRow className="bg-gray-50/50 hover:bg-gray-50/50">
+              <TableHead className="py-4 font-semibold text-gray-900 pl-6">Guest</TableHead>
+              <TableHead className="py-4 font-semibold text-gray-900">Contact</TableHead>
+              <TableHead className="py-4 font-semibold text-gray-900">Location</TableHead>
+              <TableHead className="text-center py-4 font-semibold text-gray-900">Bookings</TableHead>
+              <TableHead className="text-right py-4 font-semibold text-gray-900">Total Spent</TableHead>
+              <TableHead className="py-4 font-semibold text-gray-900">Last Visit</TableHead>
+              <TableHead className="py-4 font-semibold text-gray-900">Status</TableHead>
+              <TableHead className="text-right py-4 font-semibold text-gray-900 pr-6">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredGuests.map((guest) => (
-              <TableRow key={guest.id}>
-                <TableCell>
+              <TableRow key={guest.id} className="hover:bg-gray-50/50 transition-colors">
+                <TableCell className="pl-6 py-4">
                   <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10">
+                    <Avatar className="h-10 w-10 border border-gray-100">
                       <AvatarImage src={guest.avatar || "/placeholder.svg"} />
-                      <AvatarFallback className="bg-primary/10 text-primary">
+                      <AvatarFallback className="bg-gradient-to-br from-gray-50 to-gray-100 text-gray-600 font-medium">
                         {guest.name
                           .split(" ")
                           .map((n) => n[0])
@@ -249,52 +282,52 @@ export default function GuestsPage() {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="font-medium">{guest.name}</p>
-                      <p className="text-xs text-muted-foreground">{guest.id}</p>
+                      <p className="font-semibold text-gray-900">{guest.name}</p>
+                      <p className="text-xs text-muted-foreground font-mono">{guest.id}</p>
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell className="py-4">
                   <div className="space-y-1 text-sm">
-                    <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <div className="flex items-center gap-1.5 text-muted-foreground hover:text-gray-900 transition-colors cursor-pointer">
                       <Mail className="h-3.5 w-3.5" />
                       {guest.email}
                     </div>
-                    <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <div className="flex items-center gap-1.5 text-muted-foreground hover:text-gray-900 transition-colors cursor-pointer">
                       <Phone className="h-3.5 w-3.5" />
                       {guest.phone}
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-1.5 text-sm">
-                    <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+                <TableCell className="py-4">
+                  <div className="flex items-center gap-1.5 text-sm text-gray-600">
+                    <MapPin className="h-3.5 w-3.5 text-gray-400" />
                     {guest.location}
                   </div>
                 </TableCell>
-                <TableCell className="text-center font-medium">{guest.totalBookings}</TableCell>
-                <TableCell className="text-right font-medium">₹{guest.totalSpent.toLocaleString("en-IN")}</TableCell>
-                <TableCell>{formatDate(guest.lastVisit)}</TableCell>
-                <TableCell>
-                  <Badge className={getStatusConfig(guest.status).className}>{getStatusConfig(guest.status).label}</Badge>
+                <TableCell className="text-center font-semibold text-gray-900 py-4">{guest.totalBookings}</TableCell>
+                <TableCell className="text-right font-mono font-medium text-gray-900 py-4">₹{guest.totalSpent.toLocaleString("en-IN")}</TableCell>
+                <TableCell className="py-4 text-sm text-gray-600">{formatDate(guest.lastVisit)}</TableCell>
+                <TableCell className="py-4">
+                  <Badge className={cn("rounded-md px-2 py-0.5 font-medium", getStatusConfig(guest.status).className)} variant="secondary">{getStatusConfig(guest.status).label}</Badge>
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-right pr-6 py-4">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreHorizontal className="h-4 w-4" />
+                      <Button variant="ghost" size="icon" className="hover:bg-gray-100 rounded-lg">
+                        <MoreHorizontal className="h-4 w-4 text-gray-400" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleViewGuest(guest)}>
+                    <DropdownMenuContent align="end" className="rounded-xl">
+                      <DropdownMenuItem onClick={() => handleViewGuest(guest)} className="rounded-lg">
                         <Eye className="mr-2 h-4 w-4" />
                         View Profile
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem className="rounded-lg">
                         <MessageSquare className="mr-2 h-4 w-4" />
                         Send Message
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem className="rounded-lg">
                         <Calendar className="mr-2 h-4 w-4" />
                         View Bookings
                       </DropdownMenuItem>

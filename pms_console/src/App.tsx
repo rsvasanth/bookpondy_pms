@@ -2,9 +2,18 @@ import { ThemeProvider } from "@/components/theme-provider"
 import DashboardPage from "@/pages/Dashboard"
 import PropertiesPage from "@/pages/Properties"
 import BookingsPage from "@/pages/Bookings"
+import CreateBookingPage from "@/pages/CreateBooking"
 import GuestsPage from "@/pages/Guests"
 import StaffPage from "@/pages/Staff"
 import CommunicationsPage from "@/pages/Communications"
+import FinancialsPage from "@/pages/Financials"
+import InvoicesPage from "@/pages/Invoices"
+import ChannelsPage from "@/pages/Channels"
+import ReviewsPage from "@/pages/Reviews"
+import TasksPage from "@/pages/Tasks"
+import MaintenancePage from "@/pages/Maintenance"
+import ReportsPage from "@/pages/Reports"
+import SettingsPage from "@/pages/Settings"
 import LoginPage from "@/pages/Login"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { FrappeProvider, useFrappeAuth } from "frappe-react-sdk"
@@ -67,6 +76,14 @@ function App() {
 							}
 						/>
 						<Route
+							path="/bookings/new"
+							element={
+								<ProtectedRoute>
+									<CreateBookingPage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
 							path="/guests"
 							element={
 								<ProtectedRoute>
@@ -87,6 +104,70 @@ function App() {
 							element={
 								<ProtectedRoute>
 									<CommunicationsPage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/financials"
+							element={
+								<ProtectedRoute>
+									<FinancialsPage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/invoices"
+							element={
+								<ProtectedRoute>
+									<InvoicesPage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/channels"
+							element={
+								<ProtectedRoute>
+									<ChannelsPage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/reviews"
+							element={
+								<ProtectedRoute>
+									<ReviewsPage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/tasks"
+							element={
+								<ProtectedRoute>
+									<TasksPage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/maintenance"
+							element={
+								<ProtectedRoute>
+									<MaintenancePage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/reports"
+							element={
+								<ProtectedRoute>
+									<ReportsPage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/settings"
+							element={
+								<ProtectedRoute>
+									<SettingsPage />
 								</ProtectedRoute>
 							}
 						/>

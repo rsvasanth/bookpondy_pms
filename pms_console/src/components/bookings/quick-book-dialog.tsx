@@ -43,6 +43,7 @@ export function QuickBookDialog({ open, onOpenChange, onSuccess }: QuickBookDial
     const [dateRange, setDateRange] = useState<DateRange | undefined>()
     const [selectedProperty, setSelectedProperty] = useState<string>("")
     const [selectedCategory, setSelectedCategory] = useState<string>("")
+    const [selectedUnit, setSelectedUnit] = useState<string>("")
     const [guests, setGuests] = useState("2")
     const [guestName, setGuestName] = useState("")
     const [guestEmail, setGuestEmail] = useState("")
@@ -58,6 +59,13 @@ export function QuickBookDialog({ open, onOpenChange, onSuccess }: QuickBookDial
     const { data: unitCategoriesList } = useFrappeGetDocList("Unit Category", {
         fields: ["name", "category_name", "base_rate_per_night"],
         filters: selectedProperty ? [["property", "=", selectedProperty]] : undefined,
+        limit: 100
+    })
+
+    // Fetch units for selected property and category
+    const { data: unitsList } = useFrappeGetDocList("Unit", {
+        fields: ["name", "unit_number", "unit_status"],
+        filters: selectedCategory ? [["unit_category", "=", selectedCategory]] : undefined,
         limit: 100
     })
 
@@ -90,6 +98,7 @@ export function QuickBookDialog({ open, onOpenChange, onSuccess }: QuickBookDial
                 guest_email: guestEmail,
                 guest_phone: guestPhone,
                 unit_category: selectedCategory,
+                allocated_unit: selectedUnit === " " ? null : selectedUnit,
                 check_in_date: format(dateRange.from, "yyyy-MM-dd"),
                 check_out_date: format(dateRange.to, "yyyy-MM-dd"),
                 nights: nights,
@@ -111,6 +120,7 @@ export function QuickBookDialog({ open, onOpenChange, onSuccess }: QuickBookDial
             setGuestPhone("")
             setSelectedProperty("")
             setSelectedCategory("")
+            setSelectedUnit("")
             setDateRange(undefined)
         } catch (e: any) {
             console.error("Failed to create booking:", e)
@@ -125,6 +135,7 @@ export function QuickBookDialog({ open, onOpenChange, onSuccess }: QuickBookDial
         setGuestPhone("")
         setSelectedProperty("")
         setSelectedCategory("")
+        setSelectedUnit("")
         setDateRange(undefined)
         onOpenChange(false)
     }
@@ -263,20 +274,38 @@ export function QuickBookDialog({ open, onOpenChange, onSuccess }: QuickBookDial
                             </div>
 
                             <div className="grid gap-4 sm:grid-cols-2">
-                                <div className="space-y-2">
-                                    <Label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Unit Type</Label>
-                                    <Select value={selectedCategory} onValueChange={setSelectedCategory} disabled={!selectedProperty}>
-                                        <SelectTrigger className="rounded-xl h-12 bg-gray-50/50 border-gray-100 focus:ring-[#FF3D2E]/20 font-medium">
-                                            <SelectValue placeholder="Choose type" />
-                                        </SelectTrigger>
-                                        <SelectContent className="rounded-2xl border-gray-100 shadow-xl p-2">
-                                            {unitCategoriesList?.map((category) => (
-                                                <SelectItem key={category.name} value={category.name} className="rounded-xl py-3 cursor-pointer font-medium">
-                                                    {category.category_name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                <div className="grid gap-4 grid-cols-2">
+                                    <div className="space-y-2">
+                                        <Label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Unit Type</Label>
+                                        <Select value={selectedCategory} onValueChange={setSelectedCategory} disabled={!selectedProperty}>
+                                            <SelectTrigger className="rounded-xl h-12 bg-gray-50/50 border-gray-100 focus:ring-[#FF3D2E]/20 font-medium">
+                                                <SelectValue placeholder="Choose type" />
+                                            </SelectTrigger>
+                                            <SelectContent className="rounded-2xl border-gray-100 shadow-xl p-2">
+                                                {unitCategoriesList?.map((category) => (
+                                                    <SelectItem key={category.name} value={category.name} className="rounded-xl py-3 cursor-pointer font-medium">
+                                                        {category.category_name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Unit (Opt)</Label>
+                                        <Select value={selectedUnit} onValueChange={setSelectedUnit} disabled={!selectedCategory}>
+                                            <SelectTrigger className="rounded-xl h-12 bg-gray-50/50 border-gray-100 focus:ring-[#FF3D2E]/20 font-medium">
+                                                <SelectValue placeholder="Unit" />
+                                            </SelectTrigger>
+                                            <SelectContent className="rounded-2xl border-gray-100 shadow-xl p-2">
+                                                <SelectItem value=" " className="rounded-xl py-3 cursor-pointer font-medium italic text-gray-400">Any Unit</SelectItem>
+                                                {unitsList?.map((unit) => (
+                                                    <SelectItem key={unit.name} value={unit.name} className="rounded-xl py-3 cursor-pointer font-medium">
+                                                        {unit.unit_number}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
                                 </div>
 
                                 <div className="space-y-2">

@@ -35,13 +35,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <Separator orientation="vertical" className="mr-2 h-4" />
 
           {/* Search */}
-          <div className="relative flex-1 max-w-md">
+          {/* Search */}
+          <div className="ml-auto relative w-full max-w-sm mr-4">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="Search properties, bookings, guests..." className="pl-9 h-9" />
+            <Input placeholder="Search..." className="pl-9 h-9" />
           </div>
 
           {/* Right Section */}
-          <div className="ml-auto flex items-center gap-2">
+          <div className="flex items-center gap-2">
             {/* Theme Toggle */}
             <Button variant="ghost" size="icon" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
               <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />

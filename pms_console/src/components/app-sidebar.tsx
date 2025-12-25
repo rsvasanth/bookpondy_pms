@@ -45,7 +45,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useFrappeAuth } from "frappe-react-sdk"
+import { useFrappeAuth, useFrappeGetDocList } from "frappe-react-sdk"
+import BrandLogo from "./brand-logo"
 
 const mainNavItems = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -69,74 +70,33 @@ const operationsNavItems = [
   { href: "/reports", label: "Reports", icon: BarChart3 },
 ]
 
-const properties = [
-  { id: 1, name: "Ocean View Villa", location: "Pondicherry" },
-  { id: 2, name: "Beach House Resort", location: "Chennai" },
-  { id: 3, name: "Heritage Homestay", location: "Mahabalipuram" },
-]
+
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { pathname } = useLocation()
   const { currentUser, logout } = useFrappeAuth()
-  const [selectedProperty, setSelectedProperty] = React.useState(properties[0])
+
+  const { data: propertiesList } = useFrappeGetDocList("Property", {
+    fields: ["name", "property_name", "city"],
+    limit: 100
+  })
+
+  // Set initial property when list loads
+  const [selectedProperty, setSelectedProperty] = React.useState<{ name: string, property_name: string, city: string } | null>(null)
+
+  React.useEffect(() => {
+    if (propertiesList && propertiesList.length > 0 && !selectedProperty) {
+      setSelectedProperty(propertiesList[0])
+    }
+  }, [propertiesList, selectedProperty])
 
   const userDisplayName = currentUser || "Administrator"
   const userInitials = userDisplayName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton
-                  size="lg"
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                >
-                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                    <Building2 className="size-4" />
-                  </div>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">Bookpondy</span>
-                    <span className="truncate text-xs">{selectedProperty.name}</span>
-                  </div>
-                  <ChevronsUpDown className="ml-auto" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-                align="start"
-                side="bottom"
-                sideOffset={4}
-              >
-                <DropdownMenuLabel className="text-xs text-muted-foreground">Properties</DropdownMenuLabel>
-                {properties.map((property) => (
-                  <DropdownMenuItem
-                    key={property.id}
-                    onClick={() => setSelectedProperty(property)}
-                    className="gap-2 p-2"
-                  >
-                    <div className="flex size-6 items-center justify-center rounded-sm border">
-                      <Building2 className="size-4 shrink-0" />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="font-medium">{property.name}</span>
-                      <span className="text-xs text-muted-foreground">{property.location}</span>
-                    </div>
-                  </DropdownMenuItem>
-                ))}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="gap-2 p-2">
-                  <div className="flex size-6 items-center justify-center rounded-md border bg-background">
-                    <Plus className="size-4" />
-                  </div>
-                  <div className="font-medium text-muted-foreground">Add property</div>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
+      <SidebarHeader className="h-16 flex flex-row items-center border-b px-4 py-0 gap-0">
+        <BrandLogo />
       </SidebarHeader>
 
       <SidebarContent>

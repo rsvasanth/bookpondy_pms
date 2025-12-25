@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -67,6 +68,7 @@ const paymentStatusConfig = {
 }
 
 export default function BookingsPage() {
+  const navigate = useNavigate()
   const {
     bookingSearch,
     bookingStatus,
@@ -169,13 +171,22 @@ export default function BookingsPage() {
               Manage and track all your property bookings with real-time updates
             </p>
           </div>
-          <Button
-            className="bg-[#FF3D2E] hover:bg-[#e63225] text-white rounded-xl h-12 px-6 font-bold text-sm gap-2 shadow-xl shadow-red-500/20 w-fit"
-            onClick={() => setQuickBookOpen(true)}
-          >
-            <Plus className="h-4 w-4" />
-            Quick Book
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              className="rounded-xl h-12 px-6 font-bold text-sm border-gray-200 hover:bg-gray-50"
+              onClick={() => navigate("/bookings/new")}
+            >
+              New Booking
+            </Button>
+            <Button
+              className="bg-[#FF3D2E] hover:bg-[#e63225] text-white rounded-xl h-12 px-6 font-bold text-sm gap-2 shadow-xl shadow-red-500/20"
+              onClick={() => setQuickBookOpen(true)}
+            >
+              <Plus className="h-4 w-4" />
+              Quick Book
+            </Button>
+          </div>
         </div>
       </div>
 
