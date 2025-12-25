@@ -10,6 +10,23 @@ class Reservation(Document):
 	def validate(self):
 		self.calculate_nights()
 		self.calculate_totals()
+		self.check_availability()
+	def check_availability(self):
+		if not self.allocated_unit or not self.check_in_date or not self.check_out_date:
+			return
+			
+		# Check for overlapping reservations for the same unit
+		filters = {
+			"allocated_unit": self.allocated_unit,
+			"reservation_status": ["in", ["Confirmed", "Checked-In", "Tentative"]],
+			"name": ["!=", self.name],
+			"check_in_date": ["<", self.check_out_date],
+			"check_out_date": [">", self.check_in_date]
+		}
+		
+		overlap = frappe.db.exists("Reservation", filters)
+		if overlap:
+			frappe.throw(f"Unit {self.allocated_unit} is already booked for these dates (Reservation: {overlap})")
 
 	def on_update(self):
 		if self.has_value_changed("reservation_status"):

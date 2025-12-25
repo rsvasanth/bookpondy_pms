@@ -14,6 +14,8 @@
         "column_break_1",
         "guest_phone",
         "guest_email",
+        "guest_id_number",
+        "guest_id_image",
         "reservation_source",
         "marketplace_booking_id",
         "section_break_booking",
@@ -106,6 +108,16 @@
             "label": "Guest Email",
             "fetch_from": "guest.email",
             "read_only": 1
+        },
+        {
+            "fieldname": "guest_id_number",
+            "fieldtype": "Data",
+            "label": "Guest ID Number"
+        },
+        {
+            "fieldname": "guest_id_image",
+            "fieldtype": "Attach Image",
+            "label": "Guest ID Image"
         },
         {
             "fieldname": "reservation_source",

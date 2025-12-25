@@ -24,6 +24,8 @@
         "section_break_id",
         "id_type",
         "id_number",
+        "id_number",
+        "id_proof_image",
         "id_expiry_date",
         "column_break_3",
         "primary_language",
@@ -149,6 +151,11 @@
             "fieldname": "id_number",
             "fieldtype": "Data",
             "label": "ID Number"
+        },
+        {
+            "fieldname": "id_proof_image",
+            "fieldtype": "Attach Image",
+            "label": "ID Proof Image"
         },
         {
             "fieldname": "id_expiry_date",
