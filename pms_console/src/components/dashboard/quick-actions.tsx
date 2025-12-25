@@ -28,78 +28,82 @@ import {
   Sparkles,
 } from "lucide-react"
 import { AddBookingSheet } from "@/components/bookings/add-booking-sheet"
-import { AddPropertyDialog } from "@/components/properties/add-property-dialog"
+import { PropertyDialog } from "@/components/properties/property-dialog"
 
-export function QuickActions() {
+interface QuickActionsProps {
+  onSuccess?: () => void
+}
+
+export function QuickActions({ onSuccess }: QuickActionsProps) {
   const [bookingSheetOpen, setBookingSheetOpen] = useState(false)
   const [propertyDialogOpen, setPropertyDialogOpen] = useState(false)
 
   return (
     <>
-      <Card>
-        <CardHeader className="pb-3">
+      <Card className="border-none shadow-sm rounded-2xl bg-white overflow-hidden">
+        <CardHeader className="pb-3 px-6 pt-6">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-base font-semibold">Quick Actions</CardTitle>
-              <CardDescription>Frequently used operations</CardDescription>
+              <CardTitle className="text-base font-bold">Quick Actions</CardTitle>
+              <CardDescription className="text-xs font-medium">Frequently used operations</CardDescription>
             </div>
             <Sparkles className="h-5 w-5 text-amber-500" />
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
+        <CardContent className="px-6 pb-6 pt-2">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
             {/* Primary Actions */}
             <Button
               onClick={() => setBookingSheetOpen(true)}
-              className="h-auto flex-col gap-1.5 bg-primary py-3 hover:bg-primary/90"
+              className="h-auto flex-col gap-2 bg-[#FF3D2E] py-4 hover:bg-[#e63225] rounded-2xl shadow-lg shadow-red-500/20 text-white font-bold"
             >
-              <CalendarPlus className="h-5 w-5" />
-              <span className="text-xs">New Booking</span>
+              <CalendarPlus className="h-6 w-6" />
+              <span className="text-[11px] uppercase tracking-wider">New Booking</span>
             </Button>
 
             <Button
               onClick={() => setPropertyDialogOpen(true)}
               variant="outline"
-              className="h-auto flex-col gap-1.5 border-dashed py-3"
+              className="h-auto flex-col gap-2 border-gray-100 border-dashed py-4 rounded-2xl bg-white hover:bg-gray-50 text-gray-600 font-bold"
             >
-              <Building2 className="h-5 w-5" />
-              <span className="text-xs">Add Property</span>
+              <Building2 className="h-6 w-6 text-gray-400" />
+              <span className="text-[11px] uppercase tracking-wider">Add Property</span>
             </Button>
 
-            <Button variant="outline" className="h-auto flex-col gap-1.5 py-3 bg-transparent">
-              <UserPlus className="h-5 w-5" />
-              <span className="text-xs">Add Guest</span>
+            <Button variant="outline" className="h-auto flex-col gap-2 border-gray-100 py-4 rounded-2xl bg-white hover:bg-gray-50 text-gray-600 font-bold">
+              <UserPlus className="h-6 w-6 text-gray-400" />
+              <span className="text-[11px] uppercase tracking-wider">Add Guest</span>
             </Button>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="h-auto flex-col gap-1.5 py-3 bg-transparent">
-                  <Plus className="h-5 w-5" />
-                  <span className="flex items-center gap-0.5 text-xs">
+                <Button variant="outline" className="h-auto flex-col gap-2 border-gray-100 py-4 rounded-2xl bg-white hover:bg-gray-50 text-gray-600 font-bold">
+                  <Plus className="h-6 w-6 text-gray-400" />
+                  <span className="flex items-center gap-0.5 text-[11px] uppercase tracking-wider">
                     More <ChevronDown className="h-3 w-3" />
                   </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem>
-                  <Receipt className="mr-2 h-4 w-4" />
+              <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2 border-gray-100 shadow-xl">
+                <DropdownMenuItem className="rounded-xl py-2.5 cursor-pointer">
+                  <Receipt className="mr-3 h-4 w-4 text-muted-foreground" />
                   Create Invoice
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <ClipboardList className="mr-2 h-4 w-4" />
+                <DropdownMenuItem className="rounded-xl py-2.5 cursor-pointer">
+                  <ClipboardList className="mr-3 h-4 w-4 text-muted-foreground" />
                   Assign Task
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Wrench className="mr-2 h-4 w-4" />
+                <DropdownMenuItem className="rounded-xl py-2.5 cursor-pointer">
+                  <Wrench className="mr-3 h-4 w-4 text-muted-foreground" />
                   Log Maintenance
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <MessageSquarePlus className="mr-2 h-4 w-4" />
+                <DropdownMenuItem className="rounded-xl py-2.5 cursor-pointer">
+                  <MessageSquarePlus className="mr-3 h-4 w-4 text-muted-foreground" />
                   Send Message
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <FileText className="mr-2 h-4 w-4" />
+                <DropdownMenuItem className="rounded-xl py-2.5 cursor-pointer">
+                  <FileText className="mr-3 h-4 w-4 text-muted-foreground" />
                   Generate Report
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -107,49 +111,49 @@ export function QuickActions() {
           </div>
 
           {/* Today's Summary */}
-          <div className="mt-4 grid grid-cols-2 gap-2 rounded-lg border bg-muted/30 p-3 sm:grid-cols-4">
-            <div className="flex items-center gap-2">
-              <div className="rounded-full bg-blue-100 p-1.5 dark:bg-blue-900/30">
-                <BedDouble className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+          <div className="mt-6 grid grid-cols-2 gap-3 rounded-2xl border border-gray-50 bg-gray-50/50 p-4 sm:grid-cols-4">
+            <div className="flex items-center gap-3">
+              <div className="rounded-xl bg-blue-100 p-2 text-blue-600">
+                <BedDouble className="h-4 w-4" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Check-ins</p>
-                <p className="text-sm font-semibold">4 today</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Check-ins</p>
+                <p className="text-sm font-bold">4 today</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="rounded-full bg-orange-100 p-1.5 dark:bg-orange-900/30">
-                <Clock className="h-3.5 w-3.5 text-orange-600 dark:text-orange-400" />
+            <div className="flex items-center gap-3">
+              <div className="rounded-xl bg-orange-100 p-2 text-orange-600">
+                <Clock className="h-4 w-4" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Check-outs</p>
-                <p className="text-sm font-semibold">3 today</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Check-outs</p>
+                <p className="text-sm font-bold">3 today</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="rounded-full bg-green-100 p-1.5 dark:bg-green-900/30">
-                <CheckCircle2 className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
+            <div className="flex items-center gap-3">
+              <div className="rounded-xl bg-green-100 p-2 text-green-600">
+                <CheckCircle2 className="h-4 w-4" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Completed</p>
-                <p className="text-sm font-semibold">12 tasks</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Completed</p>
+                <p className="text-sm font-bold">12 tasks</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="rounded-full bg-red-100 p-1.5 dark:bg-red-900/30">
-                <AlertTriangle className="h-3.5 w-3.5 text-red-600 dark:text-red-400" />
+            <div className="flex items-center gap-3">
+              <div className="rounded-xl bg-red-100 p-2 text-red-600">
+                <AlertTriangle className="h-4 w-4" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Urgent</p>
-                <p className="text-sm font-semibold">2 tasks</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Urgent</p>
+                <p className="text-sm font-bold">2 tasks</p>
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <AddBookingSheet open={bookingSheetOpen} onOpenChange={setBookingSheetOpen} />
-      <AddPropertyDialog open={propertyDialogOpen} onOpenChange={setPropertyDialogOpen} />
+      <AddBookingSheet open={bookingSheetOpen} onOpenChange={setBookingSheetOpen} onSuccess={onSuccess} />
+      <PropertyDialog open={propertyDialogOpen} onOpenChange={setPropertyDialogOpen} onSuccess={onSuccess} />
     </>
   )
 }

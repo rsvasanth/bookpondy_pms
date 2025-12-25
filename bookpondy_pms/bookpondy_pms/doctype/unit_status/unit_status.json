@@ -2,17 +2,14 @@
     "actions": [],
     "allow_rename": 1,
     "autoname": "naming_series:",
-    "creation": "2025-12-20 20:25:05.982084",
+    "creation": "2025-12-25 10:00:00.000000",
     "doctype": "DocType",
     "editable_grid": 1,
     "engine": "InnoDB",
     "field_order": [
         "naming_series",
         "unit",
-        "task_type",
-        "status",
-        "checklist",
-        "issues"
+        "current_status"
     ],
     "fields": [
         {
@@ -20,7 +17,7 @@
             "fieldtype": "Select",
             "in_list_view": 1,
             "label": "Series",
-            "options": "HK-.YYYY.-.#####",
+            "options": "US-.YYYY.-.#####",
             "reqd": 1
         },
         {
@@ -32,40 +29,21 @@
             "reqd": 1
         },
         {
-            "fieldname": "task_type",
+            "fieldname": "current_status",
             "fieldtype": "Select",
             "in_list_view": 1,
-            "label": "Task Type",
-            "options": "Cleaning\nMaintenance\nInspection",
+            "label": "Current Status",
+            "options": "Available\nOccupied\nDirty\nOut-of-Service\nUnder-Maintenance",
             "reqd": 1
-        },
-        {
-            "default": "Pending",
-            "fieldname": "status",
-            "fieldtype": "Select",
-            "label": "Status",
-            "options": "Pending\nIn Progress\nCompleted"
-        },
-        {
-            "fieldname": "checklist",
-            "fieldtype": "Table",
-            "label": "Checklist",
-            "options": "Housekeeping Task Checklist"
-        },
-        {
-            "fieldname": "issues",
-            "fieldtype": "Table",
-            "label": "Issues Found",
-            "options": "Housekeeping Task Issue"
         }
     ],
     "grid_page_length": 50,
     "index_web_pages_for_search": 1,
     "links": [],
-    "modified": "2025-12-22 19:10:00.000000",
+    "modified": "2025-12-25 10:00:00.000000",
     "modified_by": "Administrator",
     "module": "Bookpondy Pms",
-    "name": "Housekeeping Task",
+    "name": "Unit Status",
     "naming_rule": "By \"Naming Series\" field",
     "owner": "Administrator",
     "permissions": [

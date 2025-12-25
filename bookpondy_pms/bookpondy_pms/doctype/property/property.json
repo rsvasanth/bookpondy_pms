@@ -11,6 +11,7 @@
         "status",
         "column_break_1",
         "naming_series",
+        "portfolio",
         "contact_person",
         "average_rating",
         "section_break_location",
@@ -42,6 +43,14 @@
             "options": "PROP-.YYYY.-.#####",
             "reqd": 1,
             "hidden": 0
+        },
+        {
+            "fieldname": "portfolio",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Portfolio",
+            "options": "Property Portfolio"
         },
         {
             "fieldname": "property_name",

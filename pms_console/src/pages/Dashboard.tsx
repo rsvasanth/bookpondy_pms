@@ -25,12 +25,15 @@ import {
 import { Link } from "react-router-dom"
 
 import { useFrappeGetDocList, useFrappeAuth } from "frappe-react-sdk"
+import { PropertyDialog } from "@/components/properties/property-dialog"
+import { useState } from "react"
 
 export default function DashboardPage() {
   const { currentUser } = useFrappeAuth()
+  const [propertyDialogOpen, setPropertyDialogOpen] = useState(false)
 
-  const { data: propertiesList, isLoading: propertiesLoading } = useFrappeGetDocList("Property", {
-    fields: ["name", "property_name", "location_description", "banner_image", "status", "average_rating", "total_rooms"],
+  const { data: propertiesList, mutate: mutateProperties } = useFrappeGetDocList("Property", {
+    fields: ["name", "property_name", "location_description", "banner_image", "status", "average_rating", "total_units", "total_rooms"],
     limit: 4
   })
 
@@ -57,7 +60,7 @@ export default function DashboardPage() {
 
   // Fetch Maintenance Tasks
   const { data: maintenanceTasks } = useFrappeGetDocList("Maintenance Ticket", {
-    fields: ["name", "issue_title", "room", "priority", "creation"],
+    fields: ["name", "issue_title", "unit", "priority", "creation"],
     filters: [["ticket_status", "!=", "Closed"]],
     limit: 5
   })
@@ -68,7 +71,7 @@ export default function DashboardPage() {
       id: t.name,
       type: "maintenance",
       title: t.issue_title,
-      description: `Room ${t.room} - Priority: ${t.priority}`,
+      description: `Unit ${t.unit} - Priority: ${t.priority}`,
       time: t.creation?.split(" ")[0] || "Today"
     })) || []),
     // Add payment alerts based on reservations if needed, e.g. pending ones
@@ -89,15 +92,26 @@ export default function DashboardPage() {
           <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-muted-foreground">Welcome back, {currentUser}! Here&apos;s your property overview.</p>
         </div>
-        <Button className="bg-[#E68B47] hover:bg-[#c97339]">
+        <Button
+          className="bg-[#FF3D2E] hover:bg-[#e63225] text-white font-bold rounded-xl shadow-lg shadow-red-500/20"
+          onClick={() => setPropertyDialogOpen(true)}
+        >
           <Plus className="mr-2 h-4 w-4" />
           Add Property
         </Button>
       </div>
 
+      {propertyDialogOpen && (
+        <PropertyDialog
+          open={propertyDialogOpen}
+          onOpenChange={setPropertyDialogOpen}
+          onSuccess={() => mutateProperties()}
+        />
+      )}
+
       {/* Quick Actions section */}
       <div className="mb-6">
-        <QuickActions />
+        <QuickActions onSuccess={() => mutateProperties()} />
       </div>
 
       {/* KPI Cards */}
@@ -223,10 +237,10 @@ export default function DashboardPage() {
                 </div>
                 <div className="mt-3 space-y-2">
                   <div className="text-sm">
-                    <span className="text-muted-foreground">AC repair - Room #204</span>
+                    <span className="text-muted-foreground">AC repair - Unit #204</span>
                   </div>
                   <div className="text-sm">
-                    <span className="text-muted-foreground">VIP room prep - Suite #201</span>
+                    <span className="text-muted-foreground">VIP unit prep - Unit #201</span>
                   </div>
                 </div>
               </div>

@@ -85,7 +85,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 p-4">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   )

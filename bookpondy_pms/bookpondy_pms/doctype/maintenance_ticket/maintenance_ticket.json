@@ -8,7 +8,7 @@
     "field_order": [
         "naming_series",
         "issue_title",
-        "room",
+        "unit",
         "priority",
         "ticket_status",
         "parts"
@@ -29,10 +29,10 @@
             "reqd": 1
         },
         {
-            "fieldname": "room",
+            "fieldname": "unit",
             "fieldtype": "Link",
-            "label": "Room",
-            "options": "Room"
+            "label": "Unit",
+            "options": "Unit"
         },
         {
             "default": "Medium",
