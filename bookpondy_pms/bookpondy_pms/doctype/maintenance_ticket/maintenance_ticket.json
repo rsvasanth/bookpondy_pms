@@ -8,9 +8,21 @@
     "field_order": [
         "naming_series",
         "issue_title",
+        "property_link",
         "unit",
+        "section_break_details",
         "priority",
         "ticket_status",
+        "column_break_status",
+        "assigned_vendor",
+        "section_break_timing",
+        "scheduled_time",
+        "completion_time",
+        "section_break_costs",
+        "estimated_cost",
+        "actual_cost",
+        "section_break_content",
+        "completion_notes",
         "parts"
     ],
     "fields": [
@@ -29,24 +41,86 @@
             "reqd": 1
         },
         {
+            "fieldname": "property_link",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "label": "Property",
+            "options": "Property"
+        },
+        {
             "fieldname": "unit",
             "fieldtype": "Link",
             "label": "Unit",
             "options": "Unit"
         },
         {
+            "fieldname": "section_break_details",
+            "fieldtype": "Section Break",
+            "label": "Issue Details"
+        },
+        {
             "default": "Medium",
             "fieldname": "priority",
             "fieldtype": "Select",
             "label": "Priority",
-            "options": "Low\nMedium\nHigh\nCritical"
+            "options": "Low\nMedium\nHigh\nCritical\nEmergency"
         },
         {
             "default": "Open",
             "fieldname": "ticket_status",
             "fieldtype": "Select",
             "label": "Ticket Status",
-            "options": "Open\nAssigned\nIn Progress\nResolved\nClosed"
+            "options": "Open\nAssigned\nIn Progress\nOn Hold\nResolved\nClosed",
+            "in_list_view": 1
+        },
+        {
+            "fieldname": "column_break_status",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "assigned_vendor",
+            "fieldtype": "Data",
+            "label": "Assigned Vendor"
+        },
+        {
+            "fieldname": "section_break_timing",
+            "fieldtype": "Section Break",
+            "label": "Timing"
+        },
+        {
+            "fieldname": "scheduled_time",
+            "fieldtype": "Datetime",
+            "label": "Scheduled Time"
+        },
+        {
+            "fieldname": "completion_time",
+            "fieldtype": "Datetime",
+            "label": "Completion Time",
+            "read_only": 1
+        },
+        {
+            "fieldname": "section_break_costs",
+            "fieldtype": "Section Break",
+            "label": "Financials"
+        },
+        {
+            "fieldname": "estimated_cost",
+            "fieldtype": "Currency",
+            "label": "Estimated Cost"
+        },
+        {
+            "fieldname": "actual_cost",
+            "fieldtype": "Currency",
+            "label": "Actual Cost"
+        },
+        {
+            "fieldname": "section_break_content",
+            "fieldtype": "Section Break"
+        },
+        {
+            "fieldname": "completion_notes",
+            "fieldtype": "Small Text",
+            "label": "Completion Notes"
         },
         {
             "fieldname": "parts",

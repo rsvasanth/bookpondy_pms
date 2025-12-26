@@ -1,0 +1,170 @@
+{
+    "actions": [],
+    "allow_rename": 1,
+    "creation": "2025-12-26 14:16:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "guest_name",
+        "inquiry_status",
+        "inquiry_date",
+        "column_break_1",
+        "guest_email",
+        "guest_phone",
+        "guest_whatsapp",
+        "section_break_booking",
+        "property_interested",
+        "unit_category",
+        "source_channel",
+        "column_break_2",
+        "check_in_date",
+        "check_out_date",
+        "number_of_guests",
+        "section_break_financials",
+        "quoted_price",
+        "quote_expiry_date",
+        "conversion_status",
+        "section_break_notes",
+        "special_requests"
+    ],
+    "fields": [
+        {
+            "fieldname": "guest_name",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "Guest Name",
+            "reqd": 1
+        },
+        {
+            "default": "New",
+            "fieldname": "inquiry_status",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "label": "Inquiry Status",
+            "options": "New\nContacted\nQuote Sent\nBooked\nNot Interested",
+            "reqd": 1
+        },
+        {
+            "fieldname": "inquiry_date",
+            "fieldtype": "Datetime",
+            "label": "Inquiry Date"
+        },
+        {
+            "fieldname": "column_break_1",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "guest_email",
+            "fieldtype": "Email",
+            "label": "Guest Email"
+        },
+        {
+            "fieldname": "guest_phone",
+            "fieldtype": "Data",
+            "label": "Guest Phone"
+        },
+        {
+            "fieldname": "guest_whatsapp",
+            "fieldtype": "Data",
+            "label": "Guest WhatsApp"
+        },
+        {
+            "fieldname": "section_break_booking",
+            "fieldtype": "Section Break",
+            "label": "Booking Details"
+        },
+        {
+            "fieldname": "property_interested",
+            "fieldtype": "Link",
+            "label": "Property Interested",
+            "options": "Property"
+        },
+        {
+            "fieldname": "unit_category",
+            "fieldtype": "Link",
+            "label": "Unit Category",
+            "options": "Unit Category"
+        },
+        {
+            "fieldname": "source_channel",
+            "fieldtype": "Link",
+            "label": "Source Channel",
+            "options": "Channel Config"
+        },
+        {
+            "fieldname": "column_break_2",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "check_in_date",
+            "fieldtype": "Date",
+            "label": "Check-In Date"
+        },
+        {
+            "fieldname": "check_out_date",
+            "fieldtype": "Date",
+            "label": "Check-Out Date"
+        },
+        {
+            "fieldname": "number_of_guests",
+            "fieldtype": "Int",
+            "label": "Number of Guests"
+        },
+        {
+            "fieldname": "section_break_financials",
+            "fieldtype": "Section Break",
+            "label": "Financals / Quote"
+        },
+        {
+            "fieldname": "quoted_price",
+            "fieldtype": "Currency",
+            "label": "Quoted Price"
+        },
+        {
+            "fieldname": "quote_expiry_date",
+            "fieldtype": "Date",
+            "label": "Quote Expiry Date"
+        },
+        {
+            "default": "Pending",
+            "fieldname": "conversion_status",
+            "fieldtype": "Select",
+            "label": "Conversion Status",
+            "options": "Pending\nConverted to Reservation\nLost"
+        },
+        {
+            "fieldname": "section_break_notes",
+            "fieldtype": "Section Break",
+            "label": "Notes"
+        },
+        {
+            "fieldname": "special_requests",
+            "fieldtype": "Text",
+            "label": "Special Requests"
+        }
+    ],
+    "index_web_pages_for_search": 1,
+    "links": [],
+    "modified": "2025-12-26 14:16:00.000000",
+    "modified_by": "Administrator",
+    "module": "Bookpondy Pms",
+    "name": "Booking Inquiry",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "System Manager",
+            "share": 1,
+            "write": 1
+        }
+    ],
+    "sort_field": "modified",
+    "sort_order": "DESC",
+    "states": []
+}

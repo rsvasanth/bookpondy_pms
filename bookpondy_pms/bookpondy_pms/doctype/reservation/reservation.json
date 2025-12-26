@@ -17,6 +17,7 @@
         "guest_id_number",
         "guest_id_image",
         "reservation_source",
+        "source_channel",
         "marketplace_booking_id",
         "section_break_booking",
         "unit_category",
@@ -123,8 +124,14 @@
             "fieldname": "reservation_source",
             "fieldtype": "Select",
             "label": "Reservation Source",
-            "options": "\nBookPondi\nDirect\nWhatsApp\nPhone",
+            "options": "\nBookPondi\nDirect\nWhatsApp\nPhone\nOTA\nChannel",
             "default": "Direct"
+        },
+        {
+            "fieldname": "source_channel",
+            "fieldtype": "Link",
+            "label": "Source Channel",
+            "options": "Channel Config"
         },
         {
             "fieldname": "marketplace_booking_id",

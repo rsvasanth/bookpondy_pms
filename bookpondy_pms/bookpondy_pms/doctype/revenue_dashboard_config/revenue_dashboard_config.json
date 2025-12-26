@@ -1,0 +1,79 @@
+{
+    "actions": [],
+    "allow_rename": 1,
+    "creation": "2025-12-26 14:00:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "owner_id",
+        "property",
+        "currency",
+        "date_range",
+        "section_break_metrics",
+        "metrics_enabled"
+    ],
+    "fields": [
+        {
+            "fieldname": "owner_id",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "label": "Owner",
+            "options": "User",
+            "reqd": 1
+        },
+        {
+            "fieldname": "property",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "label": "Property",
+            "options": "Property"
+        },
+        {
+            "fieldname": "currency",
+            "fieldtype": "Select",
+            "label": "Currency",
+            "options": "INR\nUSD",
+            "default": "INR"
+        },
+        {
+            "fieldname": "date_range",
+            "fieldtype": "Select",
+            "label": "Date Range",
+            "options": "This Month\nLast 30 Days\nThis Year\nCustom",
+            "default": "This Month"
+        },
+        {
+            "fieldname": "section_break_metrics",
+            "fieldtype": "Section Break",
+            "label": "Metrics"
+        },
+        {
+            "fieldname": "metrics_enabled",
+            "fieldtype": "Table",
+            "label": "Enabled Metrics",
+            "options": "Revenue Dashboard Metric"
+        }
+    ],
+    "modified": "2025-12-26 14:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "Bookpondy Pms",
+    "name": "Revenue Dashboard Config",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "System Manager",
+            "share": 1,
+            "write": 1
+        }
+    ],
+    "sort_field": "owner_id",
+    "sort_order": "DESC",
+    "states": []
+}

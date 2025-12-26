@@ -33,7 +33,10 @@
         "check_out_time",
         "section_break_images",
         "banner_image",
-        "images"
+        "images",
+        "section_break_erp",
+        "erp_cost_center",
+        "erp_sales_account"
     ],
     "fields": [
         {
@@ -201,6 +204,22 @@
             "fieldtype": "Table",
             "label": "Gallery Images",
             "options": "Property Image"
+        },
+        {
+            "fieldname": "section_break_erp",
+            "fieldtype": "Section Break",
+            "label": "ERPNext Integration",
+            "collapsible": 1
+        },
+        {
+            "fieldname": "erp_cost_center",
+            "fieldtype": "Data",
+            "label": "ERP Cost Center"
+        },
+        {
+            "fieldname": "erp_sales_account",
+            "fieldtype": "Data",
+            "label": "ERP Sales Account"
         }
     ],
     "image_field": "banner_image",

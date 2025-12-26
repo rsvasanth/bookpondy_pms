@@ -142,3 +142,105 @@ def get_console_property_details(property_id):
 		"occupancy_data": occupancy_data
 	}
 
+@frappe.whitelist()
+def get_dashboard_stats():
+	"""
+	Returns consolidated stats for the dashboard:
+	- Revenue (Total from Folios)
+	- Occupancy %
+	- Active Bookings count
+	- Maintenance Tickets count
+	- Arrivals & Departures today
+	- Housekeeping count
+	- Recent Activity (Latest 5 actions)
+	- Critical Alerts
+	"""
+	# 1. Total Revenue (Grand Total of Paid/Finalized Folios)
+	folios = frappe.get_all("Folio", 
+		filters={"status": ["in", ["Posted", "Paid"]]}, 
+		fields=["grand_total"]
+	)
+	total_revenue = sum(frappe.utils.flt(f.grand_total) for f in folios)
+
+	# 2. Occupancy % (Units occupied today / Total units)
+	total_units = frappe.db.count("Unit")
+	occupied_units = frappe.db.count("Unit", {"status": "Occupied"})
+	occupancy = (occupied_units / total_units * 100) if total_units > 0 else 0
+
+	# 3. Active Bookings (Confirmed or Checked-In today)
+	active_bookings = frappe.db.count("Reservation", {
+		"reservation_status": ["in", ["Confirmed", "Checked-In"]],
+		"check_in_date": ["<=", today()],
+		"check_out_date": [">", today()]
+	})
+
+	# 4. Maintenance Tickets (Open/Pending)
+	maintenance_tickets = frappe.db.count("Maintenance Ticket", {
+		"ticket_status": ["in", ["Open", "Assigned", "In Progress", "On Hold"]]
+	})
+
+	# 5. Arrivals & Departures Today
+	arrivals_today = frappe.db.count("Reservation", {
+		"check_in_date": today(),
+		"reservation_status": ["in", ["Confirmed", "Checked-In"]]
+	})
+	departures_today = frappe.db.count("Reservation", {
+		"check_out_date": today(),
+		"reservation_status": ["in", ["Checked-In", "Checked-Out"]]
+	})
+
+	# 6. Housekeeping Tasks (Pending)
+	housekeeping_count = frappe.db.count("Housekeeping Task", {
+		"status": ["in", ["Pending", "In Progress"]]
+	})
+
+	# 7. Recent Activity (Latest 5 reservations)
+	recent_activity = frappe.get_all("Reservation",
+		fields=["name", "guest_name", "property", "check_in_date", "creation"],
+		limit=5,
+		order_by="creation desc"
+	)
+
+	# 8. Critical Alerts
+	alerts = []
+	
+	# Upcoming check-ins today remains 'Confirmed'
+	checkins_today_alerts = frappe.get_all("Reservation",
+		filters={"check_in_date": today(), "reservation_status": "Confirmed"},
+		fields=["name", "guest_name", "property"]
+	)
+	for c in checkins_today_alerts:
+		alerts.append({
+			"type": "checkin",
+			"id": c.name,
+			"title": f"Guest Arriving: {c.guest_name}",
+			"description": f"Check-in pending for {c.property}.",
+			"severity": "high"
+		})
+
+	# High priority maintenance
+	urgent_maintenance = frappe.get_all("Maintenance Ticket",
+		filters={"priority": ["in", ["High", "Critical", "Emergency"]], "ticket_status": ["not in", ["Resolved", "Closed"]]},
+		fields=["name", "issue_title", "property_link", "unit"]
+	)
+	for m in urgent_maintenance:
+		alerts.append({
+			"type": "maintenance",
+			"id": m.name,
+			"title": f"Priority Maint: {m.issue_title}",
+			"description": f"Unit {m.unit} at {m.property_link}.",
+			"severity": "critical"
+		})
+
+	return {
+		"revenue": total_revenue,
+		"occupancy": occupancy,
+		"active_bookings": active_bookings,
+		"maintenance_count": maintenance_tickets,
+		"arrivals_today": arrivals_today,
+		"departures_today": departures_today,
+		"housekeeping_count": housekeeping_count,
+		"recent_activity": recent_activity,
+		"alerts": alerts
+	}
+

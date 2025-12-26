@@ -1,10 +1,6 @@
-# Copyright (c) 2025, vasanth ranganathan and contributors
-# For license information, please see license.txt
-
 import frappe
 from frappe.model.document import Document
-from frappe.utils import flt
-
+from frappe.utils import flt, nowdate, getdate
 
 class Folio(Document):
 	def validate(self):
@@ -14,22 +10,122 @@ class Folio(Document):
 		subtotal = 0
 		total_tax = 0
 		
-		# In this implementation, Folio finds charges linked to its reservation
+		# Find charges linked to this folio's reservation
 		charges = frappe.get_all("Charge", 
 			filters={"reservation": self.reservation},
-			fields=["total_amount", "tax_amount", "subtotal_amount"]
+			fields=["amount", "charge_type"]
 		)
 		
+		# In a real scenario, we'd have tax rates per charge type.
+		# For simplicity, let's assume 18% GST (9% SGST + 9% CGST) for Accommodation.
 		for charge in charges:
-			# Note: The field names might vary slightly depending on exact schema, 
-			# adjusting based on typical patterns. Spec mentions 'total_amount' and 'tax_amount'.
-			subtotal += flt(charge.get("total_amount", 0)) - flt(charge.get("tax_amount", 0))
-			total_tax += flt(charge.get("tax_amount", 0))
+			amount = flt(charge.amount)
+			if self.gst_status == "Applicable":
+				# Assume inclusive tax for now
+				tax = amount * 0.18 / 1.18
+				total_tax += tax
+				subtotal += amount - tax
+			else:
+				subtotal += amount
 
 		self.subtotal = subtotal
 		self.total_tax = total_tax
 		self.grand_total = subtotal + total_tax - flt(self.discount_amount)
 		
-		if self.grand_total > 0:
-			# Update folio status if paid amount matches (would need transaction link)
+		if self.status == "Paid" and self.grand_total <= 0:
+			# Logic could be more complex (comparing against actual transactions)
 			pass
+
+	@frappe.whitelist()
+	def finalize_invoice(self, gst_number=None, payment_method=None):
+		"""Finalizes the invoice and generates an invoice number."""
+		if self.invoice_status != "Draft":
+			return self.invoice_number
+
+		self.invoice_status = "Finalized"
+		self.invoice_date = nowdate()
+		if gst_number:
+			self.gst_number = gst_number
+		if payment_method:
+			self.payment_method = payment_method
+		
+		# Generate Invoice Number: {PROP_CODE}-{YYYY}{MM}{SEQ}
+		property_id = frappe.db.get_value("Reservation", self.reservation, "property")
+		prop_code = property_id[:4].upper() if property_id else "INV"
+		
+		date_prefix = getdate().strftime("%Y%m")
+		series = f"INV-{prop_code}-{date_prefix}-"
+		self.invoice_number = frappe.model.naming.make_autoname(f"{series}.#####")
+		
+		self.save()
+		return self.invoice_number
+
+@frappe.whitelist()
+def get_invoice_details(folio_name):
+	"""Returns comprehensive details for the invoice view."""
+	doc = frappe.get_doc("Folio", folio_name)
+	res_doc = frappe.get_doc("Reservation", doc.reservation)
+	
+	charges = frappe.get_all("Charge", 
+		filters={"reservation": doc.reservation},
+		fields=["name", "charge_type", "amount"]
+	)
+	
+	return {
+		"invoice_number": doc.invoice_number or doc.name,
+		"invoice_date": doc.invoice_date,
+		"invoice_status": doc.invoice_status,
+		"status": doc.status,
+		"guest_name": res_doc.guest_name,
+		"guest_email": res_doc.guest_email,
+		"guest_phone": res_doc.guest_phone,
+		"check_in_date": res_doc.check_in_date,
+		"check_out_date": res_doc.check_out_date,
+		"property_name": frappe.db.get_value("Property", res_doc.property, "property_name"),
+		"charges": charges,
+		"subtotal": doc.subtotal,
+		"total_tax": doc.total_tax,
+		"sgst_amount": doc.total_tax / 2,
+		"cgst_amount": doc.total_tax / 2,
+		"discount_amount": doc.discount_amount,
+		"total_amount": doc.grand_total,
+		"payment_method": doc.payment_method,
+		"payment_reference": doc.payment_reference,
+		"refund_amount": doc.refund_amount,
+		"refund_reason": doc.refund_reason,
+		"refund_date": doc.refund_date
+	}
+
+@frappe.whitelist()
+def process_refund(folio_name, refund_amount, refund_reason, refund_method):
+	"""Processes a refund for a folio."""
+	doc = frappe.get_doc("Folio", folio_name)
+	doc.refund_amount = flt(refund_amount)
+	doc.refund_reason = refund_reason
+	doc.refund_method = refund_method
+	doc.refund_date = nowdate()
+	doc.status = "Cancelled" # Or a new status like 'Refunded'
+	doc.save()
+	return doc.refund_amount
+
+@frappe.whitelist()
+def send_invoice_email(folio_name, email=None):
+	"""Sends the invoice PDF via email."""
+	doc = frappe.get_doc("Folio", folio_name)
+	target_email = email or doc.guest_email_address or frappe.db.get_value("Reservation", doc.reservation, "guest_email")
+	
+	if not target_email:
+		frappe.throw("Recipient email address is missing.")
+	
+	# Placeholder for real PDF attachment
+	frappe.sendmail(
+		recipients=[target_email],
+		subject=f"Invoice {doc.invoice_number or doc.name} from BookPondy",
+		message=f"Please find your invoice attached.",
+		# attachments=[frappe.attach_print("Folio", doc.name)] # This uses Frappe print format
+	)
+	
+	doc.sent_to_guest = 1
+	doc.guest_email_address = target_email
+	doc.save()
+	return True

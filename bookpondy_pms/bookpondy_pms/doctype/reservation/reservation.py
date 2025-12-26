@@ -3,7 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
-from frappe.utils import date_diff, flt
+from frappe.utils import date_diff, flt, now_datetime
 
 
 class Reservation(Document):
@@ -35,29 +35,29 @@ class Reservation(Document):
 	def handle_status_change(self):
 		if self.housekeeping_task_auto_create:
 			if self.reservation_status == "Checked-In":
-				self.create_housekeeping_task("Stayover", "High")
+				self.create_housekeeping_task("Cleaning", "High")
 			elif self.reservation_status == "Checked-Out":
-				self.create_housekeeping_task("Checkout Cleaning", "Urgent")
+				self.create_housekeeping_task("Check-Out Cleaning", "Urgent")
 		
 		if self.reservation_status == "Checked-Out":
 			self.update_guest_stats()
 
 	def create_housekeeping_task(self, task_type, priority):
-		if not self.allocated_room:
+		if not self.allocated_unit:
 			return
 
 		task = frappe.get_doc({
 			"doctype": "Housekeeping Task",
-			"property": self.property,
-			"room": self.allocated_room,
-			"reservation": self.name,
+			"naming_series": "HK-.YYYY.-.#####",
+			"property_link": self.property,
+			"unit": self.allocated_unit,
+			"related_reservation": self.name,
 			"task_type": task_type,
 			"priority": priority,
 			"status": "Pending",
-			"scheduled_date": frappe.utils.today()
+			"scheduled_time": now_datetime()
 		})
 		task.insert(ignore_permissions=True)
-		frappe.msgprint(f"Housekeeping Task created for room {self.allocated_room}")
 
 	def update_guest_stats(self):
 		if not self.guest:

@@ -9,8 +9,30 @@
     "field_order": [
         "naming_series",
         "reservation",
+        "section_break_billing",
+        "invoice_number",
+        "invoice_date",
+        "column_break_gst",
+        "gst_status",
+        "gst_number",
+        "section_break_totals",
+        "subtotal",
+        "total_tax",
+        "discount_amount",
         "grand_total",
+        "column_break_status",
         "status",
+        "invoice_status",
+        "section_break_payment",
+        "payment_method",
+        "payment_reference",
+        "column_break_refund",
+        "refund_amount",
+        "refund_reason",
+        "section_break_communication",
+        "sent_to_guest",
+        "guest_email_address",
+        "section_break_details",
         "tax_summary"
     ],
     "fields": [
@@ -32,17 +54,137 @@
             "unique": 1
         },
         {
+            "fieldname": "section_break_billing",
+            "fieldtype": "Section Break",
+            "label": "Billing Information"
+        },
+        {
+            "fieldname": "invoice_number",
+            "fieldtype": "Data",
+            "label": "Invoice Number",
+            "read_only": 1,
+            "unique": 1
+        },
+        {
+            "fieldname": "invoice_date",
+            "fieldtype": "Date",
+            "label": "Invoice Date"
+        },
+        {
+            "fieldname": "column_break_gst",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "gst_status",
+            "fieldtype": "Select",
+            "label": "GST Status",
+            "options": "Not Applicable\nExempt\nApplicable",
+            "default": "Not Applicable"
+        },
+        {
+            "fieldname": "gst_number",
+            "fieldtype": "Data",
+            "label": "Guest GSTIN"
+        },
+        {
+            "fieldname": "section_break_totals",
+            "fieldtype": "Section Break",
+            "label": "Totals"
+        },
+        {
+            "fieldname": "subtotal",
+            "fieldtype": "Currency",
+            "label": "Subtotal",
+            "read_only": 1
+        },
+        {
+            "fieldname": "total_tax",
+            "fieldtype": "Currency",
+            "label": "Total Tax",
+            "read_only": 1
+        },
+        {
+            "fieldname": "discount_amount",
+            "fieldtype": "Currency",
+            "label": "Discount Amount",
+            "default": 0
+        },
+        {
             "fieldname": "grand_total",
             "fieldtype": "Currency",
             "label": "Grand Total",
             "read_only": 1
         },
         {
+            "fieldname": "column_break_status",
+            "fieldtype": "Column Break"
+        },
+        {
             "default": "Draft",
             "fieldname": "status",
             "fieldtype": "Select",
-            "label": "Status",
+            "label": "Folio Status",
             "options": "Draft\nPosted\nPaid\nCancelled"
+        },
+        {
+            "fieldname": "invoice_status",
+            "fieldtype": "Select",
+            "label": "Invoice Status",
+            "options": "Draft\nFinalized\nSent\nPaid\nCancelled",
+            "default": "Draft"
+        },
+        {
+            "fieldname": "section_break_payment",
+            "fieldtype": "Section Break",
+            "label": "Payment Details"
+        },
+        {
+            "fieldname": "payment_method",
+            "fieldtype": "Select",
+            "label": "Payment Method",
+            "options": "Cash\nCard\nBank Transfer\nUPI"
+        },
+        {
+            "fieldname": "payment_reference",
+            "fieldtype": "Data",
+            "label": "Payment Reference"
+        },
+        {
+            "fieldname": "column_break_refund",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "refund_amount",
+            "fieldtype": "Currency",
+            "label": "Refund Amount",
+            "default": 0
+        },
+        {
+            "fieldname": "refund_reason",
+            "fieldtype": "Small Text",
+            "label": "Refund Reason"
+        },
+        {
+            "fieldname": "section_break_communication",
+            "fieldtype": "Section Break",
+            "label": "Communication"
+        },
+        {
+            "default": 0,
+            "fieldname": "sent_to_guest",
+            "fieldtype": "Check",
+            "label": "Sent to Guest"
+        },
+        {
+            "fieldname": "guest_email_address",
+            "fieldtype": "Data",
+            "label": "Guest Email Address",
+            "options": "Email"
+        },
+        {
+            "fieldname": "section_break_details",
+            "fieldtype": "Section Break",
+            "label": "Tables"
         },
         {
             "fieldname": "tax_summary",

@@ -53,12 +53,11 @@ import { useFrappeAuth, useFrappeGetDocList } from "frappe-react-sdk"
 
 const mainNavItems = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/ongoing-bookings", label: "Ongoing Bookings", icon: CalendarDays },
+  { href: "/bookings", label: "Bookings", icon: CalendarDays },
   { href: "/housekeeping", label: "Housekeeping", icon: ClipboardList },
-  { href: "/future-bookings", label: "Future Bookings", icon: CalendarDays },
   { href: "/maintenance", label: "Maintenance", icon: Wrench },
   { href: "/billing", label: "Billing & Payments", icon: Receipt },
-  { href: "/communications", label: "Client Communication", icon: MessageSquare },
+  { href: "/channels", label: "Channels & WhatsApp", icon: MessageSquare },
 ]
 
 const managementNavItems = [

@@ -1,0 +1,35 @@
+{
+    "actions": [],
+    "creation": "2025-12-26 14:00:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "metric_name",
+        "display_order"
+    ],
+    "fields": [
+        {
+            "fieldname": "metric_name",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "Metric Name",
+            "reqd": 1
+        },
+        {
+            "fieldname": "display_order",
+            "fieldtype": "Int",
+            "in_list_view": 1,
+            "label": "Display Order"
+        }
+    ],
+    "istable": 1,
+    "modified": "2025-12-26 14:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "Bookpondy Pms",
+    "name": "Revenue Dashboard Metric",
+    "owner": "Administrator",
+    "permissions": [],
+    "sort_field": "display_order",
+    "sort_order": "ASC",
+    "states": []
+}

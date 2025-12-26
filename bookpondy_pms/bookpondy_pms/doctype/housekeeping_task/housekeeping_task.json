@@ -8,9 +8,22 @@
     "engine": "InnoDB",
     "field_order": [
         "naming_series",
+        "property_link",
         "unit",
+        "related_reservation",
+        "section_break_task",
         "task_type",
+        "priority",
+        "column_break_status",
         "status",
+        "assigned_to_staff",
+        "section_break_timing",
+        "scheduled_time",
+        "column_break_times",
+        "started_time",
+        "completed_time",
+        "section_break_content",
+        "notes",
         "checklist",
         "issues"
     ],
@@ -24,6 +37,14 @@
             "reqd": 1
         },
         {
+            "fieldname": "property_link",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "label": "Property",
+            "options": "Property",
+            "reqd": 1
+        },
+        {
             "fieldname": "unit",
             "fieldtype": "Link",
             "in_list_view": 1,
@@ -32,19 +53,85 @@
             "reqd": 1
         },
         {
+            "fieldname": "related_reservation",
+            "fieldtype": "Link",
+            "label": "Related Reservation",
+            "options": "Reservation"
+        },
+        {
+            "fieldname": "section_break_task",
+            "fieldtype": "Section Break",
+            "label": "Task Details"
+        },
+        {
             "fieldname": "task_type",
             "fieldtype": "Select",
             "in_list_view": 1,
             "label": "Task Type",
-            "options": "Cleaning\nMaintenance\nInspection",
+            "options": "Cleaning\nCheck-In Cleaning\nCheck-Out Cleaning\nDeep Clean\nTurnover\nMaintenance\nInspection",
             "reqd": 1
+        },
+        {
+            "fieldname": "priority",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "label": "Priority",
+            "options": "Low\nNormal\nHigh\nUrgent",
+            "default": "Normal"
+        },
+        {
+            "fieldname": "column_break_status",
+            "fieldtype": "Column Break"
         },
         {
             "default": "Pending",
             "fieldname": "status",
             "fieldtype": "Select",
             "label": "Status",
-            "options": "Pending\nIn Progress\nCompleted"
+            "options": "Pending\nIn Progress\nCompleted\nOn Hold",
+            "in_list_view": 1
+        },
+        {
+            "fieldname": "assigned_to_staff",
+            "fieldtype": "Link",
+            "label": "Assigned To Staff",
+            "options": "User",
+            "in_list_view": 1
+        },
+        {
+            "fieldname": "section_break_timing",
+            "fieldtype": "Section Break",
+            "label": "Timing"
+        },
+        {
+            "fieldname": "scheduled_time",
+            "fieldtype": "Datetime",
+            "label": "Scheduled Time"
+        },
+        {
+            "fieldname": "column_break_times",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "started_time",
+            "fieldtype": "Datetime",
+            "label": "Started Time",
+            "read_only": 1
+        },
+        {
+            "fieldname": "completed_time",
+            "fieldtype": "Datetime",
+            "label": "Completed Time",
+            "read_only": 1
+        },
+        {
+            "fieldname": "section_break_content",
+            "fieldtype": "Section Break"
+        },
+        {
+            "fieldname": "notes",
+            "fieldtype": "Text",
+            "label": "Notes"
         },
         {
             "fieldname": "checklist",

@@ -1,0 +1,147 @@
+{
+    "actions": [],
+    "allow_rename": 1,
+    "creation": "2025-12-26 14:15:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "channel_name",
+        "channel_type",
+        "is_active",
+        "column_break_1",
+        "property",
+        "section_break_api",
+        "api_key",
+        "api_secret",
+        "webhook_url",
+        "section_break_whatsapp",
+        "whatsapp_phone_number",
+        "whatsapp_api_provider",
+        "raven_channel_id",
+        "section_break_ota",
+        "ota_property_id",
+        "commission_percentage",
+        "sync_interval"
+    ],
+    "fields": [
+        {
+            "fieldname": "channel_name",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "Channel Name",
+            "reqd": 1
+        },
+        {
+            "fieldname": "channel_type",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "label": "Channel Type",
+            "options": "Direct\nOTA\nMessaging\nWebsite",
+            "reqd": 1
+        },
+        {
+            "default": "1",
+            "fieldname": "is_active",
+            "fieldtype": "Check",
+            "label": "Is Active"
+        },
+        {
+            "fieldname": "column_break_1",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "property",
+            "fieldtype": "Link",
+            "label": "Property",
+            "options": "Property"
+        },
+        {
+            "fieldname": "section_break_api",
+            "fieldtype": "Section Break",
+            "label": "API Credentials"
+        },
+        {
+            "fieldname": "api_key",
+            "fieldtype": "Password",
+            "label": "API Key"
+        },
+        {
+            "fieldname": "api_secret",
+            "fieldtype": "Password",
+            "label": "API Secret"
+        },
+        {
+            "fieldname": "webhook_url",
+            "fieldtype": "Data",
+            "label": "Webhook URL"
+        },
+        {
+            "fieldname": "section_break_whatsapp",
+            "fieldtype": "Section Break",
+            "label": "WhatsApp Settings",
+            "depends_on": "eval:doc.channel_name=='WhatsApp'"
+        },
+        {
+            "fieldname": "whatsapp_phone_number",
+            "fieldtype": "Data",
+            "label": "WhatsApp Phone Number"
+        },
+        {
+            "fieldname": "whatsapp_api_provider",
+            "fieldtype": "Select",
+            "label": "WhatsApp API Provider",
+            "options": "Raven\nTwilio\nMeta Graph API"
+        },
+        {
+            "fieldname": "raven_channel_id",
+            "fieldtype": "Data",
+            "label": "Raven Channel ID"
+        },
+        {
+            "fieldname": "section_break_ota",
+            "fieldtype": "Section Break",
+            "label": "OTA Settings",
+            "depends_on": "eval:doc.channel_type=='OTA'"
+        },
+        {
+            "fieldname": "ota_property_id",
+            "fieldtype": "Data",
+            "label": "OTA Property ID"
+        },
+        {
+            "fieldname": "commission_percentage",
+            "fieldtype": "Percent",
+            "label": "Commission Percentage"
+        },
+        {
+            "fieldname": "sync_interval",
+            "fieldtype": "Int",
+            "label": "Sync Interval (minutes)",
+            "default": 15
+        }
+    ],
+    "index_web_pages_for_search": 1,
+    "links": [],
+    "modified": "2025-12-26 14:15:00.000000",
+    "modified_by": "Administrator",
+    "module": "Bookpondy Pms",
+    "name": "Channel Config",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "System Manager",
+            "share": 1,
+            "write": 1
+        }
+    ],
+    "sort_field": "modified",
+    "sort_order": "DESC",
+    "states": []
+}

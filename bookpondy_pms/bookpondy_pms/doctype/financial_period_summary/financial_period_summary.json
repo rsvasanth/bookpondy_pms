@@ -1,0 +1,147 @@
+{
+    "actions": [],
+    "allow_rename": 1,
+    "creation": "2025-12-26 14:00:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "property",
+        "period_start_date",
+        "period_end_date",
+        "section_break_revenue",
+        "total_revenue",
+        "room_revenue",
+        "additional_revenue",
+        "column_break_metrics",
+        "occupancy_nights",
+        "available_nights",
+        "occupancy_percent",
+        "adr",
+        "revpar",
+        "section_break_stats",
+        "booking_count",
+        "avg_length_of_stay",
+        "cancellation_count",
+        "avg_daily_guests"
+    ],
+    "fields": [
+        {
+            "fieldname": "property",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "label": "Property",
+            "options": "Property",
+            "reqd": 1
+        },
+        {
+            "fieldname": "period_start_date",
+            "fieldtype": "Date",
+            "in_list_view": 1,
+            "label": "Period Start Date",
+            "reqd": 1
+        },
+        {
+            "fieldname": "period_end_date",
+            "fieldtype": "Date",
+            "in_list_view": 1,
+            "label": "Period End Date",
+            "reqd": 1
+        },
+        {
+            "fieldname": "section_break_revenue",
+            "fieldtype": "Section Break",
+            "label": "Revenue"
+        },
+        {
+            "fieldname": "total_revenue",
+            "fieldtype": "Currency",
+            "label": "Total Revenue"
+        },
+        {
+            "fieldname": "room_revenue",
+            "fieldtype": "Currency",
+            "label": "Room Revenue"
+        },
+        {
+            "fieldname": "additional_revenue",
+            "fieldtype": "Currency",
+            "label": "Additional Revenue"
+        },
+        {
+            "fieldname": "column_break_metrics",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "occupancy_nights",
+            "fieldtype": "Int",
+            "label": "Occupancy Nights"
+        },
+        {
+            "fieldname": "available_nights",
+            "fieldtype": "Int",
+            "label": "Available Nights"
+        },
+        {
+            "fieldname": "occupancy_percent",
+            "fieldtype": "Percent",
+            "label": "Occupancy Percent"
+        },
+        {
+            "fieldname": "adr",
+            "fieldtype": "Currency",
+            "label": "ADR"
+        },
+        {
+            "fieldname": "revpar",
+            "fieldtype": "Currency",
+            "label": "RevPAR"
+        },
+        {
+            "fieldname": "section_break_stats",
+            "fieldtype": "Section Break",
+            "label": "Stats"
+        },
+        {
+            "fieldname": "booking_count",
+            "fieldtype": "Int",
+            "label": "Booking Count"
+        },
+        {
+            "fieldname": "avg_length_of_stay",
+            "fieldtype": "Float",
+            "label": "Avg Length of Stay"
+        },
+        {
+            "fieldname": "cancellation_count",
+            "fieldtype": "Int",
+            "label": "Cancellation Count"
+        },
+        {
+            "fieldname": "avg_daily_guests",
+            "fieldtype": "Float",
+            "label": "Avg Daily Guests"
+        }
+    ],
+    "modified": "2025-12-26 14:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "Bookpondy Pms",
+    "name": "Financial Period Summary",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "System Manager",
+            "share": 1,
+            "write": 1
+        }
+    ],
+    "sort_field": "period_start_date",
+    "sort_order": "DESC",
+    "states": []
+}
