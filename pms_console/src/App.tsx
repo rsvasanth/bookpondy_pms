@@ -10,11 +10,13 @@ import FinancialsPage from "@/pages/Financials"
 import InvoicesPage from "@/pages/Invoices"
 import ChannelsPage from "@/pages/Channels"
 import ReviewsPage from "@/pages/Reviews"
-import TasksPage from "@/pages/Tasks"
-import MaintenancePage from "@/pages/Maintenance"
 import ReportsPage from "@/pages/Reports"
 import SettingsPage from "@/pages/Settings"
 import LoginPage from "@/pages/Login"
+import HousekeepingPage from "@/pages/Housekeeping"
+import FutureBookingsPage from "@/pages/FutureBookings"
+import BillingPage from "@/pages/Billing"
+import MaintenancePage from "@/pages/Maintenance"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { FrappeProvider, useFrappeAuth } from "frappe-react-sdk"
 import { Toaster } from "@/components/ui/sonner"
@@ -140,18 +142,42 @@ function App() {
 							}
 						/>
 						<Route
-							path="/tasks"
-							element={
-								<ProtectedRoute>
-									<TasksPage />
-								</ProtectedRoute>
-							}
-						/>
-						<Route
 							path="/maintenance"
 							element={
 								<ProtectedRoute>
 									<MaintenancePage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/ongoing-bookings"
+							element={
+								<ProtectedRoute>
+									<BookingsPage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/housekeeping"
+							element={
+								<ProtectedRoute>
+									<HousekeepingPage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/future-bookings"
+							element={
+								<ProtectedRoute>
+									<FutureBookingsPage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/billing"
+							element={
+								<ProtectedRoute>
+									<BillingPage />
 								</ProtectedRoute>
 							}
 						/>

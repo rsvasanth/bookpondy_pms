@@ -8,24 +8,26 @@ import { Textarea } from "../ui/textarea"
 import { Calendar } from "../ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog"
 import {
   CalendarIcon,
   Phone,
   Mail,
   Building2,
-  Users,
-  CreditCard,
   User,
   Sparkles,
-  ArrowRight
+  ArrowRight,
 } from "lucide-react"
 import { format, differenceInDays } from "date-fns"
 import { cn } from "../../lib/utils"
 import type { DateRange } from "react-day-picker"
 import { useFrappeCreateDoc, useFrappeGetDocList } from "frappe-react-sdk"
 import { toast } from "sonner"
-import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface AddBookingSheetProps {
   open: boolean
@@ -114,15 +116,12 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
           {/* Header */}
           <div className="bg-white px-8 py-5 border-b border-gray-100 flex items-center justify-between z-10">
             <div>
-              <DialogTitle className="text-2xl font-bold text-[#0A0A0A]">New Reservation</DialogTitle>
-              <DialogDescription className="text-sm font-medium text-gray-500">Create a comprehensive booking record</DialogDescription>
+              <DialogTitle className="text-2xl font-bold text-foreground">New Reservation</DialogTitle>
+              <DialogDescription className="text-sm font-medium text-muted-foreground">Create a comprehensive booking record</DialogDescription>
             </div>
             <div className="flex items-center gap-3">
-              <Button variant="outline" onClick={() => onOpenChange(false)} className="rounded-xl h-11 px-6 font-bold border-gray-200 hover:bg-gray-50">
-                Cancel
-              </Button>
               <Button
-                className="bg-[#FF3D2E] hover:bg-[#e63225] text-white font-bold rounded-xl h-11 px-6 shadow-lg shadow-red-500/20 gap-2"
+                className="bg-primary hover:bg-primary/90 text-white font-bold rounded-xl px-8 w-full sm:w-auto h-11"
                 onClick={handleSubmit}
                 disabled={!guestName || !selectedProperty || !dateRange?.from || !dateRange?.to || creating}
               >
@@ -150,7 +149,7 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
                 {/* Section 1: Guest Details */}
                 <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm space-y-6">
                   <div className="flex items-center gap-3 border-b border-gray-50 pb-4">
-                    <div className="h-10 w-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                    <div className="h-10 w-10 rounded-2xl bg-muted text-secondary flex items-center justify-center">
                       <User className="h-5 w-5" />
                     </div>
                     <div>
@@ -164,7 +163,7 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
                       <Label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Full Name *</Label>
                       <Input
                         placeholder="e.g. Vikram Malhotra"
-                        className="rounded-xl h-12 bg-gray-50/50 border-gray-100 focus-visible:ring-[#FF3D2E]/20 font-semibold text-base"
+                        className="rounded-xl h-12 bg-muted/20 border-muted focus-visible:ring-primary/20 font-semibold text-base"
                         value={guestName}
                         onChange={(e) => setGuestName(e.target.value)}
                         autoFocus
@@ -178,7 +177,7 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
                           <Input
                             type="email"
                             placeholder="vikram@example.com"
-                            className="pl-11 rounded-xl h-12 bg-gray-50/50 border-gray-100 focus-visible:ring-[#FF3D2E]/20 font-medium"
+                            className="pl-11 rounded-xl h-12 bg-muted/20 border-muted focus-visible:ring-primary/20 font-medium"
                             value={guestEmail}
                             onChange={(e) => setGuestEmail(e.target.value)}
                           />
@@ -190,7 +189,7 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
                           <Phone className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                           <Input
                             placeholder="+91 98765 43210"
-                            className="pl-11 rounded-xl h-12 bg-gray-50/50 border-gray-100 focus-visible:ring-[#FF3D2E]/20 font-medium"
+                            className="pl-11 rounded-xl h-12 bg-muted/20 border-muted focus-visible:ring-primary/20 font-medium"
                             value={guestPhone}
                             onChange={(e) => setGuestPhone(e.target.value)}
                           />
@@ -203,7 +202,7 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
                 {/* Section 2: Stay Details */}
                 <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm space-y-6">
                   <div className="flex items-center gap-3 border-b border-gray-50 pb-4">
-                    <div className="h-10 w-10 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center">
+                    <div className="h-10 w-10 rounded-2xl bg-muted text-secondary flex items-center justify-center">
                       <Building2 className="h-5 w-5" />
                     </div>
                     <div>
@@ -216,7 +215,7 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
                     <div className="space-y-2">
                       <Label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Select Property *</Label>
                       <Select value={selectedProperty} onValueChange={setSelectedProperty}>
-                        <SelectTrigger className="rounded-xl h-12 bg-gray-50/50 border-gray-100 focus:ring-[#FF3D2E]/20 font-medium">
+                        <SelectTrigger className="rounded-xl h-12 bg-muted/20 border-muted focus:ring-primary/20 font-medium">
                           <SelectValue placeholder="Choose a property" />
                         </SelectTrigger>
                         <SelectContent className="rounded-2xl border-gray-100 shadow-xl p-2">
@@ -233,7 +232,7 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
                       <div className="space-y-2">
                         <Label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Unit Category</Label>
                         <Select value={selectedCategory} onValueChange={setSelectedCategory} disabled={!selectedProperty}>
-                          <SelectTrigger className="rounded-xl h-12 bg-gray-50/50 border-gray-100 focus:ring-[#FF3D2E]/20 font-medium">
+                          <SelectTrigger className="rounded-xl h-12 bg-muted/20 border-muted focus:ring-primary/20 font-medium">
                             <SelectValue placeholder="Unit Type" />
                           </SelectTrigger>
                           <SelectContent className="rounded-2xl border-gray-100 shadow-xl p-2">
@@ -248,7 +247,7 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
                       <div className="space-y-2">
                         <Label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Guests</Label>
                         <Select value={guests} onValueChange={setGuests}>
-                          <SelectTrigger className="rounded-xl h-12 bg-gray-50/50 border-gray-100 focus:ring-[#FF3D2E]/20 font-medium">
+                          <SelectTrigger className="rounded-xl h-12 bg-muted/20 border-muted focus:ring-primary/20 font-medium">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent className="rounded-2xl border-gray-100 shadow-xl p-2">
@@ -269,11 +268,11 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
                           <Button
                             variant="outline"
                             className={cn(
-                              "w-full justify-start text-left font-medium rounded-xl h-12 bg-gray-50/50 border-gray-100 focus:ring-[#FF3D2E]/20 px-4",
+                              "w-full justify-start text-left font-medium rounded-xl h-12 bg-muted/20 border-muted focus:ring-primary/20 px-4",
                               !dateRange && "text-muted-foreground"
                             )}
                           >
-                            <CalendarIcon className="mr-3 h-4 w-4 text-[#FF3D2E]" />
+                            <CalendarIcon className="mr-3 h-4 w-4 text-primary" />
                             {dateRange?.from ? (
                               dateRange.to ? (
                                 <span className="font-bold text-[#0A0A0A]">
@@ -326,14 +325,14 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
             {/* Right: Summary Area */}
             <div className="w-1/3 bg-white border-l border-gray-100 p-8 overflow-y-auto">
               <div className="sticky top-0 space-y-6">
-                <h3 className="text-lg font-bold text-[#0A0A0A] flex items-center gap-2">
+                <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
                   Booking Summary
                 </h3>
 
                 {/* Ticket Card */}
                 <div className="border border-gray-200 rounded-3xl overflow-hidden relative shadow-sm">
                   {/* Top Part */}
-                  <div className="bg-[#FF3D2E] p-6 text-white relative overflow-hidden">
+                  <div className="bg-primary p-6 text-white relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-4 opacity-10">
                       <Building2 className="h-24 w-24 transform translate-x-4 -translate-y-4" />
                     </div>
@@ -348,7 +347,7 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
 
                   {/* Jagged Line (Visual Trick) */}
                   <div className="h-4 bg-white relative -mt-2">
-                    <div className="absolute top-0 left-0 w-full h-2 bg-[#FF3D2E] rounded-b-xl"></div>
+                    <div className="absolute top-0 left-0 w-full h-2 bg-primary rounded-b-xl"></div>
                   </div>
 
                   {/* Middle Part */}
@@ -356,7 +355,7 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
                     <div className="flex justify-between items-start">
                       <div>
                         <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Check-in</p>
-                        <p className="font-bold text-lg text-[#0A0A0A]">
+                        <p className="font-bold text-lg text-foreground">
                           {dateRange?.from ? format(dateRange.from, "dd MMM") : "--"}
                         </p>
                         <p className="text-xs text-gray-400 font-medium">
@@ -369,7 +368,7 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
                       </div>
                       <div className="text-right">
                         <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Check-out</p>
-                        <p className="font-bold text-lg text-[#0A0A0A]">
+                        <p className="font-bold text-lg text-foreground">
                           {dateRange?.to ? format(dateRange.to, "dd MMM") : "--"}
                         </p>
                         <p className="text-xs text-gray-400 font-medium">
@@ -378,7 +377,7 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                    <div className="flex items-center gap-3 p-3 bg-muted/20 rounded-xl">
                       <div className="h-8 w-8 rounded-full bg-white flex items-center justify-center text-gray-400 shadow-sm">
                         <User className="h-4 w-4" />
                       </div>
@@ -402,8 +401,8 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
                       </div>
                     </div>
                     <div className="flex justify-between items-center pt-2 border-t border-gray-200">
-                      <span className="text-sm font-bold text-[#0A0A0A]">Total Due</span>
-                      <span className="text-2xl font-bold text-[#FF3D2E]">₹{totalWithGST.toLocaleString("en-IN")}</span>
+                      <span className="text-sm font-bold text-foreground">Total Due</span>
+                      <span className="text-2xl font-bold text-primary">₹{totalWithGST.toLocaleString("en-IN")}</span>
                     </div>
                   </div>
                 </div>

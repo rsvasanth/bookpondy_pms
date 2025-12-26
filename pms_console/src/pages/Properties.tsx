@@ -57,9 +57,9 @@ interface Property {
 }
 
 const statusConfig = {
-  active: { label: "Active", className: "bg-green-500/10 text-green-600 border-green-200" },
-  inactive: { label: "Inactive", className: "bg-gray-500/10 text-gray-600 border-gray-200" },
-  maintenance: { label: "Maintenance", className: "bg-yellow-500/10 text-yellow-600 border-yellow-200" },
+  active: { label: "Active", className: "bg-secondary/10 text-secondary border-secondary/20" },
+  inactive: { label: "Inactive", className: "bg-muted text-muted-foreground border-muted" },
+  maintenance: { label: "Maintenance", className: "bg-primary/10 text-primary border-primary/20" },
 }
 
 export default function PropertiesPage() {
@@ -158,13 +158,13 @@ export default function PropertiesPage() {
     <DashboardLayout>
       {/* Page Header - Only show if not viewing details */}
       {!propertyDetailsOpen && (
-        <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-xl font-bold tracking-tight">Properties</h1>
-            <p className="text-xs text-muted-foreground font-medium">Manage your {filteredProperties.length} properties across all locations</p>
+            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Manage your {filteredProperties.length} properties</p>
           </div>
-          <Button className="bg-[#FF3D2E] hover:bg-[#e63225] text-white font-bold rounded-xl h-9 px-5 shadow-lg shadow-red-500/10" onClick={handleAddNew}>
-            <Plus className="mr-2 h-3.5 w-3.5" />
+          <Button className="bg-primary hover:bg-primary/90 text-white font-bold rounded-lg h-8 px-4 shadow-sm" onClick={handleAddNew}>
+            <Plus className="mr-1.5 h-3.5 w-3.5" />
             Add New Property
           </Button>
         </div>
@@ -180,15 +180,15 @@ export default function PropertiesPage() {
       ) : (
         <>
           {/* Filters and Actions Bar */}
-          <Card className="mb-4 border-none shadow-sm bg-white/50 backdrop-blur-sm rounded-2xl overflow-hidden">
-            <CardContent className="p-3">
+          <Card className="mb-3 border-none shadow-sm bg-white/50 backdrop-blur-sm rounded-xl overflow-hidden">
+            <CardContent className="p-2">
               <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex flex-1 flex-col gap-2.5 sm:flex-row sm:items-center">
                   <div className="relative flex-1 max-w-md">
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
                       placeholder="Search properties..."
-                      className="pl-9 bg-white border-gray-100 rounded-xl h-10 text-sm focus-visible:ring-[#FF3D2E]/20"
+                      className="pl-9 bg-white border-muted rounded-xl h-10 text-sm focus-visible:ring-primary/20"
                       value={propertySearch}
                       onChange={(e) => setPropertySearch(e.target.value)}
                     />
@@ -228,22 +228,22 @@ export default function PropertiesPage() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="flex rounded-xl border border-gray-100 p-1 bg-white">
+                  <div className="flex rounded-lg border border-gray-100 p-0.5 bg-white">
                     <Button
                       variant={viewMode === "list" ? "secondary" : "ghost"}
                       size="sm"
-                      className={cn("h-9 rounded-lg px-4", viewMode === "list" && "bg-gray-100 shadow-none")}
+                      className={cn("h-8 rounded-md px-3", viewMode === "list" && "bg-gray-100 shadow-none")}
                       onClick={() => setViewMode("list")}
                     >
-                      <List className="h-4 w-4" />
+                      <List className="h-3.5 w-3.5" />
                     </Button>
                     <Button
                       variant={viewMode === "grid" ? "secondary" : "ghost"}
                       size="sm"
-                      className={cn("h-9 rounded-lg px-4", viewMode === "grid" && "bg-gray-100 shadow-none")}
+                      className={cn("h-8 rounded-md px-3", viewMode === "grid" && "bg-gray-100 shadow-none")}
                       onClick={() => setViewMode("grid")}
                     >
-                      <LayoutGrid className="h-4 w-4" />
+                      <LayoutGrid className="h-3.5 w-3.5" />
                     </Button>
                   </div>
                 </div>
@@ -253,12 +253,12 @@ export default function PropertiesPage() {
 
           {/* Properties Table View */}
           {viewMode === "list" && (
-            <Card className="border-none shadow-sm rounded-2xl overflow-hidden bg-white">
+            <Card className="border-none shadow-sm rounded-xl overflow-hidden bg-white">
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader className="bg-gray-50/50">
                     <TableRow className="border-gray-100 hover:bg-transparent">
-                      <TableHead className="w-12 pl-6">
+                      <TableHead className="w-10 pl-4 py-3">
                         <Checkbox
                           checked={selectedProperties.length === properties.length && properties.length > 0}
                           onCheckedChange={toggleSelectAll}
@@ -288,7 +288,7 @@ export default function PropertiesPage() {
                     ) : (
                       filteredProperties.map((property) => (
                         <TableRow key={property.id} className="border-gray-50 hover:bg-gray-50/30 transition-colors group">
-                          <TableCell className="pl-6">
+                          <TableCell className="pl-4 py-2">
                             <Checkbox
                               checked={selectedProperties.includes(property.id)}
                               onCheckedChange={() => toggleSelectProperty(property.id)}
@@ -397,7 +397,7 @@ export default function PropertiesPage() {
                       <div className="flex-1">
                         <h3 className="font-bold text-base text-[#0A0A0A] leading-tight mb-1">{property.name}</h3>
                         <div className="flex items-center gap-1 text-[11px] font-bold text-muted-foreground uppercase tracking-wide">
-                          <MapPin className="h-3 w-3 text-[#FF3D2E]" />
+                          <MapPin className="h-3 w-3 text-primary" />
                           {property.location}
                         </div>
                       </div>

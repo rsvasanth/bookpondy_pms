@@ -40,7 +40,7 @@ export function QuickActions({ onSuccess }: QuickActionsProps) {
 
   return (
     <>
-      <Card className="border-none shadow-sm rounded-2xl bg-white overflow-hidden">
+      <Card className="shadow-sm">
         <CardHeader className="pb-3 px-6 pt-6">
           <div className="flex items-center justify-between">
             <div>
@@ -55,54 +55,55 @@ export function QuickActions({ onSuccess }: QuickActionsProps) {
             {/* Primary Actions */}
             <Button
               onClick={() => setBookingSheetOpen(true)}
-              className="h-auto flex-col gap-2 bg-[#FF3D2E] py-4 hover:bg-[#e63225] rounded-2xl shadow-lg shadow-red-500/20 text-white font-bold"
+              variant="default"
+              className="h-auto flex-col gap-2 py-4"
             >
-              <CalendarPlus className="h-6 w-6" />
-              <span className="text-[11px] uppercase tracking-wider">New Booking</span>
+              <CalendarPlus className="h-5 w-5" />
+              <span className="text-[10px] uppercase tracking-wider">New Booking</span>
             </Button>
 
             <Button
               onClick={() => setPropertyDialogOpen(true)}
               variant="outline"
-              className="h-auto flex-col gap-2 border-gray-100 border-dashed py-4 rounded-2xl bg-white hover:bg-gray-50 text-gray-600 font-bold"
+              className="h-auto flex-col gap-2 py-4"
             >
-              <Building2 className="h-6 w-6 text-gray-400" />
-              <span className="text-[11px] uppercase tracking-wider">Add Property</span>
+              <Building2 className="h-5 w-5" />
+              <span className="text-[10px] uppercase tracking-wider">Add Property</span>
             </Button>
 
-            <Button variant="outline" className="h-auto flex-col gap-2 border-gray-100 py-4 rounded-2xl bg-white hover:bg-gray-50 text-gray-600 font-bold">
-              <UserPlus className="h-6 w-6 text-gray-400" />
-              <span className="text-[11px] uppercase tracking-wider">Add Guest</span>
+            <Button variant="outline" className="h-auto flex-col gap-2 py-4">
+              <UserPlus className="h-5 w-5" />
+              <span className="text-[10px] uppercase tracking-wider">Add Guest</span>
             </Button>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="h-auto flex-col gap-2 border-gray-100 py-4 rounded-2xl bg-white hover:bg-gray-50 text-gray-600 font-bold">
-                  <Plus className="h-6 w-6 text-gray-400" />
-                  <span className="flex items-center gap-0.5 text-[11px] uppercase tracking-wider">
+                <Button variant="outline" className="h-auto flex-col gap-2 py-4">
+                  <Plus className="h-5 w-5" />
+                  <span className="flex items-center gap-0.5 text-[10px] uppercase tracking-wider">
                     More <ChevronDown className="h-3 w-3" />
                   </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2 border-gray-100 shadow-xl">
-                <DropdownMenuItem className="rounded-xl py-2.5 cursor-pointer">
+                <DropdownMenuItem className="rounded-xl py-2 cursor-pointer">
                   <Receipt className="mr-3 h-4 w-4 text-muted-foreground" />
                   Create Invoice
                 </DropdownMenuItem>
-                <DropdownMenuItem className="rounded-xl py-2.5 cursor-pointer">
+                <DropdownMenuItem className="rounded-xl py-2 cursor-pointer">
                   <ClipboardList className="mr-3 h-4 w-4 text-muted-foreground" />
                   Assign Task
                 </DropdownMenuItem>
-                <DropdownMenuItem className="rounded-xl py-2.5 cursor-pointer">
+                <DropdownMenuItem className="rounded-xl py-2 cursor-pointer">
                   <Wrench className="mr-3 h-4 w-4 text-muted-foreground" />
                   Log Maintenance
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="rounded-xl py-2.5 cursor-pointer">
+                <DropdownMenuItem className="rounded-xl py-2 cursor-pointer">
                   <MessageSquarePlus className="mr-3 h-4 w-4 text-muted-foreground" />
                   Send Message
                 </DropdownMenuItem>
-                <DropdownMenuItem className="rounded-xl py-2.5 cursor-pointer">
+                <DropdownMenuItem className="rounded-xl py-2 cursor-pointer">
                   <FileText className="mr-3 h-4 w-4 text-muted-foreground" />
                   Generate Report
                 </DropdownMenuItem>
@@ -111,40 +112,40 @@ export function QuickActions({ onSuccess }: QuickActionsProps) {
           </div>
 
           {/* Today's Summary */}
-          <div className="mt-6 grid grid-cols-2 gap-3 rounded-2xl border border-gray-50 bg-gray-50/50 p-4 sm:grid-cols-4">
+          <div className="mt-6 grid grid-cols-2 gap-4 border-t pt-6 sm:grid-cols-4">
             <div className="flex items-center gap-3">
-              <div className="rounded-xl bg-blue-100 p-2 text-blue-600">
+              <div className="rounded-lg bg-muted p-2">
                 <BedDouble className="h-4 w-4" />
               </div>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Check-ins</p>
+                <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Check-ins</p>
                 <p className="text-sm font-bold">4 today</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="rounded-xl bg-orange-100 p-2 text-orange-600">
+              <div className="rounded-lg bg-muted p-2">
                 <Clock className="h-4 w-4" />
               </div>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Check-outs</p>
+                <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Check-outs</p>
                 <p className="text-sm font-bold">3 today</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="rounded-xl bg-green-100 p-2 text-green-600">
+              <div className="rounded-lg bg-muted p-2">
                 <CheckCircle2 className="h-4 w-4" />
               </div>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Completed</p>
+                <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Completed</p>
                 <p className="text-sm font-bold">12 tasks</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="rounded-xl bg-red-100 p-2 text-red-600">
-                <AlertTriangle className="h-4 w-4" />
+              <div className="rounded-lg bg-muted p-2">
+                <AlertTriangle className="h-4 w-4 text-destructive" />
               </div>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Urgent</p>
+                <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Urgent</p>
                 <p className="text-sm font-bold">2 tasks</p>
               </div>
             </div>

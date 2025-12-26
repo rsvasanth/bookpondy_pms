@@ -15,7 +15,6 @@ import {
     Phone,
     Mail,
     Building2,
-    Users,
     Sparkles,
     ArrowRight,
     ArrowLeft,
@@ -37,7 +36,7 @@ export default function CreateBookingPage() {
     const [selectedProperty, setSelectedProperty] = useState<string>("")
     const [selectedCategory, setSelectedCategory] = useState<string>("")
     const [selectedUnit, setSelectedUnit] = useState<string>("")
-    const [guests, setGuests] = useState("2")
+    const [guests] = useState("2")
     const [guestName, setGuestName] = useState("")
     const [guestEmail, setGuestEmail] = useState("")
     const [guestPhone, setGuestPhone] = useState("")
@@ -132,86 +131,86 @@ export default function CreateBookingPage() {
         <DashboardLayout>
             <div className="flex flex-col h-[calc(100vh-2rem)]">
                 {/* Header */}
-                <div className="mb-6 flex items-center justify-between shrink-0">
-                    <div className="flex items-center gap-4">
-                        <Button variant="ghost" size="icon" onClick={() => navigate("/bookings")} className="rounded-full h-10 w-10 border border-gray-200 hover:bg-white hover:shadow-sm">
+                <div className="mb-4 flex items-center justify-between shrink-0">
+                    <div className="flex items-center gap-3">
+                        <Button variant="ghost" size="icon" onClick={() => navigate("/bookings")} className="rounded-full h-8 w-8 border border-gray-200 hover:bg-white hover:shadow-sm">
                             <ArrowLeft className="h-4 w-4" />
                         </Button>
                         <div>
-                            <h1 className="text-2xl font-bold tracking-tight text-[#0A0A0A]">Create Booking</h1>
-                            <p className="text-sm text-muted-foreground font-medium">New reservation entry</p>
+                            <h1 className="text-xl font-bold tracking-tight text-foreground">Create Booking</h1>
+                            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-wider">New reservation entry</p>
                         </div>
                     </div>
                 </div>
 
                 {/* 3-Column Grid Layout */}
-                <div className="flex-1 overflow-y-auto min-h-0 pb-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
+                <div className="flex-1 overflow-y-auto min-h-0 pb-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-full">
 
                         {/* COLUMN 1: GUEST DETAILS */}
-                        <div className="flex flex-col gap-6">
-                            <div className="bg-white border border-gray-100 border-b-4 border-b-[#FF3D2E] rounded-[2rem] overflow-hidden shadow-xl shadow-gray-200/50 flex flex-col h-full hover:shadow-2xl hover:shadow-red-500/5 hover:-translate-y-1 transition-all">
+                        <div className="flex flex-col gap-4">
+                            <div className="bg-white border border-muted border-b-4 border-b-primary rounded-2xl overflow-hidden shadow-xl shadow-gray-200/50 flex flex-col h-full hover:shadow-2xl hover:shadow-primary/5 transition-all">
                                 {/* Header */}
-                                <div className="bg-gradient-to-br from-[#FF3D2E] to-[#FF6B5B] p-5 text-white relative shrink-0">
+                                <div className="bg-primary p-4 text-white relative shrink-0">
                                     <div className="absolute top-0 right-0 p-4 opacity-10">
-                                        <User className="h-24 w-24 transform translate-x-4 -translate-y-4" />
+                                        <User className="h-16 w-16 transform translate-x-4 -translate-y-4" />
                                     </div>
-                                    <p className="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-2">Step 1</p>
-                                    <h2 className="text-xl font-bold truncate pr-4 leading-tight">Guest Information</h2>
-                                    <p className="text-xs font-medium opacity-80 mt-1">Primary contact details</p>
+                                    <p className="text-[9px] font-bold uppercase tracking-widest opacity-80 mb-1">Step 1</p>
+                                    <h2 className="text-lg font-bold truncate pr-4 leading-tight">Guest Information</h2>
+                                    <p className="text-[10px] font-medium opacity-80">Primary contact details</p>
                                 </div>
                                 {/* Jagged Divider */}
                                 <div className="h-3 bg-white relative -mt-1.5 shrink-0">
-                                    <div className="absolute top-0 left-0 w-full h-1.5 bg-[#FF3D2E] opacity-90 rounded-b-[1rem]"></div>
+                                    <div className="absolute top-0 left-0 w-full h-1.5 bg-[#FF3D2E] opacity-90 rounded-b-xl"></div>
                                 </div>
 
-                                <div className="p-6 space-y-6 flex-1">
-                                    <div className="space-y-2">
-                                        <Label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Full Name *</Label>
+                                <div className="p-4 space-y-4 flex-1">
+                                    <div className="space-y-1.5">
+                                        <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Full Name *</Label>
                                         <Input
                                             placeholder="Vikram Malhotra"
-                                            className="rounded-xl h-12 bg-gray-50/50 border-gray-100 focus-visible:ring-red-500/20 font-semibold px-4"
+                                            className="rounded-lg h-10 bg-muted/20 border-muted focus-visible:ring-primary/20 font-semibold px-3 text-sm"
                                             value={guestName}
                                             onChange={(e) => setGuestName(e.target.value)}
                                             autoFocus
                                         />
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Email Address</Label>
+                                    <div className="space-y-1.5">
+                                        <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Email Address</Label>
                                         <div className="relative">
-                                            <Mail className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                                            <Mail className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
                                             <Input
                                                 type="email"
                                                 placeholder="vikram@example.com"
-                                                className="pl-11 rounded-xl h-12 bg-gray-50/50 border-gray-100 focus-visible:ring-red-500/20 font-medium"
+                                                className="pl-9 rounded-lg h-10 bg-muted/20 border-muted focus-visible:ring-primary/20 font-medium text-sm"
                                                 value={guestEmail}
                                                 onChange={(e) => setGuestEmail(e.target.value)}
                                             />
                                         </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Phone Number</Label>
+                                    <div className="space-y-1.5">
+                                        <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Phone Number</Label>
                                         <div className="relative">
-                                            <Phone className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                                            <Phone className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
                                             <Input
                                                 placeholder="+91 98765 43210"
-                                                className="pl-11 rounded-xl h-12 bg-gray-50/50 border-gray-100 focus-visible:ring-red-500/20 font-medium"
+                                                className="pl-9 rounded-lg h-10 bg-muted/20 border-muted focus-visible:ring-primary/20 font-medium text-sm"
                                                 value={guestPhone}
                                                 onChange={(e) => setGuestPhone(e.target.value)}
                                             />
                                         </div>
                                     </div>
 
-                                    <div className="pt-4 border-t border-gray-50 space-y-4">
-                                        <Label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Identity Proof (Govt. ID)</Label>
-                                        <div className="space-y-4">
+                                    <div className="pt-3 border-t border-gray-50 space-y-3">
+                                        <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Identity Proof (Govt. ID)</Label>
+                                        <div className="space-y-3">
                                             <Input
                                                 placeholder="ID Number (Aadhar / Passport)"
-                                                className="rounded-xl h-11 bg-gray-50/50 border-gray-100 focus-visible:ring-red-500/20 font-medium text-sm"
+                                                className="rounded-lg h-9 bg-muted/20 border-muted focus-visible:ring-primary/20 font-medium text-xs"
                                                 value={guestIdNumber}
                                                 onChange={(e) => setGuestIdNumber(e.target.value)}
                                             />
-                                            <div className="relative border border-dashed border-gray-200 rounded-xl p-4 flex flex-col items-center justify-center text-center gap-2 bg-gray-50/30 hover:bg-gray-50 transition-colors cursor-pointer group">
+                                            <div className="relative border border-dashed border-gray-200 rounded-lg p-3 flex flex-col items-center justify-center text-center gap-1.5 bg-gray-50/30 hover:bg-gray-50 transition-colors cursor-pointer group">
                                                 {/* Preview or Upload UI */}
                                                 {guestIdUrl ? (
                                                     <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-gray-100">
@@ -222,8 +221,8 @@ export default function CreateBookingPage() {
                                                     </div>
                                                 ) : (
                                                     <>
-                                                        <div className="h-8 w-8 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
-                                                            {uploadLoading ? <Sparkles className="h-4 w-4 animate-spin text-blue-500" /> : <User className="h-4 w-4" />}
+                                                        <div className="h-8 w-8 rounded-full bg-muted text-secondary flex items-center justify-center">
+                                                            {uploadLoading ? <Sparkles className="h-4 w-4 animate-spin text-primary" /> : <User className="h-4 w-4" />}
                                                         </div>
                                                         <div>
                                                             <p className="text-xs font-bold text-gray-600">{uploadLoading ? "Uploading..." : "Upload ID Photo"}</p>
@@ -249,27 +248,27 @@ export default function CreateBookingPage() {
                         </div>
 
                         {/* COLUMN 2: STAY DETAILS */}
-                        <div className="flex flex-col gap-6">
-                            <div className="bg-white border border-gray-100 border-b-4 border-b-[#FF3D2E]/20 rounded-[2rem] overflow-hidden shadow-xl shadow-gray-200/50 flex flex-col h-full hover:shadow-2xl hover:shadow-red-500/5 hover:-translate-y-1 transition-all">
+                        <div className="flex flex-col gap-4">
+                            <div className="bg-white border border-muted border-b-4 border-b-primary/20 rounded-2xl overflow-hidden shadow-xl shadow-gray-200/50 flex flex-col h-full hover:shadow-2xl hover:shadow-primary/5 transition-all">
                                 {/* Header */}
-                                <div className="bg-gradient-to-br from-[#FF3D2E] to-[#FF6B5B] p-5 text-white relative shrink-0">
+                                <div className="bg-primary p-4 text-white relative shrink-0">
                                     <div className="absolute top-0 right-0 p-4 opacity-10">
-                                        <MapPin className="h-24 w-24 transform translate-x-4 -translate-y-4" />
+                                        <MapPin className="h-16 w-16 transform translate-x-4 -translate-y-4" />
                                     </div>
-                                    <p className="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-2">Step 2</p>
-                                    <h2 className="text-xl font-bold truncate pr-4 leading-tight">Stay Details</h2>
-                                    <p className="text-xs font-medium opacity-80 mt-1">Property & Dates</p>
+                                    <p className="text-[9px] font-bold uppercase tracking-widest opacity-80 mb-1">Step 2</p>
+                                    <h2 className="text-lg font-bold truncate pr-4 leading-tight">Stay Details</h2>
+                                    <p className="text-[10px] font-medium opacity-80 mt-1">Property & Dates</p>
                                 </div>
                                 {/* Jagged Divider */}
                                 <div className="h-3 bg-white relative -mt-1.5 shrink-0">
-                                    <div className="absolute top-0 left-0 w-full h-1.5 bg-[#FF3D2E] opacity-90 rounded-b-[1rem]"></div>
+                                    <div className="absolute top-0 left-0 w-full h-1.5 bg-[#FF3D2E] opacity-90 rounded-b-xl"></div>
                                 </div>
 
-                                <div className="p-6 space-y-6 flex-1">
-                                    <div className="space-y-2">
-                                        <Label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Property *</Label>
+                                <div className="p-4 space-y-4 flex-1">
+                                    <div className="space-y-1.5">
+                                        <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Property *</Label>
                                         <Select value={selectedProperty} onValueChange={setSelectedProperty}>
-                                            <SelectTrigger className="rounded-xl h-12 bg-gray-50/50 border-gray-100 focus:ring-red-500/20 font-medium px-4">
+                                            <SelectTrigger className="rounded-lg h-10 bg-muted/20 border-muted focus:ring-primary/20 font-medium px-3 text-sm">
                                                 <SelectValue placeholder="Select Property" />
                                             </SelectTrigger>
                                             <SelectContent className="rounded-xl border-gray-100 shadow-xl p-1">
@@ -286,7 +285,7 @@ export default function CreateBookingPage() {
                                         <div className="space-y-2">
                                             <Label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Type</Label>
                                             <Select value={selectedCategory} onValueChange={setSelectedCategory} disabled={!selectedProperty}>
-                                                <SelectTrigger className="rounded-xl h-12 bg-gray-50/50 border-gray-100 focus:ring-orange-500/20 font-medium px-3">
+                                                <SelectTrigger className="rounded-xl h-10 bg-muted/20 border-muted focus:ring-primary/20 font-medium px-3">
                                                     <SelectValue placeholder="Category" />
                                                 </SelectTrigger>
                                                 <SelectContent className="rounded-xl border-gray-100 shadow-xl p-1">
@@ -301,7 +300,7 @@ export default function CreateBookingPage() {
                                         <div className="space-y-2">
                                             <Label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Unit</Label>
                                             <Select value={selectedUnit} onValueChange={setSelectedUnit} disabled={!selectedProperty}>
-                                                <SelectTrigger className="rounded-xl h-12 bg-gray-50/50 border-gray-100 focus:ring-orange-500/20 font-medium px-3">
+                                                <SelectTrigger className="rounded-xl h-10 bg-muted/20 border-muted focus:ring-primary/20 font-medium px-3">
                                                     <SelectValue placeholder="Unit #" />
                                                 </SelectTrigger>
                                                 <SelectContent className="rounded-xl border-gray-100 shadow-xl p-1">
@@ -323,14 +322,14 @@ export default function CreateBookingPage() {
                                                 <Button
                                                     variant="outline"
                                                     className={cn(
-                                                        "w-full justify-start text-left font-medium rounded-xl h-12 bg-gray-50/50 border-gray-100 focus:ring-orange-500/20 px-4",
+                                                        "w-full justify-start text-left font-medium rounded-xl h-10 bg-muted/20 border-muted focus:ring-primary/20 px-4",
                                                         !dateRange && "text-muted-foreground"
                                                     )}
                                                 >
                                                     <CalendarIcon className="mr-3 h-4 w-4 text-gray-400" />
                                                     {dateRange?.from ? (
                                                         dateRange.to ? (
-                                                            <span className="font-bold text-[#0A0A0A]">
+                                                            <span className="font-bold text-foreground">
                                                                 {format(dateRange.from, "dd MMM")} - {format(dateRange.to, "dd MMM")}
                                                             </span>
                                                         ) : (
@@ -341,7 +340,7 @@ export default function CreateBookingPage() {
                                                     )}
                                                 </Button>
                                             </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-4 rounded-3xl border-gray-100 shadow-2xl bg-white" align="start">
+                                            <PopoverContent className="w-auto p-4 rounded-2xl border-gray-100 shadow-2xl bg-white" align="start">
                                                 <Calendar
                                                     mode="range"
                                                     selected={dateRange}
@@ -358,7 +357,7 @@ export default function CreateBookingPage() {
                                         <Label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2 block">Special Requests</Label>
                                         <Textarea
                                             placeholder="Requests..."
-                                            className="rounded-xl bg-gray-50/50 border-gray-100 focus-visible:ring-orange-500/20 min-h-[80px] font-medium resize-none"
+                                            className="rounded-xl bg-muted/20 border-muted focus-visible:ring-primary/20 min-h-[80px] font-medium resize-none"
                                             value={specialRequests}
                                             onChange={(e) => setSpecialRequests(e.target.value)}
                                         />
@@ -369,9 +368,9 @@ export default function CreateBookingPage() {
 
                         {/* COLUMN 3: SUMMARY & CONFIRM */}
                         <div className="flex flex-col gap-6">
-                            <div className="bg-white border border-gray-100 border-b-4 border-b-[#FF3D2E]/20 rounded-[2rem] overflow-hidden shadow-xl shadow-gray-200/50 flex flex-col h-full sticky top-4 hover:shadow-2xl hover:shadow-red-500/5 hover:-translate-y-1 transition-all">
+                            <div className="bg-white border border-muted border-b-4 border-b-primary/20 rounded-2xl overflow-hidden shadow-xl shadow-gray-200/50 flex flex-col h-full sticky top-4 hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1 transition-all">
                                 {/* Ticket Header */}
-                                <div className="bg-gradient-to-br from-[#FF3D2E] to-[#FF6B5B] p-5 text-white relative shrink-0">
+                                <div className="bg-primary p-5 text-white relative shrink-0">
                                     <div className="absolute top-0 right-0 p-4 opacity-10">
                                         <Building2 className="h-24 w-24 transform translate-x-4 -translate-y-4" />
                                     </div>
@@ -395,15 +394,15 @@ export default function CreateBookingPage() {
 
                                 {/* Jagged Divider */}
                                 <div className="h-3 bg-white relative -mt-1.5 shrink-0">
-                                    <div className="absolute top-0 left-0 w-full h-1.5 bg-[#FF3D2E] opacity-90 rounded-b-[1rem]"></div>
+                                    <div className="absolute top-0 left-0 w-full h-1.5 bg-[#FF3D2E] opacity-90 rounded-b-xl"></div>
                                 </div>
 
                                 {/* Ticket Body */}
-                                <div className="p-6 space-y-6 flex-1 flex flex-col">
+                                <div className="p-5 space-y-6 flex-1 flex flex-col">
                                     <div className="flex justify-between items-center text-center">
                                         <div>
                                             <p className="text-[10px] font-bold uppercase text-gray-400">In</p>
-                                            <p className="font-bold text-lg text-[#0A0A0A]">{dateRange?.from ? format(dateRange.from, "dd MMM") : "--"}</p>
+                                            <p className="font-bold text-lg text-foreground">{dateRange?.from ? format(dateRange.from, "dd MMM") : "--"}</p>
                                         </div>
                                         <div className="flex-1 px-4 flex flex-col items-center">
                                             <span className="text-[10px] font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded-full">{nights} Nts</span>
@@ -411,14 +410,14 @@ export default function CreateBookingPage() {
                                         </div>
                                         <div>
                                             <p className="text-[10px] font-bold uppercase text-gray-400">Out</p>
-                                            <p className="font-bold text-lg text-[#0A0A0A]">{dateRange?.to ? format(dateRange.to, "dd MMM") : "--"}</p>
+                                            <p className="font-bold text-lg text-foreground">{dateRange?.to ? format(dateRange.to, "dd MMM") : "--"}</p>
                                         </div>
                                     </div>
 
-                                    <div className="bg-gray-50 rounded-xl p-4 flex items-center gap-3">
-                                        <div className="h-8 w-8 bg-white rounded-full flex items-center justify-center text-gray-400 shadow-sm"><User className="h-4 w-4" /></div>
+                                    <div className="bg-muted/20 rounded-xl p-4 flex items-center gap-3">
+                                        <div className="h-8 w-8 bg-white rounded-full flex items-center justify-center text-muted-foreground shadow-sm"><User className="h-4 w-4" /></div>
                                         <div>
-                                            <p className="text-sm font-bold text-[#0A0A0A]">{guestName || "Guest"}</p>
+                                            <p className="text-sm font-bold text-foreground">{guestName || "Guest"}</p>
                                             <p className="text-xs text-gray-400 font-medium">{guests} Guests</p>
                                         </div>
                                     </div>
@@ -433,13 +432,13 @@ export default function CreateBookingPage() {
                                             <span>₹{Math.round(baseRate * nights * 0.18).toLocaleString("en-IN")}</span>
                                         </div>
                                         <div className="flex justify-between items-end pt-2">
-                                            <span className="text-sm font-bold text-[#0A0A0A] uppercase tracking-wider">Total</span>
-                                            <span className="text-3xl font-bold text-[#FF3D2E]">₹{totalWithGST.toLocaleString("en-IN")}</span>
+                                            <span className="text-sm font-bold text-foreground uppercase tracking-wider">Total</span>
+                                            <span className="text-3xl font-bold text-primary">₹{totalWithGST.toLocaleString("en-IN")}</span>
                                         </div>
                                     </div>
 
                                     <Button
-                                        className="w-full bg-[#FF3D2E] hover:bg-[#e63225] text-white font-bold rounded-xl h-12 shadow-lg shadow-red-500/20 mt-4"
+                                        className="w-full bg-primary hover:bg-primary/90 text-white font-bold rounded-xl h-10 shadow-lg shadow-primary/20 mt-4"
                                         onClick={handleSubmit}
                                         disabled={!guestName || !selectedProperty || !dateRange?.from || !dateRange?.to || creating}
                                     >

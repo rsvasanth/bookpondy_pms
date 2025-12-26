@@ -7,7 +7,6 @@ import {
   Building2,
   CalendarDays,
   Users,
-  Wallet,
   MessageSquare,
   Star,
   Wrench,
@@ -15,10 +14,7 @@ import {
   BarChart3,
   Settings,
   ChevronUp,
-  Plus,
-  ChevronsUpDown,
   ClipboardList,
-  Globe,
   Receipt,
 } from "lucide-react"
 
@@ -45,29 +41,35 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { useFrappeAuth, useFrappeGetDocList } from "frappe-react-sdk"
-import BrandLogo from "./brand-logo"
+// import BrandLogo from "./brand-logo" // Removed per user request
 
 const mainNavItems = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/properties", label: "Properties", icon: Building2 },
-  { href: "/bookings", label: "Bookings", icon: CalendarDays },
-  { href: "/guests", label: "Guests", icon: Users },
+  { href: "/ongoing-bookings", label: "Ongoing Bookings", icon: CalendarDays },
+  { href: "/housekeeping", label: "Housekeeping", icon: ClipboardList },
+  { href: "/future-bookings", label: "Future Bookings", icon: CalendarDays },
+  { href: "/maintenance", label: "Maintenance", icon: Wrench },
+  { href: "/billing", label: "Billing & Payments", icon: Receipt },
+  { href: "/communications", label: "Client Communication", icon: MessageSquare },
 ]
 
 const managementNavItems = [
-  { href: "/financials", label: "Financials", icon: Wallet },
-  { href: "/invoices", label: "Invoices", icon: Receipt },
-  { href: "/channels", label: "Channels", icon: Globe },
-  { href: "/communications", label: "Communications", icon: MessageSquare },
-  { href: "/reviews", label: "Reviews", icon: Star },
+  { href: "/properties", label: "Properties", icon: Building2 },
+  { href: "/guests", label: "Guests", icon: Users },
+  { href: "/staff", label: "Staff", icon: UsersRound },
 ]
 
-const operationsNavItems = [
-  { href: "/tasks", label: "Tasks", icon: ClipboardList },
-  { href: "/maintenance", label: "Maintenance", icon: Wrench },
-  { href: "/staff", label: "Staff", icon: UsersRound },
+const reportsNavItems = [
   { href: "/reports", label: "Reports", icon: BarChart3 },
+  { href: "/reviews", label: "Reviews", icon: Star },
 ]
 
 
@@ -83,20 +85,50 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   // Set initial property when list loads
   const [selectedProperty, setSelectedProperty] = React.useState<{ name: string, property_name: string, city: string } | null>(null)
+  const [selectedPortfolio, setSelectedPortfolio] = React.useState<string>("")
+
+  const { data: portfoliosList } = useFrappeGetDocList("Property Portfolio", {
+    fields: ["name", "portfolio_name"],
+    limit: 100
+  })
 
   React.useEffect(() => {
     if (propertiesList && propertiesList.length > 0 && !selectedProperty) {
       setSelectedProperty(propertiesList[0])
     }
-  }, [propertiesList, selectedProperty])
+    if (portfoliosList && portfoliosList.length > 0 && !selectedPortfolio) {
+      setSelectedPortfolio(portfoliosList[0].name)
+    }
+  }, [propertiesList, selectedProperty, portfoliosList, selectedPortfolio])
 
   const userDisplayName = currentUser || "Administrator"
   const userInitials = userDisplayName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader className="h-16 flex flex-row items-center border-b px-4 py-0 gap-0">
-        <BrandLogo />
+      <SidebarHeader className="h-16 flex items-center border-b px-4 shrink-0 bg-transparent group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center">
+        <div className="w-full flex justify-center">
+          <Select value={selectedPortfolio} onValueChange={setSelectedPortfolio}>
+            <SelectTrigger
+              className="w-full h-10 rounded-xl border-muted bg-muted/30 focus:ring-primary/20 hover:bg-muted/40 transition-all font-bold text-foreground px-4 group-data-[collapsible=icon]:h-10 group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:border-none group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:[&>svg:last-child]:hidden"
+            >
+              <div className="flex-1 flex items-center gap-2.5 min-w-0 group-data-[collapsible=icon]:hidden">
+                <Building2 className="h-4 w-4 text-primary shrink-0" />
+                <SelectValue placeholder="Select" className="text-sm truncate" />
+              </div>
+              <div className="hidden group-data-[collapsible=icon]:flex items-center justify-center h-10 w-10 rounded-xl bg-primary/10 border border-primary/20">
+                <Building2 className="h-5 w-5 text-primary" />
+              </div>
+            </SelectTrigger>
+            <SelectContent className="rounded-xl border-muted shadow-xl">
+              {portfoliosList?.map((portfolio) => (
+                <SelectItem key={portfolio.name} value={portfolio.name} className="rounded-lg py-2.5 font-medium">
+                  {portfolio.portfolio_name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </SidebarHeader>
 
       <SidebarContent>
@@ -147,10 +179,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarSeparator />
 
         <SidebarGroup>
-          <SidebarGroupLabel>Operations</SidebarGroupLabel>
+          <SidebarGroupLabel>Analytics & Reports</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {operationsNavItems.map((item) => {
+              {reportsNavItems.map((item) => {
                 const isActive = pathname === item.href || pathname.startsWith(item.href)
                 return (
                   <SidebarMenuItem key={item.href}>

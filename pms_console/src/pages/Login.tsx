@@ -49,9 +49,9 @@ export default function Login() {
                     {/* Centered Login Form with TRANSPARENT Background */}
                     <Card className="w-full max-w-md border-none shadow-none bg-transparent p-0">
                         <CardContent className="pt-4 space-y-6 sm:space-y-8">
-                            <div className="space-y-2 text-center">
-                                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#0A0A0A]">Welcome Back</h2>
-                                <p className="text-sm text-muted-foreground">Enter your credentials to access the Bookpondy PMS</p>
+                            <div className="space-y-1 text-center">
+                                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-secondary">Welcome Back</h2>
+                                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Enter credentials to access PMS</p>
                             </div>
 
                             {error && (
@@ -64,36 +64,36 @@ export default function Login() {
 
                             <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
                                 <div className="space-y-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="email" className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground ml-1">Email Address</Label>
+                                    <div className="space-y-1.5">
+                                        <Label htmlFor="email" className="text-[9px] font-black uppercase tracking-[0.15em] text-muted-foreground ml-1">Email Address</Label>
                                         <div className="relative">
-                                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                                             <Input
                                                 id="email"
                                                 placeholder="admin@bookpondy.com"
                                                 type="email"
                                                 value={email}
                                                 onChange={(e) => setEmail(e.target.value)}
-                                                className="pl-12 h-12 sm:h-14 rounded-2xl bg-gray-50/50 border-gray-100 focus-visible:ring-2 focus-visible:ring-[#FF3D2E]/20 text-sm sm:text-base transition-all"
+                                                className="pl-10 h-11 rounded-xl bg-muted/20 border-muted focus-visible:ring-2 focus-visible:ring-primary/20 text-sm transition-all"
                                                 required
                                             />
                                         </div>
                                     </div>
 
-                                    <div className="space-y-2">
+                                    <div className="space-y-1.5">
                                         <div className="flex justify-between items-center ml-1">
-                                            <Label htmlFor="password" className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">Password</Label>
-                                            <a href="#" className="text-[10px] text-[#FF3D2E] font-bold uppercase tracking-wider hover:underline">Forgot?</a>
+                                            <Label htmlFor="password" className="text-[9px] font-black uppercase tracking-[0.15em] text-muted-foreground">Password</Label>
+                                            <a href="#" className="text-[9px] text-primary font-black uppercase tracking-wider hover:underline">Forgot?</a>
                                         </div>
                                         <div className="relative">
-                                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                                             <Input
                                                 id="password"
                                                 type="password"
                                                 placeholder="••••••••"
                                                 value={password}
                                                 onChange={(e) => setPassword(e.target.value)}
-                                                className="pl-12 h-12 sm:h-14 rounded-2xl bg-gray-50/50 border-gray-100 focus-visible:ring-2 focus-visible:ring-[#FF3D2E]/20 text-sm sm:text-base transition-all"
+                                                className="pl-10 h-11 rounded-xl bg-muted/20 border-muted focus-visible:ring-2 focus-visible:ring-primary/20 text-sm transition-all"
                                                 required
                                             />
                                         </div>
@@ -102,22 +102,22 @@ export default function Login() {
 
                                 <Button
                                     type="submit"
-                                    className="w-full h-12 sm:h-14 rounded-2xl bg-[#FF3D2E] hover:bg-[#e63225] text-white font-bold transition-all shadow-xl shadow-red-500/20 group text-base uppercase tracking-widest px-8"
+                                    className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-white font-black transition-all shadow-lg shadow-primary/20 group text-sm uppercase tracking-widest px-8"
                                     disabled={isLoading}
                                 >
                                     {isLoading ? (
-                                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                     ) : (
                                         <>
                                             Sign In
-                                            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                            <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                         </>
                                     )}
                                 </Button>
                             </form>
 
                             <p className="text-center text-sm text-muted-foreground pt-2">
-                                Need access? <a href="#" className="text-[#FF3D2E] hover:underline font-bold">Contact Admin</a>
+                                Need access? <a href="#" className="text-primary hover:underline font-bold">Contact Admin</a>
                             </p>
                         </CardContent>
                     </Card>

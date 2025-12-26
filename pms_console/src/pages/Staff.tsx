@@ -11,6 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Plus, Search, MoreHorizontal, Eye, Pencil, User } from "lucide-react"
 import { useFrappeGetDocList } from "frappe-react-sdk"
+import { cn } from "@/lib/utils"
 
 export default function StaffPage() {
     const [searchQuery, setSearchQuery] = useState("")
@@ -27,24 +28,24 @@ export default function StaffPage() {
 
     return (
         <DashboardLayout>
-            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight">Staff Management</h1>
-                    <p className="text-muted-foreground">Manage property personnel and roles</p>
+                    <h1 className="text-xl font-bold tracking-tight">Staff Management</h1>
+                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Property personnel and roles</p>
                 </div>
-                <Button className="bg-[#FF3D2E] hover:bg-[#FF3D2E]/90 shadow-lg shadow-red-500/20 rounded-xl transition-all hover:scale-105">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Staff member
+                <Button className="bg-primary hover:bg-primary/90 shadow-sm rounded-lg h-8 px-4 transition-all hover:scale-105 font-bold text-xs">
+                    <Plus className="mr-1.5 h-3.5 w-3.5" />
+                    Add Staff Member
                 </Button>
             </div>
 
-            <Card className="mb-6 rounded-[2rem] border-gray-100 shadow-xl shadow-gray-200/50">
-                <CardContent className="p-6">
+            <Card className="mb-3 rounded-xl border-gray-100 shadow-sm">
+                <CardContent className="p-3">
                     <div className="relative max-w-md">
                         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                         <Input
                             placeholder="Search staff..."
-                            className="pl-10 h-11 rounded-2xl bg-gray-50 border-gray-100 focus-visible:ring-red-500/20"
+                            className="pl-10 h-11 rounded-2xl bg-muted/20 border-muted focus-visible:ring-primary/20"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -52,16 +53,16 @@ export default function StaffPage() {
                 </CardContent>
             </Card>
 
-            <Card className="rounded-[2rem] border-gray-100 shadow-xl shadow-gray-200/50 overflow-hidden">
+            <Card className="rounded-xl border-gray-100 shadow-sm overflow-hidden bg-white">
                 <Table>
                     <TableHeader>
                         <TableRow className="bg-gray-50/50 hover:bg-gray-50/50">
-                            <TableHead className="py-4 font-semibold text-gray-900 pl-6">Staff Member</TableHead>
-                            <TableHead className="py-4 font-semibold text-gray-900">Designation</TableHead>
-                            <TableHead className="py-4 font-semibold text-gray-900">Property</TableHead>
-                            <TableHead className="py-4 font-semibold text-gray-900">Contact</TableHead>
-                            <TableHead className="py-4 font-semibold text-gray-900">Status</TableHead>
-                            <TableHead className="text-right py-4 font-semibold text-gray-900 pr-6">Actions</TableHead>
+                            <TableHead className="py-2.5 font-bold text-[10px] uppercase tracking-wider text-gray-400 pl-4">Staff Member</TableHead>
+                            <TableHead className="py-2.5 font-bold text-[10px] uppercase tracking-wider text-gray-400">Designation</TableHead>
+                            <TableHead className="py-2.5 font-bold text-[10px] uppercase tracking-wider text-gray-400">Property</TableHead>
+                            <TableHead className="py-2.5 font-bold text-[10px] uppercase tracking-wider text-gray-400">Contact</TableHead>
+                            <TableHead className="py-2.5 font-bold text-[10px] uppercase tracking-wider text-gray-400">Status</TableHead>
+                            <TableHead className="text-right py-2.5 font-bold text-[10px] uppercase tracking-wider text-gray-400 pr-4">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -69,8 +70,8 @@ export default function StaffPage() {
                             <TableRow key={staff.name} className="hover:bg-gray-50/50 transition-colors">
                                 <TableCell className="pl-6 py-4">
                                     <div className="flex items-center gap-3">
-                                        <Avatar className="h-10 w-10 border border-gray-100">
-                                            <AvatarFallback className="bg-gradient-to-br from-blue-50 to-blue-100 text-blue-600"><User className="h-4 w-4" /></AvatarFallback>
+                                        <Avatar className="h-10 w-10 border border-muted">
+                                            <AvatarFallback className="bg-muted text-secondary"><User className="h-4 w-4" /></AvatarFallback>
                                         </Avatar>
                                         <span className="font-semibold text-gray-900">{staff.staff_name}</span>
                                     </div>
@@ -84,7 +85,10 @@ export default function StaffPage() {
                                     </div>
                                 </TableCell>
                                 <TableCell className="py-4">
-                                    <Badge variant="secondary" className={`rounded-md px-2 py-0.5 font-medium ${staff.status === "Active" ? "bg-green-50 text-green-700" : "bg-gray-100 text-gray-600"}`}>
+                                    <Badge variant="secondary" className={cn(
+                                        "rounded-md px-2 py-0.5 font-bold uppercase text-[9px]",
+                                        staff.status === "Active" ? "bg-muted text-secondary" : "bg-primary/10 text-primary"
+                                    )}>
                                         {staff.status}
                                     </Badge>
                                 </TableCell>

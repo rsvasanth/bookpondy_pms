@@ -1,8 +1,8 @@
 "use client"
 
-import type React from "react"
+import React from "react"
 import { useTheme } from "next-themes"
-import { Search, Bell, Sun, Moon, HelpCircle } from "lucide-react"
+import { Search, Bell, Sun, Moon, User, LogOut, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
+import { useFrappeAuth } from "frappe-react-sdk"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -24,6 +25,23 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const { theme, setTheme } = useTheme()
+  const { currentUser, logout } = useFrappeAuth()
+  const [now, setNow] = React.useState(new Date())
+
+  React.useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 60000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const formattedDate = now.toLocaleDateString('en-IN', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short'
+  })
+  const formattedTime = now.toLocaleTimeString('en-IN', {
+    hour: '2-digit',
+    minute: '2-digit'
+  })
 
   return (
     <SidebarProvider>
@@ -34,11 +52,23 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
 
+          {/* Clock/Date - visible on desktop */}
+          <div className="hidden md:flex items-center ml-2 border border-muted bg-muted/20 px-3 py-1.5 rounded-xl">
+            <Clock className="h-3.5 w-3.5 text-primary mr-2" />
+            <div className="flex items-center gap-2 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+              <span>{formattedDate}</span>
+              <span className="opacity-30">•</span>
+              <span className="text-foreground">{formattedTime}</span>
+            </div>
+          </div>
+
           {/* Search */}
-          {/* Search */}
-          <div className="ml-auto relative w-full max-w-sm mr-4">
+          <div className="ml-auto relative w-full max-w-sm mr-4 hidden sm:block">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="Search..." className="pl-9 h-9" />
+            <Input
+              placeholder="Search bookings, guests, properties..."
+              className="pl-9 h-10 border-none bg-muted/50 rounded-xl focus-visible:ring-primary"
+            />
           </div>
 
           {/* Right Section */}
@@ -78,10 +108,29 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Help */}
-            <Button variant="ghost" size="icon">
-              <HelpCircle className="h-5 w-5" />
-            </Button>
+            {/* User Profile */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full bg-muted/50 overflow-hidden border">
+                  <User className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 rounded-xl">
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-bold leading-none">{currentUser || "Administrator"}</p>
+                    <p className="text-xs leading-none text-muted-foreground">Property Owner</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="rounded-lg gap-2">
+                  <User className="h-4 w-4" /> Account Settings
+                </DropdownMenuItem>
+                <DropdownMenuItem className="rounded-lg gap-2 text-destructive focus:text-destructive focus:bg-destructive/10" onClick={() => logout()}>
+                  <LogOut className="h-4 w-4" /> Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
 
