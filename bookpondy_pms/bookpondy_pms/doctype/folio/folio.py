@@ -7,34 +7,35 @@ class Folio(Document):
 		self.calculate_totals()
 
 	def calculate_totals(self):
-		subtotal = 0
-		total_tax = 0
+		self.subtotal = 0
+		self.total_tax = 0
 		
-		# Find charges linked to this folio's reservation
+		# Map charge types to GST rates (default 18% for accommodation, 5% for others)
+		gst_rates = {
+			"Accommodation": 12 if self.grand_total < 7500 else 18,
+			"Service": 18,
+			"Amenity": 12,
+			"Food & Beverage": 5
+		}
+		
 		charges = frappe.get_all("Charge", 
 			filters={"reservation": self.reservation},
-			fields=["amount", "charge_type"]
+			fields=["name", "amount", "charge_type"]
 		)
 		
-		# In a real scenario, we'd have tax rates per charge type.
-		# For simplicity, let's assume 18% GST (9% SGST + 9% CGST) for Accommodation.
 		for charge in charges:
 			amount = flt(charge.amount)
+			rate = gst_rates.get(charge.charge_type, 18)
+			
 			if self.gst_status == "Applicable":
-				# Assume inclusive tax for now
-				tax = amount * 0.18 / 1.18
-				total_tax += tax
-				subtotal += amount - tax
+				# Simplified: Assume inclusive tax
+				tax = amount * rate / (100 + rate)
+				self.total_tax += tax
+				self.subtotal += amount - tax
 			else:
-				subtotal += amount
+				self.subtotal += amount
 
-		self.subtotal = subtotal
-		self.total_tax = total_tax
-		self.grand_total = subtotal + total_tax - flt(self.discount_amount)
-		
-		if self.status == "Paid" and self.grand_total <= 0:
-			# Logic could be more complex (comparing against actual transactions)
-			pass
+		self.grand_total = self.subtotal + self.total_tax - flt(self.discount_amount)
 
 	@frappe.whitelist()
 	def finalize_invoice(self, gst_number=None, payment_method=None):
@@ -129,3 +130,15 @@ def send_invoice_email(folio_name, email=None):
 	doc.guest_email_address = target_email
 	doc.save()
 	return True
+
+@frappe.whitelist()
+def generate_invoice_pdf(folio):
+	"""Generates and returns an invoice PDF (placeholder)."""
+	doc = frappe.get_doc("Folio", folio)
+	# In a real system, we'd use frappe.get_print("Folio", doc.name)
+	# For now, we return a simple HTML that the browser can print.
+	html = frappe.get_print("Folio", doc.name, as_pdf=True)
+	
+	frappe.local.response.filename = f"{doc.invoice_number or doc.name}.pdf"
+	frappe.local.response.filecontent = html
+	frappe.local.response.type = "download"

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -150,7 +150,7 @@ export default function InvoicesPage() {
     )
 }
 
-function InvoiceDetailView({ folioName, onBack }: { folioName: string, onBack: () => void }) {
+function InvoiceDetailView({ folioName }: { folioName: string, onBack: () => void }) {
     const { data: details, isLoading, mutate } = useFrappeGetCall(
         "bookpondy_pms.bookpondy_pms.doctype.folio.folio.get_invoice_details",
         { folio_name: folioName }
@@ -158,6 +158,10 @@ function InvoiceDetailView({ folioName, onBack }: { folioName: string, onBack: (
 
     const { call: finalize } = useFrappePostCall("bookpondy_pms.bookpondy_pms.doctype.folio.folio.finalize_invoice")
     const { call: sendEmail } = useFrappePostCall("bookpondy_pms.bookpondy_pms.doctype.folio.folio.send_invoice_email")
+
+    const handleDownloadPDF = () => {
+        window.open(`/api/method/bookpondy_pms.bookpondy_pms.doctype.folio.folio.generate_invoice_pdf?folio=${folioName}`);
+    };
 
     const handleFinalize = async () => {
         try {
@@ -294,7 +298,11 @@ function InvoiceDetailView({ folioName, onBack }: { folioName: string, onBack: (
                             Print Invoice
                         </Button>
 
-                        <Button variant="outline" className="w-full h-11 rounded-xl border-muted font-bold text-blue-600 border-blue-100 hover:bg-blue-50">
+                        <Button
+                            variant="outline"
+                            className="w-full h-11 rounded-xl border-muted font-bold text-blue-600 border-blue-100 hover:bg-blue-50"
+                            onClick={handleDownloadPDF}
+                        >
                             <Download className="mr-2 h-4 w-4" />
                             Download PDF
                         </Button>

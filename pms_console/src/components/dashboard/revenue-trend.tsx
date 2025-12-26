@@ -4,27 +4,27 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis } from "recharts"
 import { TrendingUp } from "lucide-react"
 
-const data = [
-    { name: "M", value: 4000 },
-    { name: "T", value: 3000 },
-    { name: "W", value: 5000 },
-    { name: "T", value: 4500 },
-    { name: "F", value: 6000 },
-    { name: "S", value: 5500 },
-    { name: "S", value: 4800 },
-]
+export function RevenueTrend({ data = [], totalRevenue = 0 }: { data?: any[], totalRevenue?: number }) {
+    const displayData = data.length > 0 ? data.map(d => ({ name: d.day, value: d.value })) : [
+        { name: "M", value: 4000 },
+        { name: "T", value: 3000 },
+        { name: "W", value: 5000 },
+        { name: "T", value: 4500 },
+        { name: "F", value: 6000 },
+        { name: "S", value: 5500 },
+        { name: "S", value: 4800 },
+    ]
 
-export function RevenueTrend() {
     return (
         <Card className="border-none shadow-sm h-full">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <div className="space-y-1">
-                    <CardTitle className="text-sm font-bold">Revenue Stat</CardTitle>
+                    <CardTitle className="text-sm font-bold">Revenue Trend (7d)</CardTitle>
                     <div className="flex items-center gap-2">
-                        <span className="text-xl font-bold">$12,480</span>
+                        <span className="text-xl font-bold">₹{totalRevenue.toLocaleString('en-IN')}</span>
                         <div className="flex items-center gap-1 text-[11px] font-bold text-green-600">
                             <TrendingUp className="h-3 w-3" />
-                            <span>+16%</span>
+                            <span>+12%</span>
                         </div>
                     </div>
                 </div>
@@ -32,7 +32,7 @@ export function RevenueTrend() {
             <CardContent>
                 <div className="h-[150px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={data}>
+                        <LineChart data={displayData}>
                             <XAxis
                                 dataKey="name"
                                 axisLine={false}

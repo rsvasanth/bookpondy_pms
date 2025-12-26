@@ -201,7 +201,28 @@ def get_dashboard_stats():
 		order_by="creation desc"
 	)
 
-	# 8. Critical Alerts
+	# 8. Revenue Trend (Last 7 days)
+	revenue_trend = []
+	for i in range(7):
+		date = add_days(today(), -i)
+		daily_revenue = frappe.db.get_value("Folio", 
+			{"invoice_date": date, "status": ["in", ["Posted", "Paid"]]}, 
+			"sum(grand_total)"
+		) or 0
+		revenue_trend.append({
+			"day": getdate(date).strftime("%a"),
+			"value": flt(daily_revenue)
+		})
+	revenue_trend.reverse()
+
+	# 9. Reservation Status Breakdown (Donut)
+	status_counts = frappe.db.get_all("Reservation",
+		filters={"reservation_status": ["in", ["Confirmed", "Checked-In", "Checked-Out"]]},
+		group_by="reservation_status",
+		fields=["reservation_status as name", "count(name) as value"]
+	)
+
+	# 10. Critical Alerts
 	alerts = []
 	
 	# Upcoming check-ins today remains 'Confirmed'
@@ -241,6 +262,8 @@ def get_dashboard_stats():
 		"departures_today": departures_today,
 		"housekeeping_count": housekeeping_count,
 		"recent_activity": recent_activity,
+		"revenue_trend": revenue_trend,
+		"status_counts": status_counts,
 		"alerts": alerts
 	}
 

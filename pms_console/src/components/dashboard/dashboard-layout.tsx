@@ -2,7 +2,7 @@
 
 import React from "react"
 import { useTheme } from "next-themes"
-import { Search, Bell, Sun, Moon, User, LogOut, Clock } from "lucide-react"
+import { Search, Bell, Sun, Moon, User, LogOut, Clock, Plus, UserPlus, Brush, FileText } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -56,7 +56,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="hidden md:flex items-center ml-2 border border-muted bg-muted/20 px-3 py-1.5 rounded-xl">
             <Clock className="h-3.5 w-3.5 text-primary mr-2" />
             <div className="flex items-center gap-2 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-              <span>{formattedDate}</span>
+              <span className="bg-slate-100 px-1.5 rounded text-slate-600">📅 {formattedDate}</span>
               <span className="opacity-30">•</span>
               <span className="text-foreground">{formattedTime}</span>
             </div>
@@ -69,6 +69,22 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               placeholder="Search bookings, guests, properties..."
               className="pl-9 h-10 border-none bg-muted/50 rounded-xl focus-visible:ring-primary"
             />
+          </div>
+
+          {/* Quick Actions - Moving from Dashboard.tsx */}
+          <div className="hidden xl:flex items-center gap-2 mr-4">
+            <Button className="h-8 px-3 bg-[#ff3924] hover:bg-[#d6301e] text-white font-bold rounded-lg text-[10px] tracking-wide uppercase shadow-md transition-all hover:translate-y-[-1px]">
+              <Plus className="h-3.5 w-3.5 mr-1" /> Booking
+            </Button>
+            <Button variant="secondary" className="h-8 px-3 bg-[#f8f9fa] hover:bg-slate-100 text-slate-700 font-bold rounded-lg text-[10px] tracking-wide uppercase border border-slate-200 shadow-sm transition-all">
+              <UserPlus className="h-3.5 w-3.5 mr-1 text-slate-400" /> Guest
+            </Button>
+            <Button variant="secondary" className="h-8 px-3 bg-[#f8f9fa] hover:bg-slate-100 text-slate-700 font-bold rounded-lg text-[10px] tracking-wide uppercase border border-slate-200 shadow-sm transition-all">
+              <Brush className="h-3.5 w-3.5 mr-1 text-slate-400" /> Task
+            </Button>
+            <Button variant="secondary" className="h-8 px-3 bg-[#f8f9fa] hover:bg-slate-100 text-slate-700 font-bold rounded-lg text-[10px] tracking-wide uppercase border border-slate-200 shadow-sm transition-all">
+              <FileText className="h-3.5 w-3.5 mr-1 text-slate-400" /> Folio
+            </Button>
           </div>
 
           {/* Right Section */}

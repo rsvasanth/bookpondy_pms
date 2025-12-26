@@ -7,9 +7,13 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { PropertyDialog } from "@/components/properties/property-dialog"
 import { PropertyDetailsView } from "@/components/properties/property-details-view"
 import {
@@ -17,14 +21,13 @@ import {
   Search,
   LayoutGrid,
   List,
-  Filter,
   MoreHorizontal,
-  Eye,
-  Pencil,
-  Trash2,
-  Star,
   MapPin,
   Loader2,
+  Building2,
+  Home,
+  CheckCircle2,
+  AlertCircle
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useFrappeGetDocList, useFrappeDeleteDoc } from "frappe-react-sdk"
@@ -56,14 +59,7 @@ interface Property {
   raw?: any
 }
 
-const statusConfig = {
-  active: { label: "Active", className: "bg-secondary/10 text-secondary border-secondary/20" },
-  inactive: { label: "Inactive", className: "bg-muted text-muted-foreground border-muted" },
-  maintenance: { label: "Maintenance", className: "bg-primary/10 text-primary border-primary/20" },
-}
-
 export default function PropertiesPage() {
-  const [viewMode, setViewMode] = useState<"grid" | "list">("list")
   const [selectedProperties, setSelectedProperties] = useState<string[]>([])
   const [propertyDialogOpen, setPropertyDialogOpen] = useState(false)
   const [editingProperty, setEditingProperty] = useState<any>(null)
@@ -73,20 +69,17 @@ export default function PropertiesPage() {
 
   const {
     propertySearch, setPropertySearch,
-    propertyStatus, setPropertyStatus,
     propertyType, setPropertyType
   } = useFiltersStore()
 
-  // Fetch Properties
   const { data: propertiesList, isLoading, mutate } = useFrappeGetDocList("Property", {
-    fields: ["*"], // Fetch all fields for editing
+    fields: ["*"],
     limit: 100,
     orderBy: { field: "creation", order: "desc" }
   })
 
   const { deleteDoc, loading: isDeleting } = useFrappeDeleteDoc()
 
-  // Map to interface
   const properties: Property[] = propertiesList?.map(p => ({
     id: p.name,
     name: p.property_name,
@@ -101,11 +94,6 @@ export default function PropertiesPage() {
     image: p.banner_image || p.images?.[0]?.image || "/placeholder.svg",
     raw: p
   })) || []
-
-  const getStatusConfig = (status: string) => {
-    const s = status.toLowerCase()
-    return statusConfig[s as keyof typeof statusConfig] || statusConfig.inactive
-  }
 
   const toggleSelectAll = () => {
     if (selectedProperties.length === properties.length) {
@@ -149,27 +137,19 @@ export default function PropertiesPage() {
   const filteredProperties = properties.filter((p) => {
     const matchesSearch = p.name.toLowerCase().includes(propertySearch.toLowerCase()) ||
       p.location.toLowerCase().includes(propertySearch.toLowerCase())
-    const matchesStatus = propertyStatus === "all" || p.status === propertyStatus.toLowerCase()
     const matchesType = propertyType === "all" || p.type.toLowerCase() === propertyType.toLowerCase()
-    return matchesSearch && matchesStatus && matchesType
+    return matchesSearch && matchesType
   })
+
+  const stats = [
+    { label: "Total Properties", value: properties.length || 0, icon: Building2, color: "text-blue-500", bg: "bg-blue-50" },
+    { label: "Active", value: properties.filter(p => p.status === "active").length || 0, icon: CheckCircle2, color: "text-emerald-500", bg: "bg-emerald-50" },
+    { label: "Total Units", value: properties.reduce((acc, curr) => acc + curr.units, 0), icon: Home, color: "text-primary", bg: "bg-primary/5" },
+    { label: "Maintenance", value: properties.filter(p => p.status === "maintenance").length || 0, icon: AlertCircle, color: "text-amber-500", bg: "bg-amber-50" },
+  ]
 
   return (
     <DashboardLayout>
-      {/* Page Header - Only show if not viewing details */}
-      {!propertyDetailsOpen && (
-        <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-xl font-bold tracking-tight">Properties</h1>
-            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Manage your {filteredProperties.length} properties</p>
-          </div>
-          <Button className="bg-primary hover:bg-primary/90 text-white font-bold rounded-lg h-8 px-4 shadow-sm" onClick={handleAddNew}>
-            <Plus className="mr-1.5 h-3.5 w-3.5" />
-            Add New Property
-          </Button>
-        </div>
-      )}
-
       {propertyDetailsOpen && viewingProperty ? (
         <div className="flex-1 min-h-[calc(100vh-180px)]">
           <PropertyDetailsView
@@ -178,267 +158,239 @@ export default function PropertiesPage() {
           />
         </div>
       ) : (
-        <>
-          {/* Filters and Actions Bar */}
-          <Card className="mb-3 border-none shadow-sm bg-white/50 backdrop-blur-sm rounded-xl overflow-hidden">
-            <CardContent className="p-2">
-              <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                <div className="flex flex-1 flex-col gap-2.5 sm:flex-row sm:items-center">
-                  <div className="relative flex-1 max-w-md">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                      placeholder="Search properties..."
-                      className="pl-9 bg-white border-muted rounded-xl h-10 text-sm focus-visible:ring-primary/20"
-                      value={propertySearch}
-                      onChange={(e) => setPropertySearch(e.target.value)}
-                    />
-                  </div>
-
-                  <Select value={propertyType} onValueChange={setPropertyType}>
-                    <SelectTrigger className="w-[130px] bg-white border-gray-100 rounded-xl h-10 text-xs font-bold uppercase tracking-wider">
-                      <SelectValue placeholder="Type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Types</SelectItem>
-                      <SelectItem value="Homestay">Homestay</SelectItem>
-                      <SelectItem value="Villa">Villa</SelectItem>
-                      <SelectItem value="Hotel">Hotel</SelectItem>
-                      <SelectItem value="Hostel">Hostel</SelectItem>
-                      <SelectItem value="Resort">Resort</SelectItem>
-                      <SelectItem value="Guesthouse">Guesthouse</SelectItem>
-                      <SelectItem value="Apartment">Apartment</SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  <Select value={propertyStatus} onValueChange={setPropertyStatus}>
-                    <SelectTrigger className="w-[130px] bg-white border-gray-100 rounded-xl h-10 text-xs font-bold uppercase tracking-wider">
-                      <SelectValue placeholder="Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Status</SelectItem>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="inactive">Inactive</SelectItem>
-                      <SelectItem value="maintenance">Maintenance</SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  <Button variant="outline" size="icon" className="h-10 w-10 rounded-xl border-gray-100 bg-white shadow-sm">
-                    <Filter className="h-4 w-4" />
-                  </Button>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <div className="flex rounded-lg border border-gray-100 p-0.5 bg-white">
-                    <Button
-                      variant={viewMode === "list" ? "secondary" : "ghost"}
-                      size="sm"
-                      className={cn("h-8 rounded-md px-3", viewMode === "list" && "bg-gray-100 shadow-none")}
-                      onClick={() => setViewMode("list")}
-                    >
-                      <List className="h-3.5 w-3.5" />
-                    </Button>
-                    <Button
-                      variant={viewMode === "grid" ? "secondary" : "ghost"}
-                      size="sm"
-                      className={cn("h-8 rounded-md px-3", viewMode === "grid" && "bg-gray-100 shadow-none")}
-                      onClick={() => setViewMode("grid")}
-                    >
-                      <LayoutGrid className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
-                </div>
+        <div className="flex flex-col gap-6">
+          {/* Header */}
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-slate-800">Properties</h1>
+              <p className="text-sm text-slate-500 font-medium tracking-tight">
+                Manage your real estate assets and inventory
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="relative w-full md:w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                <Input
+                  placeholder="Search properties..."
+                  className="pl-9 h-10 rounded-xl border-slate-200 bg-white shadow-sm text-sm"
+                  value={propertySearch}
+                  onChange={(e) => setPropertySearch(e.target.value)}
+                />
               </div>
-            </CardContent>
-          </Card>
+              <Button
+                onClick={handleAddNew}
+                className="bg-primary hover:bg-primary/90 text-white rounded-xl h-10 px-4 font-bold text-sm gap-2 shadow-sm"
+              >
+                <Plus className="h-4 w-4" /> Add Property
+              </Button>
+            </div>
+          </div>
 
-          {/* Properties Table View */}
-          {viewMode === "list" && (
-            <Card className="border-none shadow-sm rounded-xl overflow-hidden bg-white">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader className="bg-gray-50/50">
-                    <TableRow className="border-gray-100 hover:bg-transparent">
-                      <TableHead className="w-10 pl-4 py-3">
-                        <Checkbox
-                          checked={selectedProperties.length === properties.length && properties.length > 0}
-                          onCheckedChange={toggleSelectAll}
-                        />
-                      </TableHead>
-                      <TableHead className="font-bold text-gray-400 uppercase text-[10px] tracking-wider">Property</TableHead>
-                      <TableHead className="font-bold text-gray-400 uppercase text-[10px] tracking-wider">Type</TableHead>
-                      <TableHead className="text-center font-bold text-gray-400 uppercase text-[10px] tracking-wider">Units</TableHead>
-                      <TableHead className="text-center font-bold text-gray-400 uppercase text-[10px] tracking-wider">Rating</TableHead>
-                      <TableHead className="font-bold text-gray-400 uppercase text-[10px] tracking-wider">Status</TableHead>
-                      <TableHead className="text-right pr-6 font-bold text-gray-400 uppercase text-[10px] tracking-wider">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {isLoading ? (
-                      <TableRow>
-                        <TableCell colSpan={7} className="h-32 text-center">
-                          <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
-                        </TableCell>
-                      </TableRow>
-                    ) : filteredProperties.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={7} className="h-32 text-center text-muted-foreground">
-                          No properties found matching your filters.
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      filteredProperties.map((property) => (
-                        <TableRow key={property.id} className="border-gray-50 hover:bg-gray-50/30 transition-colors group">
-                          <TableCell className="pl-4 py-2">
-                            <Checkbox
-                              checked={selectedProperties.includes(property.id)}
-                              onCheckedChange={() => toggleSelectProperty(property.id)}
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-3 py-0.5">
-                              <div className="relative h-11 w-16 overflow-hidden rounded-lg border border-gray-100 bg-gray-50 flex-shrink-0">
-                                <img
-                                  src={property.image}
-                                  alt={property.name}
-                                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                                />
-                              </div>
-                              <div>
-                                <p className="font-bold text-sm text-[#0A0A0A] leading-tight">{property.name}</p>
-                                <div className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground mt-0.5 uppercase tracking-wide">
-                                  <MapPin className="h-2.5 w-2.5" />
-                                  {property.location}
+          <Tabs defaultValue="list" className="w-full space-y-6">
+            <div className="flex items-center justify-between">
+              <TabsList className="bg-slate-100/50 p-1 rounded-xl h-11">
+                <TabsTrigger value="list" className="rounded-lg h-9 px-4 font-bold text-xs gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm text-slate-500 data-[state=active]:text-slate-900">
+                  <List className="h-4 w-4" /> List View
+                </TabsTrigger>
+                <TabsTrigger value="grid" className="rounded-lg h-9 px-4 font-bold text-xs gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm text-slate-500 data-[state=active]:text-slate-900">
+                  <LayoutGrid className="h-4 w-4" /> Grid View
+                </TabsTrigger>
+              </TabsList>
+            </div>
+
+            {/* Stats Row */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {stats.map((stat) => (
+                <Card key={stat.label} className="border-none shadow-sm rounded-2xl bg-white transition-all hover:translate-y-[-2px]">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{stat.label}</span>
+                      <stat.icon className={cn("h-4 w-4", stat.color)} />
+                    </div>
+                    <p className="text-3xl font-black text-slate-800 tracking-tight">{stat.value}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            <TabsContent value="list" className="mt-0">
+              <Card className="border-none shadow-sm rounded-2xl overflow-hidden bg-white">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-slate-50">
+                        <th className="text-left py-4 px-6">
+                          <Checkbox
+                            checked={selectedProperties.length === properties.length && properties.length > 0}
+                            onCheckedChange={toggleSelectAll}
+                            className="border-slate-300"
+                          />
+                        </th>
+                        <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Property</th>
+                        <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Type</th>
+                        <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Units</th>
+                        <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Status</th>
+                        <th className="text-right py-4 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-50">
+                      {isLoading ? (
+                        <tr>
+                          <td colSpan={6} className="h-32 text-center">
+                            <Loader2 className="h-6 w-6 animate-spin mx-auto text-slate-400" />
+                          </td>
+                        </tr>
+                      ) : filteredProperties.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="h-32 text-center text-slate-400 font-medium text-sm">
+                            No properties found.
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredProperties.map((property) => (
+                          <tr key={property.id} className="hover:bg-slate-50/50 transition-colors group">
+                            <td className="py-4 px-6">
+                              <Checkbox
+                                checked={selectedProperties.includes(property.id)}
+                                onCheckedChange={() => toggleSelectProperty(property.id)}
+                                className="border-slate-300"
+                              />
+                            </td>
+                            <td className="py-4 px-6">
+                              <div className="flex items-center gap-4">
+                                <div className="h-12 w-16 rounded-lg bg-slate-100 overflow-hidden border border-slate-100 flex-shrink-0">
+                                  <img
+                                    src={property.image}
+                                    alt={property.name}
+                                    className="object-cover w-full h-full"
+                                  />
+                                </div>
+                                <div>
+                                  <p className="font-bold text-slate-800 text-sm mb-0.5">{property.name}</p>
+                                  <p className="text-[10px] font-medium text-slate-400 tracking-tight flex items-center gap-1">
+                                    <MapPin className="h-3 w-3" />
+                                    {property.location}
+                                  </p>
                                 </div>
                               </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <span className="text-xs font-bold uppercase tracking-wider text-gray-400">{property.type}</span>
-                          </TableCell>
-                          <TableCell className="text-center font-bold text-sm">{property.units}</TableCell>
-                          <TableCell className="text-center">
-                            <div className="flex items-center justify-center gap-1">
-                              <Star className="h-3.5 w-3.5 text-yellow-500 fill-yellow-500" />
-                              <span className="font-bold text-xs">{property.rating}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge className={cn("rounded-lg px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider border", getStatusConfig(property.status).className)}>
-                              {getStatusConfig(property.status).label}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right pr-6">
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10 hover:bg-gray-100">
-                                  <MoreHorizontal className="h-5 w-5" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end" className="w-48 rounded-2xl p-2 border-gray-100 shadow-xl overflow-hidden">
-                                <DropdownMenuItem className="rounded-xl py-2.5 cursor-pointer" onClick={() => handleViewDetails(property)}>
-                                  <Eye className="mr-3 h-4 w-4 text-muted-foreground" />
-                                  View Details
-                                </DropdownMenuItem>
-                                <DropdownMenuItem className="rounded-xl py-2.5 cursor-pointer" onClick={() => handleEdit(property)}>
-                                  <Pencil className="mr-3 h-4 w-4 text-muted-foreground" />
-                                  Edit Property
-                                </DropdownMenuItem>
-                                <DropdownMenuItem className="rounded-xl py-2.5 cursor-pointer text-destructive focus:text-destructive focus:bg-red-50" onClick={() => setDeletingProperty(property.id)}>
-                                  <Trash2 className="mr-3 h-4 w-4" />
-                                  Delete Property
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
+                            </td>
+                            <td className="py-4 px-6">
+                              <Badge variant="outline" className="text-[9px] font-bold text-slate-500 uppercase border-slate-200 bg-slate-50">
+                                {property.type}
+                              </Badge>
+                            </td>
+                            <td className="py-4 px-6">
+                              <span className="text-xs font-bold text-slate-700">{property.units} Units</span>
+                            </td>
+                            <td className="py-4 px-6">
+                              <Badge className={cn(
+                                "text-[10px] font-black uppercase px-2 py-0.5 rounded-md border-none shadow-none",
+                                property.status === "active" ? "bg-emerald-500 text-white" :
+                                  property.status === "maintenance" ? "bg-amber-500 text-white" : "bg-slate-200 text-slate-500"
+                              )}>
+                                {property.status}
+                              </Badge>
+                            </td>
+                            <td className="py-4 px-6 text-right">
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-slate-100 text-slate-400">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-48 rounded-xl p-1">
+                                  <DropdownMenuItem className="rounded-lg text-xs font-bold cursor-pointer" onClick={() => handleViewDetails(property)}>
+                                    View Details
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="rounded-lg text-xs font-bold cursor-pointer" onClick={() => handleEdit(property)}>
+                                    Edit Property
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="rounded-lg text-xs font-bold text-red-600 focus:text-red-600 cursor-pointer" onClick={() => setDeletingProperty(property.id)}>
+                                    Delete
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="grid" className="mt-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {isLoading ? (
+                  Array(4).fill(0).map((_, i) => (
+                    <Card key={i} className="h-72 animate-pulse bg-slate-50 rounded-2xl border-none shadow-sm" />
+                  ))
+                ) : filteredProperties.length === 0 ? (
+                  <div className="col-span-full h-32 flex items-center justify-center text-slate-400 font-medium text-sm">
+                    No properties found.
+                  </div>
+                ) : (
+                  filteredProperties.map((property) => (
+                    <Card key={property.id} className="overflow-hidden border-none shadow-sm hover:shadow-md transition-all rounded-2xl group bg-white cursor-pointer" onClick={() => handleViewDetails(property)}>
+                      <div className="relative h-48 overflow-hidden">
+                        <img
+                          src={property.image}
+                          alt={property.name}
+                          className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
+                        <div className="absolute top-3 right-3">
+                          <Badge className={cn(
+                            "text-[9px] font-black uppercase px-2 py-0.5 rounded-md border-none shadow-none",
+                            property.status === "active" ? "bg-emerald-500 text-white" : "bg-slate-800 text-white"
+                          )}>
+                            {property.status}
+                          </Badge>
+                        </div>
+                        <div className="absolute bottom-3 left-3 right-3 text-white">
+                          <h3 className="font-bold text-lg leading-tight mb-0.5">{property.name}</h3>
+                          <p className="text-[10px] font-bold uppercase tracking-widest opacity-80 flex items-center gap-1">
+                            <MapPin className="h-3 w-3" />
+                            {property.location}
+                          </p>
+                        </div>
+                      </div>
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="space-y-0.5">
+                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Type</span>
+                            <span className="text-xs font-bold text-slate-700">{property.type}</span>
+                          </div>
+                          <div className="space-y-0.5 text-right">
+                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Inventory</span>
+                            <span className="text-xs font-bold text-slate-700">{property.units} Units</span>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
               </div>
-            </Card>
-          )}
+            </TabsContent>
+          </Tabs>
 
-          {/* Properties Grid View */}
-          {viewMode === "grid" && (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {isLoading ? (
-                Array(8).fill(0).map((_, i) => (
-                  <Card key={i} className="h-72 animate-pulse bg-gray-50 rounded-2xl border-none shadow-sm" />
-                ))
-              ) : filteredProperties.length === 0 ? (
-                <div className="col-span-full text-center text-muted-foreground py-12">
-                  No properties found matching your filters.
-                </div>
-              ) : (
-                filteredProperties.map((property) => (
-                  <Card key={property.id} className="overflow-hidden border-none shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl group flex flex-col bg-white">
-                    <div className="relative h-40 overflow-hidden">
-                      <img src={property.image} alt={property.name} className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500" />
-                      <Badge className={cn("absolute right-3 top-3 rounded-xl border backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold", getStatusConfig(property.status).className)}>
-                        {getStatusConfig(property.status).label}
-                      </Badge>
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
-                        <div className="flex gap-1.5 w-full">
-                          <Button variant="secondary" size="sm" className="h-8 px-2 rounded-xl font-bold bg-white/95 border-none" onClick={() => handleViewDetails(property)}>
-                            <Eye className="h-3.5 w-3.5" />
-                          </Button>
-                          <Button variant="secondary" size="sm" className="flex-1 h-8 rounded-xl font-bold bg-white/95 border-none text-xs" onClick={() => handleEdit(property)}>
-                            <Pencil className="mr-1 h-3 w-3" />
-                            Edit
-                          </Button>
-                          <Button variant="destructive" size="sm" className="h-8 px-2 rounded-xl shadow-lg shadow-red-500/20" onClick={() => setDeletingProperty(property.id)}>
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                    <CardContent className="p-4 flex-1 flex flex-col">
-                      <div className="flex-1">
-                        <h3 className="font-bold text-base text-[#0A0A0A] leading-tight mb-1">{property.name}</h3>
-                        <div className="flex items-center gap-1 text-[11px] font-bold text-muted-foreground uppercase tracking-wide">
-                          <MapPin className="h-3 w-3 text-primary" />
-                          {property.location}
-                        </div>
-                      </div>
-
-                      <div className="mt-4 pt-3 border-t border-gray-50 flex items-center justify-between">
-                        <div>
-                          <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400 block mb-0.5">Type</span>
-                          <span className="text-xs font-bold">{property.type}</span>
-                        </div>
-                        <div className="text-right">
-                          <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400 block mb-0.5">Units</span>
-                          <span className="text-xs font-bold">{property.units}</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              )}
-            </div>
-          )}
-
-          {/* Confirmation Dialog for Deletion */}
           <AlertDialog open={!!deletingProperty} onOpenChange={() => setDeletingProperty(null)}>
-            <AlertDialogContent className="rounded-3xl bg-white border-none shadow-2xl p-8 max-w-sm mx-auto">
-              <AlertDialogHeader className="space-y-4">
-                <div className="w-16 h-16 bg-red-50 text-red-500 rounded-3xl flex items-center justify-center mx-auto">
-                  <Trash2 className="h-8 w-8" />
-                </div>
-                <AlertDialogTitle className="text-xl font-bold text-center">Delete Property?</AlertDialogTitle>
-                <AlertDialogDescription className="text-center text-muted-foreground leading-relaxed">
-                  Are you sure you want to delete this property? This action cannot be undone and all data will be lost.
+            <AlertDialogContent className="rounded-2xl border-none shadow-lg bg-white p-6 max-w-sm">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-lg font-bold text-slate-800">Delete Property?</AlertDialogTitle>
+                <AlertDialogDescription className="text-sm text-slate-500 font-medium">
+                  This action cannot be undone. This will permanently delete the property and remove data from the servers.
                 </AlertDialogDescription>
               </AlertDialogHeader>
-              <AlertDialogFooter className="mt-8 flex gap-3 flex-col sm:flex-row">
-                <AlertDialogCancel className="rounded-xl border-gray-100 h-12 sm:flex-1 mt-0">Cancel</AlertDialogCancel>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="rounded-xl border-slate-200 h-10 font-bold text-xs">Cancel</AlertDialogCancel>
                 <AlertDialogAction
-                  className="bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl h-12 sm:flex-1"
+                  className="bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl h-10 text-xs"
                   onClick={handleDelete}
                   disabled={isDeleting}
                 >
-                  {isDeleting ? "Deleting..." : "Delete Now"}
+                  Delete
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -450,7 +402,7 @@ export default function PropertiesPage() {
             initialData={editingProperty}
             onSuccess={() => mutate()}
           />
-        </>
+        </div>
       )}
     </DashboardLayout>
   )

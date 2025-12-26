@@ -15,7 +15,11 @@ def create_demo_data():
         "Booking Inquiry", "Financial Period Summary"
     ]
     for dt in doctypes_to_clear:
-        frappe.db.delete(dt)
+        try:
+            if frappe.db.table_exists(f"tab{dt}"):
+                frappe.db.delete(dt)
+        except Exception as e:
+            print(f"Skipping {dt} cleanup: {e}")
     
     frappe.db.commit()
     print("Cleanup complete.")
