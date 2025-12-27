@@ -18,6 +18,8 @@ import {
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { useFrappeAuth } from "frappe-react-sdk"
+import { useIsTablet } from "@/hooks/use-mobile"
+import { useLocation } from "react-router-dom"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -27,6 +29,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const { theme, setTheme } = useTheme()
   const { currentUser, logout } = useFrappeAuth()
   const [now, setNow] = React.useState(new Date())
+  const location = useLocation()
 
   React.useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60000)
@@ -43,8 +46,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     minute: '2-digit'
   })
 
+  const isTablet = useIsTablet()
+  const isSchedulerPage = location.pathname === "/scheduler"
+
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={!isTablet}>
       <AppSidebar />
       <SidebarInset>
         {/* Header */}
@@ -151,7 +157,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 p-4">{children}</main>
+        <main className={`flex-1 ${isSchedulerPage ? 'p-3' : 'p-4'}`}>{children}</main>
       </SidebarInset>
     </SidebarProvider>
   )

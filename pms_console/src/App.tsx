@@ -16,6 +16,7 @@ import LoginPage from "@/pages/Login"
 import HousekeepingPage from "@/pages/Housekeeping"
 import BillingPage from "@/pages/Billing"
 import MaintenancePage from "@/pages/Maintenance"
+import SchedulerPage from "@/pages/Scheduler"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { FrappeProvider, useFrappeAuth } from "frappe-react-sdk"
 import { Toaster } from "@/components/ui/sonner"
@@ -81,6 +82,14 @@ function App() {
 							element={
 								<ProtectedRoute>
 									<CreateBookingPage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/scheduler"
+							element={
+								<ProtectedRoute>
+									<SchedulerPage />
 								</ProtectedRoute>
 							}
 						/>
