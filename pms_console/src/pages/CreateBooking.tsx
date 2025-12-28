@@ -24,12 +24,13 @@ import {
 import { format, differenceInDays } from "date-fns"
 import { cn } from "@/lib/utils"
 import type { DateRange } from "react-day-picker"
-import { useFrappeCreateDoc, useFrappeGetDocList, useFrappeFileUpload } from "frappe-react-sdk"
+import { useFrappeFileUpload } from "frappe-react-sdk"
+import { useLocalDocList, useLocalCreate } from "@/hooks/use-local-data"
 import { toast } from "sonner"
 
 export default function CreateBookingPage() {
     const navigate = useNavigate()
-    const { createDoc, loading: creating } = useFrappeCreateDoc()
+    const { create: createLocalDoc, isCreating: creating } = useLocalCreate()
     const { upload, loading: uploadLoading } = useFrappeFileUpload() // Upload hook
 
     const [dateRange, setDateRange] = useState<DateRange | undefined>()
@@ -45,23 +46,16 @@ export default function CreateBookingPage() {
     const [specialRequests, setSpecialRequests] = useState("")
 
     // Fetch real properties
-    const { data: propertiesList } = useFrappeGetDocList("Property", {
-        fields: ["name", "property_name"],
-        limit: 100
-    })
+    const { data: propertiesList } = useLocalDocList("Property")
 
     // Fetch unit categories for selected property
-    const { data: unitCategoriesList } = useFrappeGetDocList("Unit Category", {
-        fields: ["name", "category_name", "base_rate_per_night"],
-        filters: selectedProperty ? [["property", "=", selectedProperty]] : undefined,
-        limit: 100
+    const { data: unitCategoriesList } = useLocalDocList("Unit Category", {
+        selector: selectedProperty ? { property: selectedProperty } : {}
     })
 
     // Fetch units
-    const { data: unitsList } = useFrappeGetDocList("Unit", {
-        fields: ["name", "unit_number", "unit_status"],
-        filters: selectedCategory ? [["unit_category", "=", selectedCategory]] : undefined,
-        limit: 100
+    const { data: unitsList } = useLocalDocList("Unit", {
+        selector: selectedCategory ? { unit_category: selectedCategory } : {}
     })
 
     const nights = dateRange?.from && dateRange?.to ? differenceInDays(dateRange.to, dateRange.from) : 0
@@ -98,7 +92,7 @@ export default function CreateBookingPage() {
         }
 
         try {
-            await createDoc("Reservation", {
+            await createLocalDoc("Reservation", {
                 naming_series: "RES-.YYYY.-.#####",
                 property: selectedProperty,
                 guest_name: guestName,

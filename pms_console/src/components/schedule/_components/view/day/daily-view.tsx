@@ -56,33 +56,33 @@ const pageTransitionVariants = {
 // Precise time-based event grouping function
 const groupEventsByTimePeriod = (events: Event[] | undefined) => {
   if (!events || events.length === 0) return [];
-  
+
   // Sort events by start time
-  const sortedEvents = [...events].sort((a, b) => 
+  const sortedEvents = [...events].sort((a, b) =>
     new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
   );
-  
+
   // Precise time overlap checking function
   const eventsOverlap = (event1: Event, event2: Event) => {
     const start1 = new Date(event1.startDate).getTime();
     const end1 = new Date(event1.endDate).getTime();
     const start2 = new Date(event2.startDate).getTime();
     const end2 = new Date(event2.endDate).getTime();
-    
+
     // Strict time overlap - one event starts before the other ends
     return (start1 < end2 && start2 < end1);
   };
-  
+
   // Use a graph-based approach to find connected components (overlapping event groups)
   const buildOverlapGraph = (events: Event[]) => {
     // Create adjacency list
     const graph: Record<string, string[]> = {};
-    
+
     // Initialize graph
     events.forEach(event => {
       graph[event.id] = [];
     });
-    
+
     // Build connections
     for (let i = 0; i < events.length; i++) {
       for (let j = i + 1; j < events.length; j++) {
@@ -92,54 +92,54 @@ const groupEventsByTimePeriod = (events: Event[] | undefined) => {
         }
       }
     }
-    
+
     return graph;
   };
-  
+
   // Find connected components using DFS
   const findConnectedComponents = (graph: Record<string, string[]>, events: Event[]) => {
     const visited: Record<string, boolean> = {};
     const components: Event[][] = [];
-    
+
     // DFS function to traverse the graph
     const dfs = (nodeId: string, component: string[]) => {
       visited[nodeId] = true;
       component.push(nodeId);
-      
+
       for (const neighbor of graph[nodeId]) {
         if (!visited[neighbor]) {
           dfs(neighbor, component);
         }
       }
     };
-    
+
     // Find all connected components
     for (const event of events) {
       if (!visited[event.id]) {
         const component: string[] = [];
         dfs(event.id, component);
-        
+
         // Map IDs back to events
-        const eventGroup = component.map(id => 
+        const eventGroup = component.map(id =>
           events.find(e => e.id === id)!
         );
-        
+
         components.push(eventGroup);
       }
     }
-    
+
     return components;
   };
-  
+
   // Build the overlap graph
   const graph = buildOverlapGraph(sortedEvents);
-  
+
   // Find connected components (groups of overlapping events)
   const timeGroups = findConnectedComponents(graph, sortedEvents);
-  
+
   // Sort events within each group by start time
-  return timeGroups.map(group => 
-    group.sort((a, b) => 
+  return timeGroups.map(group =>
+    group.sort((a, b) =>
       new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
     )
   );
@@ -201,7 +201,7 @@ export default function DailyView({
     currentDate?.getDate() || 0,
     currentDate
   );
-  
+
   // Calculate time groups once for all events
   const timeGroups = groupEventsByTimePeriod(dayEvents);
 
@@ -289,7 +289,7 @@ export default function DailyView({
   }, [currentDate]);
 
   return (
-    <div className="">
+    <div className="flex flex-col h-full">
       <div className="flex justify-between gap-3 flex-wrap mb-5">
         <h1 className="text-3xl font-semibold mb-4">
           {getFormattedDayTitle()}
@@ -322,25 +322,26 @@ export default function DailyView({
           )}
         </div>
       </div>
-      <AnimatePresence initial={false} custom={direction} mode="wait">
-        <motion.div
-          key={currentDate.toISOString()}
-          custom={direction}
-          variants={pageTransitionVariants}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{
-            x: { type: "spring", stiffness: 300, damping: 30 },
-            opacity: { duration: 0.2 },
-          }}
-          className="flex flex-col gap-4"
-        >
-          {!stopDayEventSummary && (
-            <div className="all-day-events">
-              <AnimatePresence initial={false}>
-                {dayEvents && dayEvents?.length
-                  ? dayEvents?.map((event, eventIndex) => {
+      <div className="flex-1 overflow-y-auto min-h-0 relative">
+        <AnimatePresence initial={false} custom={direction} mode="wait">
+          <motion.div
+            key={currentDate.toISOString()}
+            custom={direction}
+            variants={pageTransitionVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{
+              x: { type: "spring", stiffness: 300, damping: 30 },
+              opacity: { duration: 0.2 },
+            }}
+            className="flex flex-col gap-4"
+          >
+            {!stopDayEventSummary && (
+              <div className="all-day-events">
+                <AnimatePresence initial={false}>
+                  {dayEvents && dayEvents?.length
+                    ? dayEvents?.map((event, eventIndex) => {
                       return (
                         <motion.div
                           key={event.id}
@@ -361,53 +362,53 @@ export default function DailyView({
                         </motion.div>
                       );
                     })
-                  : "No events for today"}
-              </AnimatePresence>
-            </div>
-          )}
-
-          <div className="relative rounded-md bg-default-50 hover:bg-default-100 transition duration-400">
-            <motion.div
-              className="relative rounded-xl flex ease-in-out"
-              ref={hoursColumnRef}
-              variants={containerVariants}
-              initial="hidden" // Ensure initial state is hidden
-              animate="visible" // Trigger animation to visible state
-              onMouseMove={handleMouseMove}
-              onMouseLeave={() => setDetailedHour(null)}
-            >
-              <div className="flex  flex-col">
-                {hours.map((hour, index) => (
-                  <motion.div
-                    key={`hour-${index}`}
-                    variants={itemVariants}
-                    className="cursor-pointer   transition duration-300  p-4 h-[64px] text-left text-sm text-muted-foreground border-default-200"
-                  >
-                    {hour}
-                  </motion.div>
-                ))}
+                    : "No events for today"}
+                </AnimatePresence>
               </div>
-              <div className="flex relative flex-grow flex-col ">
-                {Array.from({ length: 24 }).map((_, index) => (
-                  <div
-                    onClick={() => {
-                      handleAddEventDay(detailedHour as string);
-                    }}
-                    key={`hour-${index}`}
-                    className="cursor-pointer w-full relative border-b  hover:bg-default-200/50  transition duration-300  p-4 h-[64px] text-left text-sm text-muted-foreground border-default-200"
-                  >
-                    <div className="absolute bg-accent flex items-center justify-center text-xs opacity-0 transition left-0 top-0 duration-250 hover:opacity-100 w-full h-full">
-                      Add Event
+            )}
+
+            <div className="relative rounded-md bg-default-50 hover:bg-default-100 transition duration-400">
+              <motion.div
+                className="relative rounded-xl flex ease-in-out"
+                ref={hoursColumnRef}
+                variants={containerVariants}
+                initial="hidden" // Ensure initial state is hidden
+                animate="visible" // Trigger animation to visible state
+                onMouseMove={handleMouseMove}
+                onMouseLeave={() => setDetailedHour(null)}
+              >
+                <div className="flex  flex-col">
+                  {hours.map((hour, index) => (
+                    <motion.div
+                      key={`hour-${index}`}
+                      variants={itemVariants}
+                      className="cursor-pointer   transition duration-300  p-4 h-[80px] text-left text-sm text-muted-foreground border-default-200"
+                    >
+                      {hour}
+                    </motion.div>
+                  ))}
+                </div>
+                <div className="flex relative flex-grow flex-col ">
+                  {Array.from({ length: 24 }).map((_, index) => (
+                    <div
+                      onClick={() => {
+                        handleAddEventDay(detailedHour as string);
+                      }}
+                      key={`hour-${index}`}
+                      className="cursor-pointer w-full relative border-b  hover:bg-default-200/50  transition duration-300  p-4 h-[80px] text-left text-sm text-muted-foreground border-default-200"
+                    >
+                      <div className="absolute bg-accent flex items-center justify-center text-xs opacity-0 transition left-0 top-0 duration-250 hover:opacity-100 w-full h-full">
+                        Add Event
+                      </div>
                     </div>
-                  </div>
-                ))}
-                <AnimatePresence initial={false}>
-                  {dayEvents && dayEvents?.length
-                    ? dayEvents?.map((event, eventIndex) => {
+                  ))}
+                  <AnimatePresence initial={false}>
+                    {dayEvents && dayEvents?.length
+                      ? dayEvents?.map((event, eventIndex) => {
                         // Find which time group this event belongs to
                         let eventsInSamePeriod = 1;
                         let periodIndex = 0;
-                        
+
                         for (let i = 0; i < timeGroups.length; i++) {
                           const groupIndex = timeGroups[i].findIndex(e => e.id === event.id);
                           if (groupIndex !== -1) {
@@ -416,7 +417,7 @@ export default function DailyView({
                             break;
                           }
                         }
-                        
+
                         const {
                           height,
                           left,
@@ -425,7 +426,7 @@ export default function DailyView({
                           top,
                           zIndex,
                         } = handlers.handleEventStyling(
-                          event, 
+                          event,
                           dayEvents,
                           {
                             eventsInSamePeriod,
@@ -462,27 +463,28 @@ export default function DailyView({
                           </motion.div>
                         );
                       })
-                    : ""}
-                </AnimatePresence>
-              </div>
-            </motion.div>
+                      : ""}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
 
-            {detailedHour && (
-              <div
-                className="absolute left-[50px] w-[calc(100%-53px)] h-[2px] bg-primary/40 rounded-full pointer-events-none"
-                style={{ top: `${timelinePosition}px` }}
-              >
-                <Badge
-                  variant="outline"
-                  className="absolute -translate-y-1/2 bg-white z-50 left-[-20px] text-xs"
+              {detailedHour && (
+                <div
+                  className="absolute left-[50px] w-[calc(100%-53px)] h-[2px] bg-primary/40 rounded-full pointer-events-none"
+                  style={{ top: `${timelinePosition}px` }}
                 >
-                  {detailedHour}
-                </Badge>
-              </div>
-            )}
-          </div>
-        </motion.div>
-      </AnimatePresence>
+                  <Badge
+                    variant="outline"
+                    className="absolute -translate-y-1/2 bg-white z-50 left-[-20px] text-xs"
+                  >
+                    {detailedHour}
+                  </Badge>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

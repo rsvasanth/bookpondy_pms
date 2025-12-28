@@ -33,7 +33,7 @@ import { cn } from "@/lib/utils"
 
 
 
-import { useFrappeGetDocList } from "frappe-react-sdk"
+import { useLocalDocList } from "@/hooks/use-local-data"
 
 // ... imports
 
@@ -67,10 +67,8 @@ export default function GuestsPage() {
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [addGuestOpen, setAddGuestOpen] = useState(false)
 
-  const { data: guestsList } = useFrappeGetDocList("Guest", {
-    fields: ["name", "guest_name", "email", "phone", "total_visits", "total_spend", "last_visit_date", "return_guest"],
-    limit: 100,
-    orderBy: { field: "last_visit_date", order: "desc" }
+  const { data: guestsList } = useLocalDocList("Guest", {
+    sort: [{ last_visit_date: 'desc' }]
   })
 
   const guests: Guest[] = guestsList?.map(g => ({

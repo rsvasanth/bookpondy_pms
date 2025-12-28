@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { useFrappeGetDocList, useFrappeGetCall, useFrappePostCall } from "frappe-react-sdk"
+import { useFrappeGetCall, useFrappePostCall } from "frappe-react-sdk"
+import { useLocalDocList } from "@/hooks/use-local-data"
 import {
     Search,
     Download,
@@ -26,9 +27,8 @@ export default function InvoicesPage() {
     const [selectedInvoice, setSelectedInvoice] = useState<string | null>(null)
     const [searchQuery, setSearchQuery] = useState("")
 
-    const { data: folios, isLoading } = useFrappeGetDocList("Folio", {
-        fields: ["name", "invoice_number", "reservation", "grand_total", "invoice_status", "status", "creation"],
-        orderBy: { field: "creation", order: "desc" },
+    const { data: folios, isLoading } = useLocalDocList("Folio", {
+        sort: [{ creation: 'desc' }],
         limit: 100
     })
 

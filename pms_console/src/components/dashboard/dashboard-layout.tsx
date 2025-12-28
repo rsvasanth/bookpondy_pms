@@ -47,16 +47,33 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   })
 
   const isTablet = useIsTablet()
+  const [open, setOpen] = React.useState(true)
   const isSchedulerPage = location.pathname === "/scheduler"
 
+  React.useEffect(() => {
+    if (isTablet !== undefined) {
+      setOpen(!isTablet)
+    }
+  }, [isTablet])
+
   return (
-    <SidebarProvider defaultOpen={!isTablet}>
+    <SidebarProvider open={open} onOpenChange={setOpen}>
       <AppSidebar />
       <SidebarInset>
         {/* Header */}
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
+
+          {/* Sync Status Badge */}
+          <div className="flex items-center gap-2 px-2 py-1 rounded-full bg-slate-50 border border-slate-100">
+            <div className={`h-2 w-2 rounded-full ${navigator.onLine ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]'} animate-pulse`} />
+            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+              {navigator.onLine ? 'Synced' : 'Offline'}
+            </span>
+          </div>
+
+          <Separator orientation="vertical" className="mx-2 h-4" />
 
           {/* Clock/Date - visible on desktop */}
           <div className="hidden md:flex items-center ml-2 border border-muted bg-muted/20 px-3 py-1.5 rounded-xl">

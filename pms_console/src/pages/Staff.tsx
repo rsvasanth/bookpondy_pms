@@ -10,15 +10,14 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Plus, Search, MoreHorizontal, Eye, Pencil, User } from "lucide-react"
-import { useFrappeGetDocList } from "frappe-react-sdk"
+import { useLocalDocList } from "@/hooks/use-local-data"
 import { cn } from "@/lib/utils"
 
 export default function StaffPage() {
     const [searchQuery, setSearchQuery] = useState("")
 
-    const { data: staffList } = useFrappeGetDocList("Staff", {
-        fields: ["name", "staff_name", "designation", "property", "status", "email", "phone"],
-        limit: 100
+    const { data: staffList } = useLocalDocList("Staff", {
+        sort: [{ staff_name: 'asc' }]
     })
 
     const filteredStaff = staffList?.filter(s =>

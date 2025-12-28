@@ -6,7 +6,7 @@ import SchedulerViewFilteration from "./schedular-view-filteration";
 export default function SchedulerView() {
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 h-full">
       <SchedulerViewFilteration />
     </div>
   );

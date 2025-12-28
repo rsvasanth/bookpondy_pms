@@ -20,24 +20,22 @@ import {
     Search
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useFrappeGetDocList, useFrappeUpdateDoc } from "frappe-react-sdk"
+import { useLocalDocList, useLocalMutation } from "@/hooks/use-local-data"
 import { toast } from "sonner"
 import { Input } from "@/components/ui/input"
 
 export default function HousekeepingPage() {
     const [searchQuery, setSearchQuery] = useState("")
-    const { data: tasks, isLoading, mutate } = useFrappeGetDocList("Housekeeping Task", {
-        fields: ["name", "unit", "task_type", "status", "assigned_to", "priority", "creation"],
-        orderBy: { field: "creation", order: "desc" }
+    const { data: tasks, isLoading } = useLocalDocList("Housekeeping Task", {
+        sort: [{ creation: 'desc' }]
     })
 
-    const { updateDoc } = useFrappeUpdateDoc()
+    const { mutate, isSaving } = useLocalMutation()
 
     const handleMarkReady = async (name: string) => {
         try {
-            await updateDoc("Housekeeping Task", name, { status: "Completed" })
+            await mutate("Housekeeping Task", name, { status: "Completed" })
             toast.success("Task marked as completed")
-            mutate()
         } catch (e) {
             toast.error("Failed to update task")
         }

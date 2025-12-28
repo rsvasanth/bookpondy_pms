@@ -43,8 +43,6 @@ export default function SchedulerViewFilteration({
   const [activeView, setActiveView] = useState<string>("day");
   const [clientSide, setClientSide] = useState(false);
 
-  console.log("activeView", activeView);
-
   useEffect(() => {
     setClientSide(true);
   }, []);
@@ -91,55 +89,58 @@ export default function SchedulerViewFilteration({
   }, []);
 
   return (
-    <div className="flex w-full flex-col">
+    <div className="flex w-full flex-col h-full">
       <div className="flex w-full">
         <div className="dayly-weekly-monthly-selection relative w-full">
           <Tabs
             value={activeView}
             onValueChange={setActiveView}
-            className={cn("w-full", classNames?.tabs)}
+            className={cn("w-full h-full flex flex-col", classNames?.tabs)}
           >
-            <div className="flex justify-between items-center mb-2">
-              <TabsList className="grid grid-cols-3 h-8 p-0.5">
-                {viewsSelector?.includes("day") && (
-                  <TabsTrigger value="day" className="text-[11px] px-3 h-7">
-                    {CustomComponents?.customTabs?.CustomDayTab ? (
-                      CustomComponents.customTabs.CustomDayTab
-                    ) : (
-                      <div className="flex items-center space-x-1">
-                        <CalendarDaysIcon size={12} />
-                        <span>Day</span>
-                      </div>
-                    )}
-                  </TabsTrigger>
-                )}
+            <div className="flex justify-between items-center mb-4 gap-4 flex-wrap">
+              <div className="flex items-center gap-4">
+                <h1 className="tracking-tighter font-bold text-xl text-slate-900 whitespace-nowrap">Event Schedule</h1>
+                <TabsList className="grid grid-cols-3 h-8 p-1 bg-slate-100/80 rounded-lg">
+                  {viewsSelector?.includes("day") && (
+                    <TabsTrigger value="day" className="text-[11px] px-3 h-7">
+                      {CustomComponents?.customTabs?.CustomDayTab ? (
+                        CustomComponents.customTabs.CustomDayTab
+                      ) : (
+                        <div className="flex items-center space-x-1">
+                          <CalendarDaysIcon size={12} />
+                          <span>Day</span>
+                        </div>
+                      )}
+                    </TabsTrigger>
+                  )}
 
-                {viewsSelector?.includes("week") && (
-                  <TabsTrigger value="week" className="text-[11px] px-3 h-7">
-                    {CustomComponents?.customTabs?.CustomWeekTab ? (
-                      CustomComponents.customTabs.CustomWeekTab
-                    ) : (
-                      <div className="flex items-center space-x-1">
-                        <BsCalendarWeek size={12} />
-                        <span>Week</span>
-                      </div>
-                    )}
-                  </TabsTrigger>
-                )}
+                  {viewsSelector?.includes("week") && (
+                    <TabsTrigger value="week" className="text-[11px] px-3 h-7">
+                      {CustomComponents?.customTabs?.CustomWeekTab ? (
+                        CustomComponents.customTabs.CustomWeekTab
+                      ) : (
+                        <div className="flex items-center space-x-1">
+                          <BsCalendarWeek size={12} />
+                          <span>Week</span>
+                        </div>
+                      )}
+                    </TabsTrigger>
+                  )}
 
-                {viewsSelector?.includes("month") && (
-                  <TabsTrigger value="month" className="text-[11px] px-3 h-7">
-                    {CustomComponents?.customTabs?.CustomMonthTab ? (
-                      CustomComponents.customTabs.CustomMonthTab
-                    ) : (
-                      <div className="flex items-center space-x-1">
-                        <BsCalendarMonth size={12} />
-                        <span>Month</span>
-                      </div>
-                    )}
-                  </TabsTrigger>
-                )}
-              </TabsList>
+                  {viewsSelector?.includes("month") && (
+                    <TabsTrigger value="month" className="text-[11px] px-3 h-7">
+                      {CustomComponents?.customTabs?.CustomMonthTab ? (
+                        CustomComponents.customTabs.CustomMonthTab
+                      ) : (
+                        <div className="flex items-center space-x-1">
+                          <BsCalendarMonth size={12} />
+                          <span>Month</span>
+                        </div>
+                      )}
+                    </TabsTrigger>
+                  )}
+                </TabsList>
+              </div>
 
               {/* Add Event Button */}
               {CustomComponents?.customButtons?.CustomAddEventButton ? (
@@ -149,19 +150,19 @@ export default function SchedulerViewFilteration({
               ) : (
                 <Button
                   onClick={() => handleAddEvent()}
-                  className={cn("h-8 text-xs px-3", classNames?.buttons?.addEvent)}
+                  className={cn("h-8 text-[11px] px-3 font-bold uppercase tracking-wider", classNames?.buttons?.addEvent)}
                   variant="default"
                 >
-                  <CalendarIcon className="mr-2 h-3 w-3" />
+                  <CalendarIcon className="mr-2 h-3.5 w-3.5" />
                   Add Event
                 </Button>
               )}
             </div>
 
             {viewsSelector?.includes("day") && (
-              <TabsContent value="day">
+              <TabsContent value="day" className="mt-0 flex-1 min-h-0 flex flex-col">
                 <AnimatePresence mode="wait">
-                  <motion.div {...animationConfig}>
+                  <motion.div {...animationConfig} className="h-full">
                     <DailyView
                       stopDayEventSummary={stopDayEventSummary}
                       classNames={classNames?.buttons}
@@ -182,9 +183,9 @@ export default function SchedulerViewFilteration({
             )}
 
             {viewsSelector?.includes("week") && (
-              <TabsContent value="week">
+              <TabsContent value="week" className="mt-0 flex-1 min-h-0 flex flex-col">
                 <AnimatePresence mode="wait">
-                  <motion.div {...animationConfig}>
+                  <motion.div {...animationConfig} className="h-full">
                     <WeeklyView
                       classNames={classNames?.buttons}
                       prevButton={
@@ -204,7 +205,7 @@ export default function SchedulerViewFilteration({
             )}
 
             {viewsSelector?.includes("month") && (
-              <TabsContent value="month">
+              <TabsContent value="month" className="mt-0 flex-1 overflow-y-auto min-h-0">
                 <AnimatePresence mode="wait">
                   <motion.div {...animationConfig}>
                     <MonthView

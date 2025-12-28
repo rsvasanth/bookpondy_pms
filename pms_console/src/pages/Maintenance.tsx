@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useFrappeGetDocList, useFrappeUpdateDoc, useFrappeCreateDoc } from "frappe-react-sdk"
+import { useLocalDocList, useLocalMutation, useLocalCreate } from "@/hooks/use-local-data"
 import {
     AlertCircle,
     Clock,
@@ -44,32 +44,29 @@ export default function MaintenancePage() {
         priority: "Medium"
     })
 
-    const { data: properties } = useFrappeGetDocList("Property", {
-        fields: ["name", "property_name"]
+    const { data: properties } = useLocalDocList("Property", {
+        sort: [{ property_name: 'asc' }]
     })
 
-    const { data: units } = useFrappeGetDocList("Unit", {
-        fields: ["name", "unit_no", "property"],
-        filters: newTicket.property_link ? [["property", "=", newTicket.property_link]] : []
+    const { data: units } = useLocalDocList("Unit", {
+        selector: newTicket.property_link ? { property: newTicket.property_link } : {}
     })
 
-    const { data: tickets, mutate } = useFrappeGetDocList("Maintenance Ticket", {
-        fields: ["name", "issue_title", "unit", "priority", "ticket_status", "property_link", "assigned_vendor", "scheduled_time", "actual_cost"],
-        filters: [
-            propertyId !== "all" ? ["property_link", "=", propertyId] : null,
-            priorityFilter !== "all" ? ["priority", "=", priorityFilter] : null
-        ].filter(Boolean) as any,
-        orderBy: { field: "creation", order: "desc" }
+    const { data: tickets } = useLocalDocList("Maintenance Ticket", {
+        selector: {
+            ...(propertyId !== "all" ? { property_link: propertyId } : {}),
+            ...(priorityFilter !== "all" ? { priority: priorityFilter } : {})
+        },
+        sort: [{ creation: 'desc' }]
     })
 
-    const { updateDoc } = useFrappeUpdateDoc()
-    const { createDoc, loading: creating } = useFrappeCreateDoc()
+    const { mutate: updateLocalDoc, isSaving: updating } = useLocalMutation()
+    const { create: createLocalDoc, isCreating: creating } = useLocalCreate()
 
     const updateStatus = async (name: string, newStatus: string) => {
         try {
-            await updateDoc("Maintenance Ticket", name, { ticket_status: newStatus })
+            await updateLocalDoc("Maintenance Ticket", name, { ticket_status: newStatus })
             toast.success(`Ticket status updated to ${newStatus}`)
-            mutate()
         } catch (e) {
             toast.error("Failed to update ticket status")
         }
@@ -82,7 +79,7 @@ export default function MaintenancePage() {
         }
 
         try {
-            await createDoc("Maintenance Ticket", {
+            await createLocalDoc("Maintenance Ticket", {
                 ...newTicket,
                 ticket_status: "Open"
             })
@@ -95,7 +92,6 @@ export default function MaintenancePage() {
                 description: "",
                 priority: "Medium"
             })
-            mutate()
         } catch (e) {
             toast.error("Failed to create maintenance ticket")
         }

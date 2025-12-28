@@ -30,7 +30,8 @@ import {
   AlertCircle
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useFrappeGetDocList, useFrappeDeleteDoc } from "frappe-react-sdk"
+import { useLocalDocList } from "@/hooks/use-local-data"
+import { useFrappeDeleteDoc } from "frappe-react-sdk"
 import { useFiltersStore } from "@/stores/filtersStore"
 import { toast } from "sonner"
 import {
@@ -72,10 +73,8 @@ export default function PropertiesPage() {
     propertyType, setPropertyType
   } = useFiltersStore()
 
-  const { data: propertiesList, isLoading, mutate } = useFrappeGetDocList("Property", {
-    fields: ["*"],
-    limit: 100,
-    orderBy: { field: "creation", order: "desc" }
+  const { data: propertiesList, isLoading } = useLocalDocList("Property", {
+    sort: [{ property_name: 'asc' }]
   })
 
   const { deleteDoc, loading: isDeleting } = useFrappeDeleteDoc()
@@ -112,7 +111,6 @@ export default function PropertiesPage() {
     try {
       await deleteDoc("Property", deletingProperty)
       toast.success("Property deleted successfully")
-      mutate()
       setDeletingProperty(null)
     } catch (e: any) {
       toast.error(e.message || "Failed to delete property")
@@ -400,7 +398,7 @@ export default function PropertiesPage() {
             open={propertyDialogOpen}
             onOpenChange={setPropertyDialogOpen}
             initialData={editingProperty}
-            onSuccess={() => mutate()}
+            onSuccess={() => { }}
           />
         </div>
       )}

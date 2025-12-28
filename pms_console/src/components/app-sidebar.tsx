@@ -48,7 +48,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useFrappeAuth, useFrappeGetDocList } from "frappe-react-sdk"
+import { useFrappeAuth } from "frappe-react-sdk"
+import { useLocalDocList } from "@/hooks/use-local-data"
 // import BrandLogo from "./brand-logo" // Removed per user request
 
 const mainNavItems = [
@@ -78,19 +79,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { pathname } = useLocation()
   const { currentUser, logout } = useFrappeAuth()
 
-  const { data: propertiesList } = useFrappeGetDocList("Property", {
-    fields: ["name", "property_name", "city"],
-    limit: 100
-  })
+  const { data: propertiesList } = useLocalDocList("Property")
+  const { data: portfoliosList } = useLocalDocList("Property Portfolio")
 
   // Set initial property when list loads
-  const [selectedProperty, setSelectedProperty] = React.useState<{ name: string, property_name: string, city: string } | null>(null)
+  const [selectedProperty, setSelectedProperty] = React.useState<{ name: string, property_name: string } | null>(null)
   const [selectedPortfolio, setSelectedPortfolio] = React.useState<string>("")
-
-  const { data: portfoliosList } = useFrappeGetDocList("Property Portfolio", {
-    fields: ["name", "portfolio_name"],
-    limit: 100
-  })
 
   React.useEffect(() => {
     if (propertiesList && propertiesList.length > 0 && !selectedProperty) {

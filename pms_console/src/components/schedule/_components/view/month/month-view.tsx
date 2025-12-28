@@ -161,18 +161,7 @@ export default function MonthView({
   ).getDate();
   return (
     <div>
-      <div className="flex items-center gap-3">
-        <motion.h2
-          key={currentDate.getMonth()}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-lg tracking-tight font-bold"
-        >
-          {currentDate.toLocaleString("default", { month: "long" })}{" "}
-          {currentDate.getFullYear()}
-        </motion.h2>
+      <div className="flex items-center gap-4 mb-3">
         <div className="flex gap-1">
           {prevButton ? (
             <div onClick={handlePrevMonth}>{prevButton}</div>
@@ -180,7 +169,7 @@ export default function MonthView({
             <Button
               variant="outline"
               size="icon"
-              className={cn("h-7 w-7", classNames?.prev)}
+              className={cn("h-8 w-8 rounded-lg shadow-sm border-slate-200", classNames?.prev)}
               onClick={handlePrevMonth}
             >
               <ArrowLeft className="h-4 w-4" />
@@ -192,13 +181,24 @@ export default function MonthView({
             <Button
               variant="outline"
               size="icon"
-              className={cn("h-7 w-7", classNames?.next)}
+              className={cn("h-8 w-8 rounded-lg shadow-sm border-slate-200", classNames?.next)}
               onClick={handleNextMonth}
             >
               <ArrowRight className="h-4 w-4" />
             </Button>
           )}
         </div>
+        <motion.h2
+          key={currentDate.getMonth()}
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 10 }}
+          transition={{ duration: 0.3 }}
+          className="text-lg tracking-tight font-bold text-slate-800"
+        >
+          {currentDate.toLocaleString("default", { month: "long" })}{" "}
+          {currentDate.getFullYear()}
+        </motion.h2>
       </div>
       <AnimatePresence initial={false} mode="wait">
         <motion.div
@@ -228,7 +228,7 @@ export default function MonthView({
           ))}
 
           {Array.from({ length: startOffset }).map((_, idx) => (
-            <div key={`offset-${idx}`} className="h-[100px] opacity-30">
+            <div key={`offset-${idx}`} className="h-[140px] opacity-30">
               <div className={cn("font-bold relative text-sm mb-1")}>
                 {lastDateOfPrevMonth - startOffset + idx + 1}
               </div>
@@ -240,7 +240,7 @@ export default function MonthView({
 
             return (
               <motion.div
-                className="hover:z-50 border-none h-[100px] rounded group flex flex-col"
+                className="hover:z-50 border-none h-[140px] rounded group flex flex-col"
                 key={dayObj.day}
                 variants={itemVariants}
                 initial="enter"
@@ -267,38 +267,30 @@ export default function MonthView({
                     {dayObj.day}
                   </div>
                   <div className="flex-grow flex flex-col gap-2 w-full">
-                    <AnimatePresence mode="wait">
-                      {dayEvents?.length > 0 && (
-                        <motion.div
-                          key={dayEvents[0].id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ duration: 0.3 }}
-                        >
+                    <div className="flex flex-col gap-1 w-full">
+                      {dayEvents.slice(0, 4).map((event) => (
+                        <div key={event.id}>
                           <EventStyled
                             event={{
-                              ...dayEvents[0],
+                              ...event,
                               CustomEventComponent,
                               minmized: true,
                             }}
                             CustomEventModal={CustomEventModal}
                           />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                    {dayEvents.length > 1 && (
+                        </div>
+                      ))}
+                    </div>
+                    {dayEvents.length > 4 && (
                       <Badge
                         onClick={(e) => {
                           e.stopPropagation();
                           handleShowMoreEvents(dayEvents);
                         }}
-                        variant="outline"
-                        className="hover:bg-default-200 absolute right-2 text-xs top-2 transition duration-300"
+                        variant="secondary"
+                        className="hover:bg-slate-200 absolute right-1 top-1 text-[10px] h-5 px-1.5 transition duration-300 z-10"
                       >
-                        {dayEvents.length > 1
-                          ? `+${dayEvents.length - 1}`
-                          : " "}
+                        +{dayEvents.length - 4}
                       </Badge>
                     )}
                   </div>

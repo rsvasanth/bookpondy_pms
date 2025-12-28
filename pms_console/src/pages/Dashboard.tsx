@@ -4,7 +4,7 @@ import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { DashboardListWidget, type DashboardListItem } from "@/components/dashboard/dashboard-list-widget"
 import { DashboardStatsCard } from "@/components/dashboard/dashboard-stats-card"
 import { DashboardFilters } from "@/components/dashboard/dashboard-filters"
-import { useFrappeGetDocList } from "frappe-react-sdk"
+import { useLocalDocList } from "@/hooks/use-local-data"
 
 import {
   CalendarDays,
@@ -24,11 +24,12 @@ export default function DashboardPage() {
 
   // --- Data Fetching (Reusing logic) ---
   // 1. Bookings
-  const { data: bookings, isLoading: bookingsLoading } = useFrappeGetDocList("Reservation", {
-    fields: ["name", "guest_name", "reservation_status", "check_in_date", "check_out_date", "total_amount", "property"],
-    filters: [["reservation_status", "in", ["Confirmed", "Checked-In", "Tentative", "Checked-Out"]]],
-    limit: 10,
-    orderBy: { field: "check_in_date", order: "asc" }
+  const { data: bookings, isLoading: bookingsLoading } = useLocalDocList("Reservation", {
+    selector: {
+      reservation_status: { $in: ["Confirmed", "Checked-In", "Tentative", "Checked-Out"] }
+    },
+    sort: [{ check_in_date: 'asc' }],
+    limit: 10
   })
   const bookingItems: DashboardListItem[] = bookings?.map(b => ({
     id: b.name,
@@ -40,11 +41,12 @@ export default function DashboardPage() {
   })) || []
 
   // 2. Housekeeping
-  const { data: housekeeping, isLoading: hkLoading } = useFrappeGetDocList("Housekeeping Task", {
-    fields: ["name", "unit", "task_type", "status", "priority", "scheduled_time"],
-    filters: [["status", "!=", "Completed"]],
-    limit: 10,
-    orderBy: { field: "priority", order: "desc" }
+  const { data: housekeeping, isLoading: hkLoading } = useLocalDocList("Housekeeping Task", {
+    selector: {
+      status: { $ne: "Completed" }
+    },
+    sort: [{ priority: 'desc' }],
+    limit: 10
   })
   const hkItems: DashboardListItem[] = housekeeping?.map(h => ({
     id: h.name,
@@ -55,11 +57,12 @@ export default function DashboardPage() {
   })) || []
 
   // 3. Maintenance
-  const { data: maintenance, isLoading: maintLoading } = useFrappeGetDocList("Maintenance Ticket", {
-    fields: ["name", "issue_title", "unit", "ticket_status", "priority", "creation"],
-    filters: [["ticket_status", "not in", ["Resolved", "Closed"]]],
-    limit: 10,
-    orderBy: { field: "creation", order: "desc" }
+  const { data: maintenance, isLoading: maintLoading } = useLocalDocList("Maintenance Ticket", {
+    selector: {
+      ticket_status: { $nin: ["Resolved", "Closed"] }
+    },
+    sort: [{ creation: 'desc' }],
+    limit: 10
   })
   const maintItems: DashboardListItem[] = maintenance?.map(m => ({
     id: m.name,
@@ -70,11 +73,12 @@ export default function DashboardPage() {
   })) || []
 
   // 4. Enquiries (Simple List)
-  const { data: enquiries, isLoading: enquiryLoading } = useFrappeGetDocList("Booking Inquiry", {
-    fields: ["name", "guest_name", "inquiry_status", "inquiry_date", "property_interested"],
-    filters: [["inquiry_status", "=", "New"]],
-    limit: 5,
-    orderBy: { field: "inquiry_date", order: "desc" }
+  const { data: enquiries, isLoading: enquiryLoading } = useLocalDocList("Booking Inquiry", {
+    selector: {
+      inquiry_status: "New"
+    },
+    sort: [{ inquiry_date: 'desc' }],
+    limit: 5
   })
   const enquiryItems: DashboardListItem[] = enquiries?.map(e => ({
     id: e.name,
@@ -84,11 +88,12 @@ export default function DashboardPage() {
     raw: e
   })) || []
   // 5. Invoices
-  const { data: invoices, isLoading: invoiceLoading } = useFrappeGetDocList("Sales Invoice", {
-    fields: ["name", "customer_name", "status", "grand_total", "due_date"],
-    filters: [["status", "in", ["Draft", "Unpaid", "Overdue"]]],
-    limit: 5,
-    orderBy: { field: "due_date", order: "asc" }
+  const { data: invoices, isLoading: invoiceLoading } = useLocalDocList("Sales Invoice", {
+    selector: {
+      status: { $in: ["Draft", "Unpaid", "Overdue"] }
+    },
+    sort: [{ due_date: 'asc' }],
+    limit: 5
   })
   const invoiceItems: DashboardListItem[] = invoices?.map(i => ({
     id: i.name,
@@ -100,7 +105,7 @@ export default function DashboardPage() {
   })) || []
 
   // --- Render Helpers ---
-  const renderBookingActions = (item: any) => (
+  const renderBookingActions = () => (
     <div className="flex gap-1">
       <Button variant="outline" size="icon" className="h-7 w-7 rounded-lg hover:bg-[#ff3924] hover:text-white border-slate-200 transition-colors">
         <ArrowRightCircle className="h-3.5 w-3.5" />
@@ -108,7 +113,7 @@ export default function DashboardPage() {
     </div>
   )
 
-  const renderTaskActions = (item: any) => (
+  const renderTaskActions = () => (
     <div className="flex gap-1">
       <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg text-slate-400 hover:bg-slate-50 transition-colors">
         <CheckCircle2 className="h-3.5 w-3.5" />
