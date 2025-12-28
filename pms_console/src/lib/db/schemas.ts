@@ -18,7 +18,12 @@ export const ReservationSchema = {
         guest_email: { type: 'string' },
         guest_phone: { type: 'string' },
         guest_id_image: { type: 'string' },
-        special_requests: { type: 'string' }
+        special_requests: { type: 'string' },
+        is_identity_verified: { type: 'number' },
+        is_rental_agreement_signed: { type: 'number' },
+        is_security_deposit_collected: { type: 'number' },
+        is_checkin_guide_sent: { type: 'number' },
+        advance_paid: { type: 'number' }
     },
     required: ['name', 'modified', 'reservation_status', 'check_in_date'],
     indexes: ['modified', 'reservation_status', 'check_in_date']

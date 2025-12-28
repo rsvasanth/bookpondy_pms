@@ -125,13 +125,44 @@ const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: "amount",
-    header: "Total Amount",
+    header: "Amount",
     cell: ({ row }) => {
       const b = row.original
       return (
-        <div className="flex items-center gap-1.5">
-          <CreditCard className="h-3 w-3 text-slate-400" />
+        <div className="flex items-center gap-1.5 min-w-[100px]">
           <span className="font-black text-[#0f0f14] text-sm">₹{b.total_amount?.toLocaleString() || "0"}</span>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: "payment_status",
+    header: "Payment",
+    cell: ({ row }) => {
+      const status = row.original.payment_status || "Pending"
+      const isPaid = ["Received", "Refunded"].includes(status)
+      return (
+        <Badge variant="outline" className={cn(
+          "text-[9px] font-black uppercase px-2 py-0.5 rounded-md border shadow-none",
+          status === "Received" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+            status === "Refunded" ? "bg-slate-50 text-slate-600 border-slate-100" :
+              "bg-amber-50 text-amber-600 border-amber-100"
+        )}>
+          {status}
+        </Badge>
+      )
+    },
+  },
+  {
+    accessorKey: "reservation_source",
+    header: "Source",
+    cell: ({ row }) => {
+      const source = row.original.reservation_source || "Direct"
+      return (
+        <div className="flex items-center gap-1.5">
+          <Badge variant="outline" className="text-[9px] font-bold text-slate-500 border-slate-200 bg-white">
+            {source}
+          </Badge>
         </div>
       )
     },
@@ -173,7 +204,10 @@ const downloadCSV = (data: any[]) => {
 export default function BookingsPage() {
   const navigate = useNavigate()
 
-  // --- Filter State ---
+  // --- Filter & Pagination State ---
+  const [searchTerm, setSearchTerm] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize] = useState(10)
   const [selectedProperty, setSelectedProperty] = useState("")
   const [selectedStatus, setSelectedStatus] = useState("All Status")
   const [selectedDateRange, setSelectedDateRange] = useState("This Month")
@@ -183,6 +217,15 @@ export default function BookingsPage() {
 
   // Build RxDB Selector (Mango query)
   const selector: any = {}
+
+  // Search Logic
+  if (searchTerm) {
+    selector.$or = [
+      { guest_name: { $regex: searchTerm, $options: 'i' } },
+      { name: { $regex: searchTerm, $options: 'i' } }
+    ]
+  }
+
   if (selectedStatus && selectedStatus !== "All Status") {
     selector.reservation_status = selectedStatus
   } else {
@@ -208,8 +251,17 @@ export default function BookingsPage() {
 
   const { data: reservations, isLoading: reservationsLoading } = useLocalDocList("Reservation", {
     selector: selector,
-    sort: [{ check_in_date: 'desc' }]
+    sort: [{ check_in_date: 'desc' }],
+    limit: pageSize,
+    skip: (currentPage - 1) * pageSize
   })
+
+  // Get total count for pagination (ignore limit/skip)
+  const { data: allMatchingReservations } = useLocalDocList("Reservation", {
+    selector: selector
+  })
+  const totalItems = allMatchingReservations?.length || 0
+  const totalPages = Math.ceil(totalItems / pageSize)
 
   const { data: enquiries, isLoading: enquiryLoading } = useLocalDocList("Booking Inquiry", {
     selector: { inquiry_status: 'New' },
@@ -293,11 +345,13 @@ export default function BookingsPage() {
           <DashboardFilters
             properties={properties}
             selectedProperty={selectedProperty}
-            onPropertyChange={setSelectedProperty}
+            onPropertyChange={(val) => { setSelectedProperty(val); setCurrentPage(1); }}
             selectedStatus={selectedStatus}
-            onStatusChange={setSelectedStatus}
+            onStatusChange={(val) => { setSelectedStatus(val); setCurrentPage(1); }}
             selectedDateRange={selectedDateRange}
-            onDateRangeChange={setSelectedDateRange}
+            onDateRangeChange={(val) => { setSelectedDateRange(val); setCurrentPage(1); }}
+            searchTerm={searchTerm}
+            onSearchChange={(val) => { setSearchTerm(val); setCurrentPage(1); }}
           />
 
           {/* Unified Layout: 3/4 Table + 1/4 Enquiries */}
@@ -378,6 +432,47 @@ export default function BookingsPage() {
                       )}
                     </TableBody>
                   </Table>
+                </div>
+
+                {/* Pagination Controls */}
+                <div className="p-4 border-t border-slate-100 bg-slate-50/30 flex items-center justify-between">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                    Showing {Math.min((currentPage - 1) * pageSize + 1, totalItems)} to {Math.min(currentPage * pageSize, totalItems)} of {totalItems} results
+                  </p>
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 rounded-lg text-xs font-bold border-slate-200 disabled:opacity-50"
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                    >
+                      Previous
+                    </Button>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                      <Button
+                        key={page}
+                        variant={currentPage === page ? "default" : "outline"}
+                        size="sm"
+                        className={cn(
+                          "h-8 w-8 rounded-lg text-xs font-bold",
+                          currentPage === page ? "bg-[#ff3924] hover:bg-[#ff3924]/90 border-none shadow-sm" : "border-slate-200"
+                        )}
+                        onClick={() => setCurrentPage(page)}
+                      >
+                        {page}
+                      </Button>
+                    ))}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 rounded-lg text-xs font-bold border-slate-200 disabled:opacity-50"
+                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages || totalPages === 0}
+                    >
+                      Next
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>

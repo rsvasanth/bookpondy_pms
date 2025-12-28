@@ -160,8 +160,8 @@ export default function MonthView({
     0
   ).getDate();
   return (
-    <div>
-      <div className="flex items-center gap-4 mb-3">
+    <div className="h-full flex flex-col gap-4">
+      <div className="flex items-center gap-4 shrink-0">
         <div className="flex gap-1">
           {prevButton ? (
             <div onClick={handlePrevMonth}>{prevButton}</div>
@@ -216,7 +216,7 @@ export default function MonthView({
           initial="enter"
           animate="center"
           exit="exit"
-          className="grid grid-cols-7 gap-1 sm:gap-2"
+          className="grid grid-cols-7 auto-rows-fr gap-1 sm:gap-2 flex-1 min-h-0"
         >
           {daysOfWeek.map((day, idx) => (
             <div
@@ -228,7 +228,7 @@ export default function MonthView({
           ))}
 
           {Array.from({ length: startOffset }).map((_, idx) => (
-            <div key={`offset-${idx}`} className="h-[140px] opacity-30">
+            <div key={`offset-${idx}`} className="h-full min-h-[120px] opacity-30 select-none">
               <div className={cn("font-bold relative text-sm mb-1")}>
                 {lastDateOfPrevMonth - startOffset + idx + 1}
               </div>
@@ -237,10 +237,11 @@ export default function MonthView({
 
           {daysInMonth.map((dayObj) => {
             const dayEvents = getters.getEventsForDay(dayObj.day, currentDate);
+            const maxVisibleEvents = 4;
 
             return (
               <motion.div
-                className="hover:z-50 border-none h-[140px] rounded group flex flex-col"
+                className="hover:z-50 border-none h-full min-h-[120px] rounded group flex flex-col"
                 key={dayObj.day}
                 variants={itemVariants}
                 initial="enter"
@@ -248,56 +249,56 @@ export default function MonthView({
                 exit="exit"
               >
                 <Card
-                  className="shadow-sm border-slate-100 cursor-pointer overflow-hidden relative flex flex-col p-2 h-full"
+                  className="shadow-sm border-slate-100 cursor-pointer overflow-hidden relative flex flex-col p-2 h-full gap-1 hover:bg-slate-50 transition-colors"
                   onClick={() => handleAddEvent(dayObj.day)}
                 >
-                  <div
-                    className={cn(
-                      "font-bold relative text-sm mb-1",
-                      dayEvents.length > 0
-                        ? "text-primary dark:text-primary"
-                        : "text-slate-400",
-                      new Date().getDate() === dayObj.day &&
-                        new Date().getMonth() === currentDate.getMonth() &&
-                        new Date().getFullYear() === currentDate.getFullYear()
-                        ? "text-[#ff3924]"
-                        : ""
-                    )}
-                  >
-                    {dayObj.day}
-                  </div>
-                  <div className="flex-grow flex flex-col gap-2 w-full">
-                    <div className="flex flex-col gap-1 w-full">
-                      {dayEvents.slice(0, 4).map((event) => (
-                        <div key={event.id}>
-                          <EventStyled
-                            event={{
-                              ...event,
-                              CustomEventComponent,
-                              minmized: true,
-                            }}
-                            CustomEventModal={CustomEventModal}
-                          />
-                        </div>
-                      ))}
+                  <div className="flex justify-between items-start mb-1">
+                    <div
+                      className={cn(
+                        "font-bold relative text-sm",
+                        dayEvents.length > 0
+                          ? "text-primary dark:text-primary"
+                          : "text-slate-400",
+                        new Date().getDate() === dayObj.day &&
+                          new Date().getMonth() === currentDate.getMonth() &&
+                          new Date().getFullYear() === currentDate.getFullYear()
+                          ? "text-[#ff3924]"
+                          : ""
+                      )}
+                    >
+                      {dayObj.day}
                     </div>
-                    {dayEvents.length > 4 && (
+                    {dayEvents.length > maxVisibleEvents && (
                       <Badge
                         onClick={(e) => {
                           e.stopPropagation();
                           handleShowMoreEvents(dayEvents);
                         }}
                         variant="secondary"
-                        className="hover:bg-slate-200 absolute right-1 top-1 text-[10px] h-5 px-1.5 transition duration-300 z-10"
+                        className="hover:bg-slate-200 text-[10px] h-5 px-1.5 transition duration-300"
                       >
-                        +{dayEvents.length - 4}
+                        +{dayEvents.length - maxVisibleEvents}
                       </Badge>
                     )}
                   </div>
+                  <div className="flex-1 min-h-0 flex flex-col gap-1 overflow-hidden">
+                    {dayEvents.slice(0, maxVisibleEvents).map((event) => (
+                      <div key={event.id} className="shrink-0">
+                        <EventStyled
+                          event={{
+                            ...event,
+                            CustomEventComponent,
+                            minmized: true,
+                          }}
+                          CustomEventModal={CustomEventModal}
+                        />
+                      </div>
+                    ))}
+                  </div>
 
-                  {/* Hover Overlay */}
+                  {/* Hover Overlay for empty days */}
                   {dayEvents.length === 0 && (
-                    <div className="absolute inset-0 bg-[#ff3924]/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <div className="absolute inset-x-0 bottom-2 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                       <span className="text-[#ff3924] tracking-tight text-[10px] font-bold uppercase">
                         + Add
                       </span>

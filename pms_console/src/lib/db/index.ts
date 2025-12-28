@@ -16,7 +16,8 @@ import {
     CommunicationSchema,
     PropertyPortfolioSchema,
     OutboxSchema,
-    UnitCategorySchema
+    UnitCategorySchema,
+    GuestQuerySchema
 } from './schemas';
 
 // Register plugins
@@ -46,6 +47,7 @@ const create = async () => {
         portfolios: { schema: PropertyPortfolioSchema },
         outbox: { schema: OutboxSchema },
         unit_categories: { schema: UnitCategorySchema },
+        guest_queries: { schema: GuestQuerySchema },
     });
 
     console.log('RxDB: Database initialized');

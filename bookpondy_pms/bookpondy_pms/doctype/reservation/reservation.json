@@ -39,6 +39,7 @@
         "extras_and_services",
         "discount_amount",
         "total_amount",
+        "advance_paid",
         "column_break_3",
         "payment_status",
         "payment_method",
@@ -47,6 +48,11 @@
         "cancellation_reason",
         "cancellation_date",
         "refund_status",
+        "section_break_onboarding",
+        "is_identity_verified",
+        "is_rental_agreement_signed",
+        "is_security_deposit_collected",
+        "is_checkin_guide_sent",
         "section_break_housekeeping",
         "housekeeping_task_auto_create"
     ],
@@ -310,8 +316,43 @@
         {
             "fieldname": "housekeeping_task_auto_create",
             "fieldtype": "Check",
-            "label": "Auto-Create Housekeeping Tasks",
             "default": 1
+        },
+        {
+            "fieldname": "section_break_onboarding",
+            "fieldtype": "Section Break",
+            "label": "Onboarding Status",
+            "collapsible": 1
+        },
+        {
+            "fieldname": "is_identity_verified",
+            "fieldtype": "Check",
+            "label": "Identity Verified",
+            "default": 0
+        },
+        {
+            "fieldname": "is_rental_agreement_signed",
+            "fieldtype": "Check",
+            "label": "Rental Agreement Signed",
+            "default": 0
+        },
+        {
+            "fieldname": "is_security_deposit_collected",
+            "fieldtype": "Check",
+            "label": "Security Deposit Collected",
+            "default": 0
+        },
+        {
+            "fieldname": "is_checkin_guide_sent",
+            "fieldtype": "Check",
+            "label": "Check-in Guide Sent",
+            "default": 0
+        },
+        {
+            "fieldname": "advance_paid",
+            "fieldtype": "Currency",
+            "label": "Advance / Partial Payment",
+            "default": 0
         }
     ],
     "index_web_pages_for_search": 1,
