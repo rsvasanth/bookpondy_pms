@@ -140,10 +140,10 @@ export default function PropertiesPage() {
   })
 
   const stats = [
-    { label: "Total Properties", value: properties.length || 0, icon: Building2, color: "text-blue-500", bg: "bg-blue-50" },
-    { label: "Active", value: properties.filter(p => p.status === "active").length || 0, icon: CheckCircle2, color: "text-emerald-500", bg: "bg-emerald-50" },
-    { label: "Total Units", value: properties.reduce((acc, curr) => acc + curr.units, 0), icon: Home, color: "text-primary", bg: "bg-primary/5" },
-    { label: "Maintenance", value: properties.filter(p => p.status === "maintenance").length || 0, icon: AlertCircle, color: "text-amber-500", bg: "bg-amber-50" },
+    { label: "Total Properties", value: properties.length || 0, icon: Building2, color: "text-blue-600", bg: "bg-blue-50" },
+    { label: "Active", value: properties.filter(p => p.status === "active").length || 0, icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-50" },
+    { label: "Total Units", value: properties.reduce((acc, curr) => acc + curr.units, 0), icon: Home, color: "text-primary", bg: "bg-primary/10" },
+    { label: "Maintenance", value: properties.filter(p => p.status === "maintenance").length || 0, icon: AlertCircle, color: "text-amber-600", bg: "bg-amber-50" },
   ]
 
   return (
@@ -156,154 +156,156 @@ export default function PropertiesPage() {
           />
         </div>
       ) : (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4">
           {/* Header */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-800">Properties</h1>
-              <p className="text-sm text-slate-500 font-medium tracking-tight">
-                Manage your real estate assets and inventory
+              <h1 className="text-xl font-bold tracking-tight text-slate-800">Properties</h1>
+              <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
+                Manage your real estate assets
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <div className="relative w-full md:w-64">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+              <div className="relative w-full md:w-56">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                 <Input
                   placeholder="Search properties..."
-                  className="pl-9 h-10 rounded-xl border-slate-200 bg-white shadow-sm text-sm"
+                  className="pl-8 h-9 rounded-lg border-slate-200 bg-white text-xs font-medium"
                   value={propertySearch}
                   onChange={(e) => setPropertySearch(e.target.value)}
                 />
               </div>
               <Button
                 onClick={handleAddNew}
-                className="bg-primary hover:bg-primary/90 text-white rounded-xl h-10 px-4 font-bold text-sm gap-2 shadow-sm"
+                className="bg-primary hover:bg-primary/90 text-white rounded-lg h-9 px-3 text-xs font-bold gap-1.5 shadow-sm transition-all hover:scale-105"
               >
-                <Plus className="h-4 w-4" /> Add Property
+                <Plus className="h-3.5 w-3.5" /> Add Property
               </Button>
             </div>
           </div>
 
-          <Tabs defaultValue="list" className="w-full space-y-6">
+          {/* Stats Row */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {stats.map((stat) => (
+              <Card key={stat.label} className="border border-slate-100 shadow-sm rounded-xl bg-white transition-all hover:shadow-md">
+                <CardContent className="p-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{stat.label}</span>
+                    <div className={cn("p-1.5 rounded-lg", stat.bg)}>
+                      <stat.icon className={cn("h-3.5 w-3.5", stat.color)} />
+                    </div>
+                  </div>
+                  <p className="text-2xl font-black text-slate-800 tracking-tight">{stat.value}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <Tabs defaultValue="grid" className="w-full space-y-4">
             <div className="flex items-center justify-between">
-              <TabsList className="bg-slate-100/50 p-1 rounded-xl h-11">
-                <TabsTrigger value="list" className="rounded-lg h-9 px-4 font-bold text-xs gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm text-slate-500 data-[state=active]:text-slate-900">
-                  <List className="h-4 w-4" /> List View
+              <TabsList className="bg-slate-100/50 p-1 rounded-lg h-9">
+                <TabsTrigger value="grid" className="rounded-md h-7 px-3 text-[10px] font-bold uppercase tracking-wider gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-slate-800">
+                  <LayoutGrid className="h-3 w-3" /> Grid
                 </TabsTrigger>
-                <TabsTrigger value="grid" className="rounded-lg h-9 px-4 font-bold text-xs gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm text-slate-500 data-[state=active]:text-slate-900">
-                  <LayoutGrid className="h-4 w-4" /> Grid View
+                <TabsTrigger value="list" className="rounded-md h-7 px-3 text-[10px] font-bold uppercase tracking-wider gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-slate-800">
+                  <List className="h-3 w-3" /> List
                 </TabsTrigger>
               </TabsList>
             </div>
 
-            {/* Stats Row */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              {stats.map((stat) => (
-                <Card key={stat.label} className="border-none shadow-sm rounded-2xl bg-white transition-all hover:translate-y-[-2px]">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{stat.label}</span>
-                      <stat.icon className={cn("h-4 w-4", stat.color)} />
-                    </div>
-                    <p className="text-3xl font-black text-slate-800 tracking-tight">{stat.value}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
             <TabsContent value="list" className="mt-0">
-              <Card className="border-none shadow-sm rounded-2xl overflow-hidden bg-white">
+              <Card className="border border-slate-100 shadow-sm rounded-xl overflow-hidden bg-white">
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-slate-50">
-                        <th className="text-left py-4 px-6">
+                      <tr className="border-b border-slate-50 bg-slate-50/50">
+                        <th className="text-left py-3 px-4 w-10">
                           <Checkbox
                             checked={selectedProperties.length === properties.length && properties.length > 0}
                             onCheckedChange={toggleSelectAll}
-                            className="border-slate-300"
+                            className="border-slate-300 h-4 w-4 rounded-[4px]"
                           />
                         </th>
-                        <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Property</th>
-                        <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Type</th>
-                        <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Units</th>
-                        <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Status</th>
-                        <th className="text-right py-4 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Actions</th>
+                        <th className="text-left py-3 px-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Property</th>
+                        <th className="text-left py-3 px-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Type</th>
+                        <th className="text-left py-3 px-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Inventory</th>
+                        <th className="text-left py-3 px-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Status</th>
+                        <th className="text-right py-3 px-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
                       {isLoading ? (
                         <tr>
                           <td colSpan={6} className="h-32 text-center">
-                            <Loader2 className="h-6 w-6 animate-spin mx-auto text-slate-400" />
+                            <Loader2 className="h-5 w-5 animate-spin mx-auto text-slate-300" />
                           </td>
                         </tr>
                       ) : filteredProperties.length === 0 ? (
                         <tr>
-                          <td colSpan={6} className="h-32 text-center text-slate-400 font-medium text-sm">
-                            No properties found.
+                          <td colSpan={6} className="h-32 text-center text-slate-400 text-xs font-medium uppercase tracking-wide">
+                            No properties found
                           </td>
                         </tr>
                       ) : (
                         filteredProperties.map((property) => (
                           <tr key={property.id} className="hover:bg-slate-50/50 transition-colors group">
-                            <td className="py-4 px-6">
+                            <td className="py-2.5 px-4">
                               <Checkbox
                                 checked={selectedProperties.includes(property.id)}
                                 onCheckedChange={() => toggleSelectProperty(property.id)}
-                                className="border-slate-300"
+                                className="border-slate-300 h-4 w-4 rounded-[4px]"
                               />
                             </td>
-                            <td className="py-4 px-6">
-                              <div className="flex items-center gap-4">
-                                <div className="h-12 w-16 rounded-lg bg-slate-100 overflow-hidden border border-slate-100 flex-shrink-0">
+                            <td className="py-2.5 px-4">
+                              <div className="flex items-center gap-3">
+                                <div className="h-10 w-14 rounded-md bg-slate-100 overflow-hidden relative border border-slate-100">
                                   <img
                                     src={property.image}
                                     alt={property.name}
                                     className="object-cover w-full h-full"
                                   />
                                 </div>
-                                <div>
-                                  <p className="font-bold text-slate-800 text-sm mb-0.5">{property.name}</p>
-                                  <p className="text-[10px] font-medium text-slate-400 tracking-tight flex items-center gap-1">
-                                    <MapPin className="h-3 w-3" />
+                                <div className="flex flex-col">
+                                  <span className="text-xs font-bold text-slate-800">{property.name}</span>
+                                  <span className="text-[10px] font-medium text-slate-400 flex items-center gap-1">
+                                    <MapPin className="h-2.5 w-2.5" />
                                     {property.location}
-                                  </p>
+                                  </span>
                                 </div>
                               </div>
                             </td>
-                            <td className="py-4 px-6">
-                              <Badge variant="outline" className="text-[9px] font-bold text-slate-500 uppercase border-slate-200 bg-slate-50">
+                            <td className="py-2.5 px-4">
+                              <Badge variant="outline" className="text-[9px] font-bold uppercase bg-slate-50 border-slate-200 text-slate-500 rounded-md px-1.5 py-0.5">
                                 {property.type}
                               </Badge>
                             </td>
-                            <td className="py-4 px-6">
+                            <td className="py-2.5 px-4">
                               <span className="text-xs font-bold text-slate-700">{property.units} Units</span>
                             </td>
-                            <td className="py-4 px-6">
+                            <td className="py-2.5 px-4">
                               <Badge className={cn(
-                                "text-[10px] font-black uppercase px-2 py-0.5 rounded-md border-none shadow-none",
-                                property.status === "active" ? "bg-emerald-500 text-white" :
-                                  property.status === "maintenance" ? "bg-amber-500 text-white" : "bg-slate-200 text-slate-500"
+                                "text-[9px] font-bold uppercase px-1.5 py-0 border-none shadow-none rounded-[4px]",
+                                property.status === "active" ? "bg-emerald-50 text-emerald-600" :
+                                  property.status === "maintenance" ? "bg-amber-50 text-amber-600" : "bg-slate-100 text-slate-500"
                               )}>
                                 {property.status}
                               </Badge>
                             </td>
-                            <td className="py-4 px-6 text-right">
+                            <td className="py-2.5 px-4 text-right">
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-slate-100 text-slate-400">
-                                    <MoreHorizontal className="h-4 w-4" />
+                                  <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-slate-100 text-slate-400">
+                                    <MoreHorizontal className="h-3.5 w-3.5" />
                                   </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-48 rounded-xl p-1">
-                                  <DropdownMenuItem className="rounded-lg text-xs font-bold cursor-pointer" onClick={() => handleViewDetails(property)}>
+                                <DropdownMenuContent align="end" className="w-40 rounded-xl p-1 shadow-lg border-slate-100">
+                                  <DropdownMenuItem className="rounded-lg text-xs font-bold cursor-pointer focus:bg-slate-50" onClick={() => handleViewDetails(property)}>
                                     View Details
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem className="rounded-lg text-xs font-bold cursor-pointer" onClick={() => handleEdit(property)}>
+                                  <DropdownMenuItem className="rounded-lg text-xs font-bold cursor-pointer focus:bg-slate-50" onClick={() => handleEdit(property)}>
                                     Edit Property
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem className="rounded-lg text-xs font-bold text-red-600 focus:text-red-600 cursor-pointer" onClick={() => setDeletingProperty(property.id)}>
+                                  <DropdownMenuItem className="rounded-lg text-xs font-bold text-red-600 focus:text-red-700 focus:bg-red-50 cursor-pointer" onClick={() => setDeletingProperty(property.id)}>
                                     Delete
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
@@ -319,49 +321,50 @@ export default function PropertiesPage() {
             </TabsContent>
 
             <TabsContent value="grid" className="mt-0">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {isLoading ? (
                   Array(4).fill(0).map((_, i) => (
-                    <Card key={i} className="h-72 animate-pulse bg-slate-50 rounded-2xl border-none shadow-sm" />
+                    <Card key={i} className="h-64 animate-pulse bg-slate-50 rounded-xl border border-slate-100 shadow-none" />
                   ))
                 ) : filteredProperties.length === 0 ? (
-                  <div className="col-span-full h-32 flex items-center justify-center text-slate-400 font-medium text-sm">
-                    No properties found.
+                  <div className="col-span-full h-32 flex items-center justify-center text-slate-400 text-xs font-medium uppercase tracking-wide">
+                    No properties found
                   </div>
                 ) : (
                   filteredProperties.map((property) => (
-                    <Card key={property.id} className="overflow-hidden border-none shadow-sm hover:shadow-md transition-all rounded-2xl group bg-white cursor-pointer" onClick={() => handleViewDetails(property)}>
-                      <div className="relative h-48 overflow-hidden">
+                    <Card key={property.id} className="overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-all rounded-xl group bg-white cursor-pointer hover:border-[#ff3924]/20" onClick={() => handleViewDetails(property)}>
+                      <div className="relative h-40 overflow-hidden">
                         <img
                           src={property.image}
                           alt={property.name}
                           className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
-                        <div className="absolute top-3 right-3">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80" />
+                        <div className="absolute top-2 right-2">
                           <Badge className={cn(
-                            "text-[9px] font-black uppercase px-2 py-0.5 rounded-md border-none shadow-none",
-                            property.status === "active" ? "bg-emerald-500 text-white" : "bg-slate-800 text-white"
+                            "text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-[4px] border-none shadow-sm backdrop-blur-md",
+                            property.status === "active" ? "bg-emerald-500/90 text-white" :
+                              property.status === "maintenance" ? "bg-amber-500/90 text-white" : "bg-slate-800/80 text-white"
                           )}>
                             {property.status}
                           </Badge>
                         </div>
                         <div className="absolute bottom-3 left-3 right-3 text-white">
-                          <h3 className="font-bold text-lg leading-tight mb-0.5">{property.name}</h3>
-                          <p className="text-[10px] font-bold uppercase tracking-widest opacity-80 flex items-center gap-1">
-                            <MapPin className="h-3 w-3" />
+                          <h3 className="font-bold text-base leading-tight mb-0.5 text-white/95">{property.name}</h3>
+                          <p className="text-[9px] font-bold uppercase tracking-widest text-white/70 flex items-center gap-1">
+                            <MapPin className="h-2.5 w-2.5" />
                             {property.location}
                           </p>
                         </div>
                       </div>
-                      <CardContent className="p-4">
+                      <CardContent className="p-3">
                         <div className="flex items-center justify-between">
                           <div className="space-y-0.5">
-                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Type</span>
+                            <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 block">Type</span>
                             <span className="text-xs font-bold text-slate-700">{property.type}</span>
                           </div>
                           <div className="space-y-0.5 text-right">
-                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Inventory</span>
+                            <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 block">Inventory</span>
                             <span className="text-xs font-bold text-slate-700">{property.units} Units</span>
                           </div>
                         </div>
@@ -377,14 +380,14 @@ export default function PropertiesPage() {
             <AlertDialogContent className="rounded-2xl border-none shadow-lg bg-white p-6 max-w-sm">
               <AlertDialogHeader>
                 <AlertDialogTitle className="text-lg font-bold text-slate-800">Delete Property?</AlertDialogTitle>
-                <AlertDialogDescription className="text-sm text-slate-500 font-medium">
-                  This action cannot be undone. This will permanently delete the property and remove data from the servers.
+                <AlertDialogDescription className="text-xs text-slate-500 font-medium">
+                  This action cannot be undone. This will permanently delete the property.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel className="rounded-xl border-slate-200 h-10 font-bold text-xs">Cancel</AlertDialogCancel>
+                <AlertDialogCancel className="rounded-xl border-slate-200 h-9 font-bold text-xs">Cancel</AlertDialogCancel>
                 <AlertDialogAction
-                  className="bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl h-10 text-xs"
+                  className="bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl h-9 text-xs"
                   onClick={handleDelete}
                   disabled={isDeleting}
                 >

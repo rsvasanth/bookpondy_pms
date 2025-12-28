@@ -90,8 +90,8 @@ export default function SchedulerViewFilteration({
 
   return (
     <div className="flex w-full flex-col h-full">
-      <div className="flex w-full">
-        <div className="dayly-weekly-monthly-selection relative w-full">
+      <div className="flex w-full h-full">
+        <div className="dayly-weekly-monthly-selection relative w-full h-full">
           <Tabs
             value={activeView}
             onValueChange={setActiveView}

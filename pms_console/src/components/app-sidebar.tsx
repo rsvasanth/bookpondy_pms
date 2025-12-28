@@ -16,6 +16,7 @@ import {
   ChevronUp,
   ClipboardList,
   Receipt,
+  FileText
 } from "lucide-react"
 
 import {
@@ -50,34 +51,35 @@ import {
 } from "@/components/ui/select"
 import { useFrappeAuth } from "frappe-react-sdk"
 import { useLocalDocList } from "@/hooks/use-local-data"
-// import BrandLogo from "./brand-logo" // Removed per user request
+import { useAuthStore } from "@/stores/authStore"
 
 const mainNavItems = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/bookings", label: "Bookings", icon: CalendarDays },
-  { href: "/scheduler", label: "Scheduler", icon: CalendarDays },
-  { href: "/housekeeping", label: "Housekeeping", icon: ClipboardList },
-  { href: "/maintenance", label: "Maintenance", icon: Wrench },
-  { href: "/billing", label: "Billing & Payments", icon: Receipt },
-  { href: "/channels", label: "Channels & WhatsApp", icon: MessageSquare },
+  { href: "/", label: "Dashboard", icon: LayoutDashboard, roles: ["Administrator", "Manager", "Front Desk", "Housekeeping"] },
+  { href: "/bookings", label: "Bookings", icon: CalendarDays, roles: ["Administrator", "Manager", "Front Desk"] },
+  { href: "/scheduler", label: "Scheduler", icon: CalendarDays, roles: ["Administrator", "Manager", "Front Desk"] },
+  { href: "/housekeeping", label: "Housekeeping", icon: ClipboardList, roles: ["Administrator", "Manager", "Front Desk", "Housekeeping"] },
+  { href: "/maintenance", label: "Maintenance", icon: Wrench, roles: ["Administrator", "Manager", "Front Desk", "Housekeeping"] },
+  { href: "/billing", label: "Billing & Payments", icon: Receipt, roles: ["Administrator", "Manager", "Front Desk"] },
+  { href: "/channels", label: "Channels & WhatsApp", icon: MessageSquare, roles: ["Administrator", "Manager"] },
 ]
 
 const managementNavItems = [
-  { href: "/properties", label: "Properties", icon: Building2 },
-  { href: "/guests", label: "Guests", icon: Users },
-  { href: "/staff", label: "Staff", icon: UsersRound },
+  { href: "/properties", label: "Properties", icon: Building2, roles: ["Administrator", "Manager"] },
+  { href: "/guests", label: "Guests", icon: Users, roles: ["Administrator", "Manager", "Front Desk"] },
+  { href: "/staff", label: "Staff", icon: UsersRound, roles: ["Administrator", "Manager"] },
+  { href: "/financials", label: "Financials", icon: FileText, roles: ["Administrator", "Manager"] },
+  { href: "/invoices", label: "Invoices", icon: Receipt, roles: ["Administrator", "Manager"] },
 ]
 
 const reportsNavItems = [
-  { href: "/reports", label: "Reports", icon: BarChart3 },
-  { href: "/reviews", label: "Reviews", icon: Star },
+  { href: "/reports", label: "Reports", icon: BarChart3, roles: ["Administrator", "Manager"] },
+  { href: "/reviews", label: "Reviews", icon: Star, roles: ["Administrator", "Manager"] },
 ]
-
-
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { pathname } = useLocation()
   const { currentUser, logout } = useFrappeAuth()
+  const { user } = useAuthStore()
 
   const { data: propertiesList } = useLocalDocList("Property")
   const { data: portfoliosList } = useLocalDocList("Property Portfolio")
@@ -97,6 +99,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const userDisplayName = currentUser || "Administrator"
   const userInitials = userDisplayName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
+
+  // Default to Front Desk if role is undefined, or Admin if name is Administrator
+  const currentRole = user?.role || (currentUser === "Administrator" ? "Administrator" : "Front Desk")
+
+  const filterItems = (items: any[]) => {
+    return items.filter(item => !item.roles || item.roles.includes(currentRole))
+  }
+
+  const filteredMainNav = filterItems(mainNavItems)
+  const filteredManagementNav = filterItems(managementNavItems)
+  const filteredReportsNav = filterItems(reportsNavItems)
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -126,93 +139,103 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
 
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Overview</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {mainNavItems.map((item) => {
-                const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
-                return (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton asChild isActive={isActive} tooltip={item.label}>
-                      <Link to={item.href}>
-                        <item.icon />
-                        <span>{item.label}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {filteredMainNav.length > 0 && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Overview</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {filteredMainNav.map((item) => {
+                  const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
+                  return (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton asChild isActive={isActive} tooltip={item.label}>
+                        <Link to={item.href}>
+                          <item.icon />
+                          <span>{item.label}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
 
         <SidebarSeparator />
 
-        <SidebarGroup>
-          <SidebarGroupLabel>Management</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {managementNavItems.map((item) => {
-                const isActive = pathname === item.href || pathname.startsWith(item.href)
-                return (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton asChild isActive={isActive} tooltip={item.label}>
-                      <Link to={item.href}>
-                        <item.icon />
-                        <span>{item.label}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {filteredManagementNav.length > 0 && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Management</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {filteredManagementNav.map((item) => {
+                  const isActive = pathname === item.href || pathname.startsWith(item.href)
+                  return (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton asChild isActive={isActive} tooltip={item.label}>
+                        <Link to={item.href}>
+                          <item.icon />
+                          <span>{item.label}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
 
         <SidebarSeparator />
 
-        <SidebarGroup>
-          <SidebarGroupLabel>Analytics & Reports</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {reportsNavItems.map((item) => {
-                const isActive = pathname === item.href || pathname.startsWith(item.href)
-                return (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton asChild isActive={isActive} tooltip={item.label}>
-                      <Link to={item.href}>
-                        <item.icon />
-                        <span>{item.label}</span>
+        {filteredReportsNav.length > 0 && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Analytics & Reports</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {filteredReportsNav.map((item) => {
+                  const isActive = pathname === item.href || pathname.startsWith(item.href)
+                  return (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton asChild isActive={isActive} tooltip={item.label}>
+                        <Link to={item.href}>
+                          <item.icon />
+                          <span>{item.label}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        {currentRole === "Administrator" && (
+          <>
+            <SidebarSeparator />
+            <SidebarGroup>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={pathname === "/settings" || pathname.startsWith("/settings")}
+                      tooltip="Settings"
+                    >
+                      <Link to="/settings">
+                        <Settings />
+                        <span>Settings</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                )
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </>
+        )}
 
-        <SidebarSeparator />
-
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  isActive={pathname === "/settings" || pathname.startsWith("/settings")}
-                  tooltip="Settings"
-                >
-                  <Link to="/settings">
-                    <Settings />
-                    <span>Settings</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter>
@@ -230,7 +253,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">{userDisplayName}</span>
-                    <span className="truncate text-xs">Property Owner</span>
+                    <span className="truncate text-xs">{currentRole}</span>
                   </div>
                   <ChevronUp className="ml-auto size-4" />
                 </SidebarMenuButton>
@@ -249,7 +272,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-semibold">{userDisplayName}</span>
-                      <span className="truncate text-xs">{currentUser}</span>
+                      <span className="truncate text-xs">{currentRole}</span>
                     </div>
                   </div>
                 </DropdownMenuLabel>

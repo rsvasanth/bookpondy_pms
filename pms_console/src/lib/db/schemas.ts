@@ -186,14 +186,15 @@ export const StaffSchema = {
         name: { type: 'string', maxLength: 100 },
         staff_name: { type: 'string', maxLength: 100 },
         designation: { type: 'string', maxLength: 100 },
+        role: { type: 'string', maxLength: 100 },
         property: { type: 'string' },
         status: { type: 'string' },
         email: { type: 'string' },
         phone: { type: 'string' },
         modified: { type: 'string', maxLength: 100 }
     },
-    required: ['name', 'modified', 'staff_name', 'designation'],
-    indexes: ['modified', 'staff_name', 'designation']
+    required: ['name', 'modified', 'staff_name', 'designation', 'role'],
+    indexes: ['modified', 'staff_name', 'designation', 'role']
 };
 
 export const CommunicationSchema = {

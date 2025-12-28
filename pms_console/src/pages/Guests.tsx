@@ -26,16 +26,11 @@ import {
   Users,
   UserCheck,
   UserPlus,
+  Loader2
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-
-
-
-
-
 import { useLocalDocList } from "@/hooks/use-local-data"
-
-// ... imports
+import { AddGuestDialog } from "@/components/guests/add-guest-dialog"
 
 interface Guest {
   id: string
@@ -50,16 +45,12 @@ interface Guest {
   avatar?: string
 }
 
-// const guests = [] // Removed placeholder
-
 const statusConfig = {
-  active: { label: "Active", className: "bg-secondary/10 text-secondary" },
-  vip: { label: "VIP", className: "bg-primary text-white" },
-  return: { label: "Returning", className: "bg-muted text-muted-foreground" },
-  new: { label: "New", className: "bg-muted text-secondary" },
+  active: { label: "Active", className: "bg-emerald-50 text-emerald-600" },
+  vip: { label: "VIP", className: "bg-amber-50 text-amber-600" },
+  return: { label: "Returning", className: "bg-blue-50 text-blue-600" },
+  new: { label: "New", className: "bg-purple-50 text-purple-600" },
 }
-
-import { AddGuestDialog } from "@/components/guests/add-guest-dialog"
 
 export default function GuestsPage() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -67,7 +58,7 @@ export default function GuestsPage() {
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [addGuestOpen, setAddGuestOpen] = useState(false)
 
-  const { data: guestsList } = useLocalDocList("Guest", {
+  const { data: guestsList, isLoading } = useLocalDocList("Guest", {
     sort: [{ last_visit_date: 'desc' }]
   })
 
@@ -76,14 +67,13 @@ export default function GuestsPage() {
     name: g.guest_name,
     email: g.email || "",
     phone: g.phone || "",
-    location: "Not specified", // Placeholder as location isn't directly on Guest yet
+    location: "Not specified",
     totalBookings: g.total_visits || 0,
     totalSpent: g.total_spend || 0,
     lastVisit: g.last_visit_date || "",
-    status: g.return_guest ? "return" : (g.total_visits > 0 ? "active" : "new"), // Improve logic potentially
+    status: g.return_guest ? "return" : (g.total_visits > 0 ? "active" : "new"),
     avatar: ""
   })) || []
-
 
   const filteredGuests = guests.filter(
     (g) =>
@@ -98,6 +88,7 @@ export default function GuestsPage() {
   }
 
   const formatDate = (dateString: string) => {
+    if (!dateString) return "-"
     return new Date(dateString).toLocaleDateString("en-IN", {
       day: "2-digit",
       month: "short",
@@ -109,303 +100,275 @@ export default function GuestsPage() {
     return statusConfig[status as keyof typeof statusConfig] || statusConfig.new
   }
 
+  const stats = [
+    { label: "Total Guests", value: guests.length || 0, icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
+    { label: "VIP Guests", value: guests.filter(g => g.status === 'vip').length || 0, icon: Star, color: "text-amber-600", bg: "bg-amber-50" },
+    { label: "Returning", value: Math.round((guests.filter(g => g.status === 'return').length / (guests.length || 1)) * 100) + "%", icon: UserCheck, color: "text-emerald-600", bg: "bg-emerald-50" },
+    { label: "New", value: guests.filter(g => g.status === 'new').length || 0, icon: UserPlus, color: "text-purple-600", bg: "bg-purple-50" },
+  ]
+
   return (
     <DashboardLayout>
-      {/* Page Header */}
-      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-xl font-bold tracking-tight">Guest Management</h1>
-          <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Property guest database</p>
-        </div>
-        <Button className="bg-primary hover:bg-primary/90 shadow-sm rounded-lg h-8 px-4 transition-all hover:scale-105" onClick={() => setAddGuestOpen(true)}>
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
-          Add Guest
-        </Button>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="rounded-2xl border-muted shadow-sm hover:shadow-md transition-all overflow-hidden bg-white px-4 py-3">
-          <CardContent className="p-0 relative">
-            <div className="flex items-center justify-between relative z-10">
-              <div>
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Total Guests</p>
-                <p className="text-2xl font-black text-secondary tracking-tight">{guests.length || "1,248"}</p>
-              </div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-secondary">
-                <Users className="h-5 w-5" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-[2rem] border-muted shadow-sm hover:shadow-md hover:-translate-y-1 transition-all overflow-hidden group bg-white">
-          <CardContent className="p-6 relative">
-            <div className="flex items-center justify-between relative z-10">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">VIP Guests</p>
-                <p className="text-4xl font-black text-secondary tracking-tight">{guests.filter(g => g.status === 'vip').length || "89"}</p>
-              </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-                <Star className="h-6 w-6" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-[2rem] border-muted shadow-sm hover:shadow-md hover:-translate-y-1 transition-all overflow-hidden group bg-white">
-          <CardContent className="p-6 relative">
-            <div className="flex items-center justify-between relative z-10">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">Returning</p>
-                <p className="text-4xl font-black text-secondary tracking-tight">{Math.round((guests.filter(g => g.status === 'return').length / (guests.length || 1)) * 100) || "67"}%</p>
-              </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-muted text-secondary group-hover:bg-secondary group-hover:text-white transition-colors">
-                <UserCheck className="h-6 w-6" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-[2rem] border-muted shadow-sm hover:shadow-md hover:-translate-y-1 transition-all overflow-hidden group bg-white">
-          <CardContent className="p-6 relative">
-            <div className="flex items-center justify-between relative z-10">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">New</p>
-                <p className="text-4xl font-black text-secondary tracking-tight">{guests.filter(g => g.status === 'new').length || "34"}</p>
-              </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-muted text-secondary group-hover:bg-secondary group-hover:text-white transition-colors">
-                <UserPlus className="h-6 w-6" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card className="mb-4 rounded-2xl border-muted shadow-sm">
-        <CardContent className="p-3">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Search guests..."
-                className="pl-10 h-11 rounded-2xl bg-muted/20 border-muted focus-visible:ring-primary/20"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <div className="flex items-center gap-3">
-              <Select>
-                <SelectTrigger className="w-[140px] h-11 rounded-2xl border-muted bg-muted/20 focus:ring-primary/20">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="vip">VIP</SelectItem>
-                  <SelectItem value="new">New</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+      <div className="flex flex-col gap-4">
+        {/* Header */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-xl font-bold tracking-tight text-slate-800">Guests</h1>
+            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
+              Manage guest profiles & history
+            </p>
           </div>
-        </CardContent>
-      </Card>
+          <Button
+            onClick={() => setAddGuestOpen(true)}
+            className="bg-primary hover:bg-primary/90 text-white rounded-lg h-9 px-3 text-xs font-bold gap-1.5 shadow-sm transition-all hover:scale-105"
+          >
+            <Plus className="h-3.5 w-3.5" /> Add Guest
+          </Button>
+        </div>
 
-      {/* Guests Table */}
-      <Card className="rounded-2xl border-gray-100 shadow-xl shadow-gray-200/50 overflow-hidden bg-white">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-gray-50/50 hover:bg-gray-50/50">
-              <TableHead className="py-2.5 font-bold text-[10px] uppercase tracking-wider text-gray-400 pl-4">Guest</TableHead>
-              <TableHead className="py-2.5 font-bold text-[10px] uppercase tracking-wider text-gray-400">Contact</TableHead>
-              <TableHead className="py-2.5 font-bold text-[10px] uppercase tracking-wider text-gray-400">Location</TableHead>
-              <TableHead className="text-center py-2.5 font-bold text-[10px] uppercase tracking-wider text-gray-400">Bookings</TableHead>
-              <TableHead className="text-right py-2.5 font-bold text-[10px] uppercase tracking-wider text-gray-400">Spent</TableHead>
-              <TableHead className="py-2.5 font-bold text-[10px] uppercase tracking-wider text-gray-400">Last Visit</TableHead>
-              <TableHead className="py-2.5 font-bold text-[10px] uppercase tracking-wider text-gray-400">Status</TableHead>
-              <TableHead className="text-right py-2.5 font-bold text-[10px] uppercase tracking-wider text-gray-400 pr-4">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredGuests.map((guest) => (
-              <TableRow key={guest.id} className="hover:bg-gray-50/50 transition-colors">
-                <TableCell className="pl-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10 border border-gray-100">
-                      <AvatarImage src={guest.avatar || "/placeholder.svg"} />
-                      <AvatarFallback className="bg-gradient-to-br from-gray-50 to-gray-100 text-gray-600 font-medium">
-                        {guest.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-semibold text-gray-900">{guest.name}</p>
-                      <p className="text-xs text-muted-foreground font-mono">{guest.id}</p>
-                    </div>
+        {/* Stats Row */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {stats.map((stat) => (
+            <Card key={stat.label} className="border border-slate-100 shadow-sm rounded-xl bg-white transition-all hover:shadow-md">
+              <CardContent className="p-3">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{stat.label}</span>
+                  <div className={cn("p-1.5 rounded-lg", stat.bg)}>
+                    <stat.icon className={cn("h-3.5 w-3.5", stat.color)} />
                   </div>
-                </TableCell>
-                <TableCell className="py-4">
-                  <div className="space-y-1 text-sm">
-                    <div className="flex items-center gap-1.5 text-muted-foreground hover:text-gray-900 transition-colors cursor-pointer">
-                      <Mail className="h-3.5 w-3.5" />
-                      {guest.email}
-                    </div>
-                    <div className="flex items-center gap-1.5 text-muted-foreground hover:text-gray-900 transition-colors cursor-pointer">
-                      <Phone className="h-3.5 w-3.5" />
-                      {guest.phone}
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell className="py-4">
-                  <div className="flex items-center gap-1.5 text-sm text-gray-600">
-                    <MapPin className="h-3.5 w-3.5 text-gray-400" />
-                    {guest.location}
-                  </div>
-                </TableCell>
-                <TableCell className="text-center font-semibold text-gray-900 py-4">{guest.totalBookings}</TableCell>
-                <TableCell className="text-right font-mono font-medium text-gray-900 py-4">₹{guest.totalSpent.toLocaleString("en-IN")}</TableCell>
-                <TableCell className="py-4 text-sm text-gray-600">{formatDate(guest.lastVisit)}</TableCell>
-                <TableCell className="py-4">
-                  <Badge className={cn("rounded-md px-2 py-0.5 font-medium", getStatusConfig(guest.status).className)} variant="secondary">{getStatusConfig(guest.status).label}</Badge>
-                </TableCell>
-                <TableCell className="text-right pr-6 py-4">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="hover:bg-gray-100 rounded-lg">
-                        <MoreHorizontal className="h-4 w-4 text-gray-400" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="rounded-xl">
-                      <DropdownMenuItem onClick={() => handleViewGuest(guest)} className="rounded-lg">
-                        <Eye className="mr-2 h-4 w-4" />
-                        View Profile
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="rounded-lg">
-                        <MessageSquare className="mr-2 h-4 w-4" />
-                        Send Message
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="rounded-lg">
-                        <Calendar className="mr-2 h-4 w-4" />
-                        View Bookings
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Card>
+                </div>
+                <p className="text-2xl font-black text-slate-800 tracking-tight">{stat.value}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
-      {/* Guest Details Sheet */}
-      <Sheet open={detailsOpen} onOpenChange={setDetailsOpen}>
-        <SheetContent className="w-full overflow-y-auto sm:max-w-lg">
-          {selectedGuest && (
-            <>
-              <SheetHeader>
-                <SheetTitle>Guest Profile</SheetTitle>
-                <SheetDescription>View and manage guest information</SheetDescription>
-              </SheetHeader>
+        {/* Search & Filter */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+            <Input
+              placeholder="Search guests by name, email, phone..."
+              className="pl-9 h-10 rounded-xl bg-white border-slate-200 shadow-sm text-xs font-medium focus-visible:ring-primary/20"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <Select>
+            <SelectTrigger className="w-[140px] h-10 rounded-xl border-slate-200 bg-white shadow-sm text-xs font-bold">
+              <SelectValue placeholder="All Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="vip">VIP</SelectItem>
+              <SelectItem value="new">New</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-              <div className="mt-6 space-y-6">
-                {/* Guest Header */}
-                <div className="flex items-center gap-4">
-                  <Avatar className="h-16 w-16">
-                    <AvatarImage src={selectedGuest.avatar || "/placeholder.svg"} />
-                    <AvatarFallback className="bg-primary/10 text-primary text-xl">
-                      {selectedGuest.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
+        {/* Data Table */}
+        <Card className="border border-slate-100 shadow-sm rounded-xl overflow-hidden bg-white">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-slate-50/50 hover:bg-slate-50/50 border-b border-slate-50">
+                  <TableHead className="py-3 px-4 w-12 pl-6"></TableHead>
+                  <TableHead className="py-3 font-bold text-[10px] uppercase tracking-wider text-slate-400">Guest Name</TableHead>
+                  <TableHead className="py-3 font-bold text-[10px] uppercase tracking-wider text-slate-400">Contact</TableHead>
+                  <TableHead className="py-3 font-bold text-[10px] uppercase tracking-wider text-slate-400 text-center">Bookings</TableHead>
+                  <TableHead className="py-3 font-bold text-[10px] uppercase tracking-wider text-slate-400 text-right">Spent</TableHead>
+                  <TableHead className="py-3 font-bold text-[10px] uppercase tracking-wider text-slate-400 text-right">Last Visit</TableHead>
+                  <TableHead className="py-3 font-bold text-[10px] uppercase tracking-wider text-slate-400">Status</TableHead>
+                  <TableHead className="py-3 font-bold text-[10px] uppercase tracking-wider text-slate-400 text-right pr-6">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={8} className="h-32 text-center">
+                      <Loader2 className="h-5 w-5 animate-spin mx-auto text-slate-300" />
+                    </TableCell>
+                  </TableRow>
+                ) : filteredGuests.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={8} className="h-32 text-center text-slate-400 text-xs font-medium uppercase tracking-wide">
+                      No guests found
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredGuests.map((guest) => (
+                    <TableRow key={guest.id} className="hover:bg-slate-50/50 transition-colors border-b border-slate-50 group">
+                      <TableCell className="py-2 px-4 pl-6 w-12">
+                        <Avatar className="h-8 w-8 border border-slate-100">
+                          <AvatarImage src={guest.avatar} />
+                          <AvatarFallback className="bg-slate-100 text-slate-500 text-[10px] font-bold">
+                            {guest.name.substring(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                      </TableCell>
+                      <TableCell className="py-2 px-4">
+                        <div className="flex flex-col">
+                          <span className="text-xs font-bold text-slate-800">{guest.name}</span>
+                          <span className="text-[9px] text-slate-400 font-medium">ID: {guest.id}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-2 px-4">
+                        <div className="flex flex-col gap-0.5">
+                          <div className="flex items-center gap-1.5 text-xs font-medium text-slate-600">
+                            <Mail className="h-3 w-3 text-slate-400" />
+                            {guest.email}
+                          </div>
+                          <div className="flex items-center gap-1.5 text-xs font-medium text-slate-600">
+                            <Phone className="h-3 w-3 text-slate-400" />
+                            {guest.phone}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-2 px-4 text-center">
+                        <span className="text-xs font-bold text-slate-700">{guest.totalBookings}</span>
+                      </TableCell>
+                      <TableCell className="py-2 px-4 text-right">
+                        <span className="text-xs font-bold text-slate-700">₹{guest.totalSpent.toLocaleString()}</span>
+                      </TableCell>
+                      <TableCell className="py-2 px-4 text-right">
+                        <span className="text-xs font-medium text-slate-500">{formatDate(guest.lastVisit)}</span>
+                      </TableCell>
+                      <TableCell className="py-2 px-4">
+                        <Badge className={cn("text-[9px] font-bold uppercase rounded-md px-1.5 py-0 border-none shadow-none", getStatusConfig(guest.status).className)}>
+                          {getStatusConfig(guest.status).label}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="py-2 px-4 text-right pr-6">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/5 mr-1"
+                          onClick={() => handleViewGuest(guest)}
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg text-slate-400 hover:bg-slate-100">
+                              <MoreHorizontal className="h-3.5 w-3.5" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-40 rounded-xl p-1 shadow-lg border-slate-100">
+                            <DropdownMenuItem className="rounded-lg text-xs font-bold cursor-pointer focus:bg-slate-50" onClick={() => handleViewGuest(guest)}>
+                              View Profile
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="rounded-lg text-xs font-bold cursor-pointer focus:bg-slate-50">
+                              Send Message
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="rounded-lg text-xs font-bold cursor-pointer focus:bg-slate-50">
+                              Booking History
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </Card>
+
+        {/* Guest Details Sheet */}
+        <Sheet open={detailsOpen} onOpenChange={setDetailsOpen}>
+          <SheetContent className="w-full sm:max-w-md p-0 gap-0 border-l border-slate-100 shadow-2xl">
+            {selectedGuest && (
+              <div className="flex flex-col h-full bg-slate-50/50">
+                <div className="bg-[#ff3924]/5 border-b border-[#ff3924]/10 p-6 flex flex-col items-center flex-shrink-0">
+                  <Avatar className="h-20 w-20 border-4 border-white shadow-sm mb-3">
+                    <AvatarImage src={selectedGuest.avatar} />
+                    <AvatarFallback className="bg-[#ff3924] text-white text-2xl font-bold">
+                      {selectedGuest.name.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <div>
-                    <h3 className="text-lg font-semibold">{selectedGuest.name}</h3>
-                    <Badge className={getStatusConfig(selectedGuest.status).className}>
+                  <h2 className="text-xl font-black text-slate-800 tracking-tight mb-1">{selectedGuest.name}</h2>
+                  <div className="flex gap-2 mb-4">
+                    <Badge className={cn("text-[10px] font-bold uppercase border-none", getStatusConfig(selectedGuest.status).className)}>
                       {getStatusConfig(selectedGuest.status).label}
                     </Badge>
                   </div>
-                </div>
-
-                <Separator />
-
-                {/* Contact Info */}
-                <div className="space-y-3">
-                  <h4 className="text-sm font-medium">Contact Information</h4>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm">
-                      <Mail className="h-4 w-4 text-muted-foreground" />
-                      {selectedGuest.email}
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Phone className="h-4 w-4 text-muted-foreground" />
-                      {selectedGuest.phone}
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <MapPin className="h-4 w-4 text-muted-foreground" />
-                      {selectedGuest.location}
-                    </div>
+                  <div className="flex w-full gap-3">
+                    <Button className="flex-1 bg-white hover:bg-white/80 text-slate-700 border border-slate-200 shadow-sm h-9 text-xs font-bold">
+                      <MessageSquare className="mr-2 h-3.5 w-3.5" /> Message
+                    </Button>
+                    <Button className="flex-1 bg-[#ff3924] hover:bg-[#ff3924]/90 text-white shadow-sm h-9 text-xs font-bold">
+                      <Calendar className="mr-2 h-3.5 w-3.5" /> Book Now
+                    </Button>
                   </div>
                 </div>
 
-                <Separator />
-
-                {/* Stats */}
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="rounded-lg border p-3 text-center">
-                    <p className="text-2xl font-bold text-primary">{selectedGuest.totalBookings}</p>
-                    <p className="text-xs text-muted-foreground">Bookings</p>
-                  </div>
-                  <div className="rounded-lg border p-3 text-center">
-                    <p className="text-2xl font-bold text-primary">₹{(selectedGuest.totalSpent / 1000).toFixed(0)}k</p>
-                    <p className="text-xs text-muted-foreground">Total Spent</p>
-                  </div>
-                  <div className="rounded-lg border p-3 text-center">
-                    <p className="text-2xl font-bold text-primary">4.8</p>
-                    <p className="text-xs text-muted-foreground">Avg Rating</p>
-                  </div>
-                </div>
-
-                {/* Recent Bookings */}
-                <div className="space-y-3">
-                  <h4 className="text-sm font-medium">Recent Bookings</h4>
-                  <div className="space-y-2">
-                    <div className="rounded-lg border p-3">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium">Ocean View Villa</span>
-                        <Badge className="bg-green-500/10 text-green-600">Completed</Badge>
+                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                  <Card className="border-none shadow-sm rounded-xl overflow-hidden">
+                    <div className="bg-slate-100/50 px-4 py-2 border-b border-slate-100 flex items-center gap-2">
+                      <Users className="h-3.5 w-3.5 text-slate-500" />
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Contact Info</span>
+                    </div>
+                    <CardContent className="p-4 space-y-3 bg-white">
+                      <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400">
+                          <Mail className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] uppercase font-bold text-slate-400">Email</p>
+                          <p className="text-xs font-bold text-slate-800">{selectedGuest.email}</p>
+                        </div>
                       </div>
-                      <p className="text-sm text-muted-foreground">Dec 15-18, 2025</p>
-                    </div>
-                    <div className="rounded-lg border p-3">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium">Heritage Homestay</span>
-                        <Badge className="bg-green-500/10 text-green-600">Completed</Badge>
+                      <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400">
+                          <Phone className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] uppercase font-bold text-slate-400">Phone</p>
+                          <p className="text-xs font-bold text-slate-800">{selectedGuest.phone}</p>
+                        </div>
                       </div>
-                      <p className="text-sm text-muted-foreground">Nov 20-23, 2025</p>
-                    </div>
-                  </div>
-                </div>
+                      <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400">
+                          <MapPin className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] uppercase font-bold text-slate-400">Location</p>
+                          <p className="text-xs font-bold text-slate-800">{selectedGuest.location}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-                {/* Actions */}
-                <div className="flex gap-2">
-                  <Button variant="outline" className="flex-1 bg-transparent">
-                    <MessageSquare className="mr-1.5 h-4 w-4" />
-                    Message
-                  </Button>
-                  <Button className="flex-1 bg-[#E68B47] hover:bg-[#c97339]">
-                    <Plus className="mr-1.5 h-4 w-4" />
-                    New Booking
-                  </Button>
+                  <Card className="border-none shadow-sm rounded-xl overflow-hidden">
+                    <div className="bg-slate-100/50 px-4 py-2 border-b border-slate-100 flex items-center gap-2">
+                      <Eye className="h-3.5 w-3.5 text-slate-500" />
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Statistics</span>
+                    </div>
+                    <CardContent className="p-4 space-y-0 bg-white">
+                      <div className="grid grid-cols-3 gap-0 divide-x divide-slate-100">
+                        <div className="text-center px-2">
+                          <span className="block text-xl font-black text-slate-800">{selectedGuest.totalBookings}</span>
+                          <span className="text-[9px] font-bold uppercase text-slate-400">Bookings</span>
+                        </div>
+                        <div className="text-center px-2">
+                          <span className="block text-xl font-black text-slate-800">₹{selectedGuest.totalSpent > 1000 ? (selectedGuest.totalSpent / 1000).toFixed(1) + 'k' : selectedGuest.totalSpent}</span>
+                          <span className="text-[9px] font-bold uppercase text-slate-400">Spend</span>
+                        </div>
+                        <div className="text-center px-2">
+                          <span className="block text-xl font-black text-slate-800">4.9</span>
+                          <span className="text-[9px] font-bold uppercase text-slate-400">Rating</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
               </div>
-            </>
-          )}
-        </SheetContent>
-      </Sheet>
-      <AddGuestDialog open={addGuestOpen} onOpenChange={setAddGuestOpen} />
+            )}
+          </SheetContent>
+        </Sheet>
+        <AddGuestDialog open={addGuestOpen} onOpenChange={setAddGuestOpen} />
+      </div>
     </DashboardLayout>
   )
 }

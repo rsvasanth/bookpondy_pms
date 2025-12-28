@@ -24,6 +24,7 @@ import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { SyncProvider } from "@/providers/SyncProvider"
 import { useAuthStore } from "@/stores/authStore"
+import { RoleGuard } from "@/components/role-guard"
 import './globals.css'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -124,7 +125,9 @@ function App() {
 									path="/staff"
 									element={
 										<ProtectedRoute>
-											<StaffPage />
+											<RoleGuard allowedRoles={['Administrator', 'Manager']}>
+												<StaffPage />
+											</RoleGuard>
 										</ProtectedRoute>
 									}
 								/>
@@ -140,7 +143,9 @@ function App() {
 									path="/financials"
 									element={
 										<ProtectedRoute>
-											<FinancialsPage />
+											<RoleGuard allowedRoles={['Administrator', 'Manager']}>
+												<FinancialsPage />
+											</RoleGuard>
 										</ProtectedRoute>
 									}
 								/>
@@ -148,7 +153,9 @@ function App() {
 									path="/invoices"
 									element={
 										<ProtectedRoute>
-											<InvoicesPage />
+											<RoleGuard allowedRoles={['Administrator', 'Manager']}>
+												<InvoicesPage />
+											</RoleGuard>
 										</ProtectedRoute>
 									}
 								/>
@@ -156,7 +163,9 @@ function App() {
 									path="/channels"
 									element={
 										<ProtectedRoute>
-											<ChannelsPage />
+											<RoleGuard allowedRoles={['Administrator', 'Manager']}>
+												<ChannelsPage />
+											</RoleGuard>
 										</ProtectedRoute>
 									}
 								/>
@@ -196,7 +205,9 @@ function App() {
 									path="/reports"
 									element={
 										<ProtectedRoute>
-											<ReportsPage />
+											<RoleGuard allowedRoles={['Administrator', 'Manager']}>
+												<ReportsPage />
+											</RoleGuard>
 										</ProtectedRoute>
 									}
 								/>
@@ -204,7 +215,9 @@ function App() {
 									path="/settings"
 									element={
 										<ProtectedRoute>
-											<SettingsPage />
+											<RoleGuard allowedRoles={['Administrator']}>
+												<SettingsPage />
+											</RoleGuard>
 										</ProtectedRoute>
 									}
 								/>
