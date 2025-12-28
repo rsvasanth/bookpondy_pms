@@ -1,0 +1,97 @@
+{
+    "actions": [],
+    "allow_rename": 1,
+    "autoname": "naming_series:",
+    "creation": "2024-12-28 13:40:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "naming_series",
+        "guest",
+        "reservation",
+        "column_break_1",
+        "status",
+        "query_date",
+        "section_break_details",
+        "query_text"
+    ],
+    "fields": [
+        {
+            "fieldname": "naming_series",
+            "fieldtype": "Select",
+            "label": "Series",
+            "options": "GQ-.YYYY.-.#####",
+            "reqd": 1
+        },
+        {
+            "fieldname": "guest",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "label": "Guest",
+            "options": "Guest",
+            "reqd": 1
+        },
+        {
+            "fieldname": "reservation",
+            "fieldtype": "Link",
+            "label": "Reservation",
+            "options": "Reservation",
+            "reqd": 1
+        },
+        {
+            "fieldname": "column_break_1",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "status",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "label": "Status",
+            "options": "Open\nResolved",
+            "default": "Open",
+            "reqd": 1
+        },
+        {
+            "fieldname": "query_date",
+            "fieldtype": "Datetime",
+            "label": "Date",
+            "default": "Now"
+        },
+        {
+            "fieldname": "section_break_details",
+            "fieldtype": "Section Break",
+            "label": "Query Details"
+        },
+        {
+            "fieldname": "query_text",
+            "fieldtype": "Small Text",
+            "label": "Query",
+            "reqd": 1
+        }
+    ],
+    "index_web_pages_for_search": 1,
+    "links": [],
+    "modified": "2024-12-28 13:40:00.000000",
+    "modified_by": "Administrator",
+    "module": "Bookpondy Pms",
+    "name": "Guest Query",
+    "naming_rule": "By \"Naming Series\" field",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "System Manager",
+            "share": 1,
+            "write": 1
+        }
+    ],
+    "sort_field": "creation",
+    "sort_order": "DESC",
+    "track_changes": 1
+}

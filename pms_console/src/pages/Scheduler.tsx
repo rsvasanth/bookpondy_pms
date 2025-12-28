@@ -31,8 +31,8 @@ export default function SchedulerPage() {
 
     return (
         <DashboardLayout>
-            <div className="flex flex-col h-[calc(100vh-100px)]">
-                <div className="bg-white border border-slate-100 rounded-2xl shadow-sm p-3 flex-1 overflow-hidden flex flex-col">
+            <div className="flex flex-col h-full flex-1">
+                <div className="bg-white border border-slate-100 rounded-2xl shadow-sm p-3 flex-1 overflow-hidden flex flex-col h-full">
                     <SchedulerProvider initialState={schedulerEvents}>
                         <div className="h-full flex-1 min-h-0">
                             <SchedulerWrapper />

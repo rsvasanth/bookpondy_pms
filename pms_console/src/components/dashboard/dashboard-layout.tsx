@@ -57,11 +57,16 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }, [isTablet])
 
   return (
-    <SidebarProvider open={open} onOpenChange={setOpen}>
+    <SidebarProvider
+      open={open}
+      onOpenChange={setOpen}
+      className="h-screen w-full overflow-hidden"
+      defaultOpen={!isTablet}
+    >
       <AppSidebar />
-      <SidebarInset>
+      <SidebarInset className="h-full flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 bg-background">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
 
@@ -173,8 +178,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           </div>
         </header>
 
-        {/* Main Content */}
-        <main className={`flex-1 ${isSchedulerPage ? 'p-3' : 'p-4'}`}>{children}</main>
+        {/* Main Content Area */}
+        <div className={`flex-1 overflow-auto h-full flex flex-col ${isSchedulerPage ? 'p-3' : 'p-4'}`}>
+          <div className="flex-1 h-full min-h-0">
+            {children}
+          </div>
+        </div>
       </SidebarInset>
     </SidebarProvider>
   )

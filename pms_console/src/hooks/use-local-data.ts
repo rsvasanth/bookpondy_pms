@@ -16,7 +16,8 @@ const DOCTYPE_TO_COLLECTION: Record<string, string> = {
     'Housekeeping Task': 'housekeeping',
     'Maintenance Ticket': 'maintenance',
     'Guest Communication': 'communications',
-    'Sales Invoice': 'invoices'
+    'Sales Invoice': 'invoices',
+    'Guest Query': 'guest_queries'
 };
 
 export function useLocalDocList(collectionName: string, mangoQuery: any = {}) {

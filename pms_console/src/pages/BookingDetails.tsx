@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { Button } from "@/components/ui/button"
-import { useLocalDoc } from "@/hooks/use-local-data"
+import { useLocalDoc, useLocalMutation, useLocalDocList, useLocalCreate } from "@/hooks/use-local-data"
 import {
     ArrowLeft,
     Mail,
@@ -53,22 +53,52 @@ export default function BookingDetailsPage() {
     const { id } = useParams<{ id: string }>()
 
     const { data: booking, isLoading } = useLocalDoc("Reservation", id!)
+    const { mutate } = useLocalMutation()
 
-    // Derived State / Mocks for UI Demo
+    // --- Derived Payment Logic ---
+    const isPaid = ["Received", "Refunded"].includes(booking?.payment_status)
+    // Fallback to advance_paid if not fully paid
+    const paidAmount = isPaid ? booking?.total_amount : (booking?.advance_paid || 0)
+    const dueAmount = (booking?.total_amount || 0) - (paidAmount || 0)
+
+    // --- Notes Logic ---
+    const handleSaveNotes = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+        const newNotes = e.target.value
+        if (newNotes !== booking.notes) {
+            mutate('Reservation', booking.name, { notes: newNotes })
+        }
+    }
+
+    // --- Onboarding Logic ---
     const onboardingSteps = [
-        { label: "Identity Verified", done: !!booking?.guest_id_image },
-        { label: "Deposit Paid", done: true },
-        { label: "Rental Signed", done: false },
-        { label: "Security Collected", done: false },
-        { label: "Guide Sent", done: true },
+        { key: 'is_identity_verified', label: "Identity Verified", done: !!booking?.is_identity_verified },
+        { key: 'is_rental_agreement_signed', label: "Rental Agreement Signed", done: !!booking?.is_rental_agreement_signed },
+        { key: 'is_security_deposit_collected', label: "Security Collected", done: !!booking?.is_security_deposit_collected },
+        { key: 'is_checkin_guide_sent', label: "Guide Sent", done: !!booking?.is_checkin_guide_sent },
     ]
     const completedSteps = onboardingSteps.filter(s => s.done).length
     const progress = (completedSteps / onboardingSteps.length) * 100
 
-    const guestQueries = [
-        { id: 1, text: "Is early check-in available?", status: "Open", date: "2h ago" },
-        { id: 2, text: "Do you provide a hair dryer?", status: "Resolved", date: "Yesterday" }
-    ]
+    const handleToggleOnboarding = (key: string, currentVal: boolean) => {
+        mutate('Reservation', booking.name, { [key]: !currentVal ? 1 : 0 })
+    }
+
+    // --- Guest Queries Logic ---
+    const { data: queries } = useLocalDocList('Guest Query', { selector: { reservation: id } })
+    const { create: createQuery } = useLocalCreate()
+
+    const handleLogQuery = () => {
+        const text = prompt("Enter guest query:")
+        if (text) {
+            createQuery('Guest Query', {
+                reservation: id,
+                guest: booking.guest,
+                query_text: text,
+                status: 'Open',
+                query_date: new Date().toISOString()
+            })
+        }
+    }
 
     if (isLoading) {
         return (
@@ -104,6 +134,8 @@ export default function BookingDetailsPage() {
         }
     }
 
+
+
     return (
         <DashboardLayout>
             {/* Added max-h-screen/overflow logic to help fitting if needed, but primarily relying on compactness */}
@@ -129,6 +161,7 @@ export default function BookingDetailsPage() {
                             </p>
                         </div>
                     </div>
+                    {/* ... (Header Actions same as before) ... */}
                     <div className="flex items-center gap-2">
                         <Sheet>
                             <SheetTrigger asChild>
@@ -294,7 +327,7 @@ export default function BookingDetailsPage() {
                                 <CardContent className="p-3 flex items-center justify-between">
                                     <div>
                                         <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Paid</p>
-                                        <p className="text-lg font-bold text-green-600 leading-none">₹0</p>
+                                        <p className="text-lg font-bold text-green-600 leading-none">₹{paidAmount?.toLocaleString()}</p>
                                     </div>
                                     <div className="h-8 w-8 rounded-full bg-green-50 flex items-center justify-center">
                                         <CheckSquare className="h-4 w-4 text-green-500" />
@@ -305,7 +338,7 @@ export default function BookingDetailsPage() {
                                 <CardContent className="p-3 flex items-center justify-between">
                                     <div>
                                         <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Due Now</p>
-                                        <p className="text-lg font-bold text-[#ff3924] leading-none">₹{booking.total_amount?.toLocaleString()}</p>
+                                        <p className="text-lg font-bold text-[#ff3924] leading-none">₹{dueAmount?.toLocaleString()}</p>
                                     </div>
                                     <div className="h-8 w-8 rounded-full bg-red-50 flex items-center justify-center">
                                         <Clock className="h-4 w-4 text-[#ff3924]" />
@@ -317,19 +350,22 @@ export default function BookingDetailsPage() {
                         {/* Guest Queries & Onboarding Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
 
-                            {/* Guest Queries (New Feature) - AMBER Header */}
+                            {/* Guest Queries */}
                             <Card className="rounded-xl shadow-sm border-slate-100 h-full flex flex-col group hover:border-amber-200 transition-colors">
                                 <CardHeader className="py-2.5 px-3 bg-amber-50 border-b border-amber-100 flex flex-row items-center justify-between space-y-0">
                                     <CardTitle className="text-xs font-bold flex items-center gap-2 text-amber-900">
                                         <HelpCircle className="h-3.5 w-3.5 text-amber-500" />
                                         Guest Queries
                                     </CardTitle>
-                                    <Badge variant="secondary" className="bg-white text-amber-600 border-amber-100 text-[9px] h-4">2 Open</Badge>
+                                    <Badge variant="secondary" className="bg-white text-amber-600 border-amber-100 text-[9px] h-4">{queries.length}</Badge>
                                 </CardHeader>
-                                <CardContent className="p-0 flex-1">
-                                    <div className="divide-y divide-slate-50">
-                                        {guestQueries.map((q) => (
-                                            <div key={q.id} className="p-2.5 hover:bg-slate-50/50 transition-colors flex items-start gap-2.5">
+                                <CardContent className="p-0 flex-1 flex flex-col">
+                                    <div className="divide-y divide-slate-50 flex-1 overflow-y-auto max-h-[200px]">
+                                        {queries.length === 0 && (
+                                            <div className="p-4 text-center text-xs text-slate-400">No queries logged.</div>
+                                        )}
+                                        {queries.map((q) => (
+                                            <div key={q.name} className="p-2.5 hover:bg-slate-50/50 transition-colors flex items-start gap-2.5">
                                                 <div className="mt-1">
                                                     {q.status === "Open" ? (
                                                         <div className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse shadow-[0_0_0_2px_rgba(245,158,11,0.2)]" />
@@ -338,24 +374,21 @@ export default function BookingDetailsPage() {
                                                     )}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <p className="text-[11px] font-semibold text-slate-800 line-clamp-1">{q.text}</p>
-                                                    <p className="text-[9px] text-slate-400 mt-0.5">{q.date}</p>
+                                                    <p className="text-[11px] font-semibold text-slate-800 line-clamp-1">{q.query_text}</p>
+                                                    <p className="text-[9px] text-slate-400 mt-0.5">{safeFormatDate(q.query_date, "MMM dd, HH:mm")}</p>
                                                 </div>
-                                                <Button size="icon" variant="ghost" className="h-5 w-5 text-slate-300">
-                                                    <MoreHorizontal className="h-3 w-3" />
-                                                </Button>
                                             </div>
                                         ))}
                                     </div>
                                     <div className="p-2 border-t border-slate-50 mt-auto">
-                                        <Button variant="ghost" size="sm" className="w-full text-[10px] h-7 text-slate-500 hover:bg-slate-50 hover:text-slate-800">
+                                        <Button onClick={handleLogQuery} variant="ghost" size="sm" className="w-full text-[10px] h-7 text-slate-500 hover:bg-slate-50 hover:text-slate-800">
                                             + Log New Query
                                         </Button>
                                     </div>
                                 </CardContent>
                             </Card>
 
-                            {/* Onboarding Monitor - EMERALD Header */}
+                            {/* Onboarding Monitor (Partially Mock) */}
                             <Card className="rounded-xl shadow-sm border-slate-100 h-full flex flex-col group hover:border-emerald-200 transition-colors">
                                 <CardHeader className="py-2.5 px-3 bg-emerald-50 border-b border-emerald-100 flex flex-row items-center justify-between space-y-0">
                                     <CardTitle className="text-xs font-bold flex items-center gap-2 text-emerald-900">
@@ -368,7 +401,11 @@ export default function BookingDetailsPage() {
                                     <Progress value={progress} className="h-1 mb-3 bg-slate-100" indicatorClassName="bg-emerald-500" />
                                     <div className="space-y-1.5">
                                         {onboardingSteps.map((step, idx) => (
-                                            <div key={idx} className="flex items-center gap-2 group">
+                                            <div
+                                                key={idx}
+                                                className="flex items-center gap-2 group cursor-pointer"
+                                                onClick={() => handleToggleOnboarding(step.key, step.done)}
+                                            >
                                                 <div className={`h-3.5 w-3.5 rounded border flex items-center justify-center shrink-0 transition-colors ${step.done ? "bg-emerald-500 border-emerald-500 text-white" : "border-slate-200 bg-white group-hover:border-slate-300"}`}>
                                                     {step.done && <CheckSquare className="h-2.5 w-2.5" />}
                                                 </div>
@@ -392,7 +429,12 @@ export default function BookingDetailsPage() {
                             </CardHeader>
                             <CardContent className="p-3">
                                 <div className="flex gap-2">
-                                    <Textarea className="h-16 text-xs resize-none bg-yellow-50/30 border-yellow-100 text-slate-700 placeholder:text-slate-400 focus:bg-white transition-colors min-h-[64px]" placeholder="Add confidential staff notes..." />
+                                    <Textarea
+                                        className="h-16 text-xs resize-none bg-yellow-50/30 border-yellow-100 text-slate-700 placeholder:text-slate-400 focus:bg-white transition-colors min-h-[64px]"
+                                        placeholder="Add confidential staff notes..."
+                                        defaultValue={booking.notes}
+                                        onBlur={handleSaveNotes}
+                                    />
                                     <Button size="icon" className="h-16 w-10 shrink-0 bg-slate-900 text-white hover:bg-slate-800 rounded-lg">
                                         <Send className="h-4 w-4" />
                                     </Button>
