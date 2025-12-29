@@ -108,28 +108,28 @@ export default function MaintenancePage() {
 
     const getPriorityColor = (priority: string) => {
         switch (priority) {
-            case "Critical": return "bg-red-500 text-white"
-            case "High": return "bg-orange-500 text-white"
-            case "Medium": return "bg-blue-500 text-white"
-            case "Low": return "bg-slate-500 text-white"
-            default: return "bg-slate-500 text-white"
+            case "Critical": return "bg-rose-500/10 text-rose-500 border-rose-500/20"
+            case "High": return "bg-amber-500/10 text-amber-500 border-amber-500/20"
+            case "Medium": return "bg-blue-500/10 text-blue-500 border-blue-500/20"
+            case "Low": return "bg-muted text-muted-foreground border-border"
+            default: return "bg-muted text-muted-foreground border-border"
         }
     }
 
     return (
         <DashboardLayout>
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-8">
                 {/* Header */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-slate-800">Maintenance & Engineering</h1>
-                        <p className="text-sm text-slate-500 font-medium tracking-tight">
-                            Track facility issues and vendor assignments
+                    <div className="space-y-1">
+                        <h1 className="text-2xl font-bold tracking-tight text-foreground uppercase">Maintenance & Engineering</h1>
+                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                            Track facility issues, repairs, and vendor assignments.
                         </p>
                     </div>
                     <div className="flex items-center gap-2">
                         <Select value={propertyId} onValueChange={setPropertyId}>
-                            <SelectTrigger className="w-[180px] h-10 rounded-xl bg-white border-muted shadow-sm">
+                            <SelectTrigger className="w-[180px] h-10 rounded-lg bg-card border-border shadow-sm text-xs font-bold uppercase tracking-wider">
                                 <SelectValue placeholder="All Properties" />
                             </SelectTrigger>
                             <SelectContent>
@@ -141,7 +141,7 @@ export default function MaintenancePage() {
                         </Select>
 
                         <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-                            <SelectTrigger className="w-[150px] h-10 rounded-xl bg-white border-muted shadow-sm">
+                            <SelectTrigger className="w-[150px] h-10 rounded-lg bg-card border-border shadow-sm text-xs font-bold uppercase tracking-wider">
                                 <SelectValue placeholder="All Priorities" />
                             </SelectTrigger>
                             <SelectContent>
@@ -155,25 +155,25 @@ export default function MaintenancePage() {
 
                         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
                             <DialogTrigger asChild>
-                                <Button className="bg-primary hover:bg-primary/90 text-white rounded-xl h-10 px-4 font-bold text-sm gap-2 shadow-sm">
+                                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-10 px-4 font-bold text-[10px] uppercase tracking-widest gap-2 shadow-sm">
                                     <Plus className="h-4 w-4" /> Log Issue
                                 </Button>
                             </DialogTrigger>
-                            <DialogContent className="sm:max-w-[425px] rounded-2xl">
-                                <DialogHeader>
-                                    <DialogTitle className="text-xl font-bold">Log Maintenance Issue</DialogTitle>
-                                    <DialogDescription className="font-medium">
+                            <DialogContent className="sm:max-w-[425px] rounded-lg border-border bg-card">
+                                <DialogHeader className="space-y-2">
+                                    <DialogTitle className="text-lg font-bold uppercase tracking-tight">Log Maintenance Issue</DialogTitle>
+                                    <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                                         Report a new maintenance issue for a property unit.
                                     </DialogDescription>
                                 </DialogHeader>
-                                <div className="grid gap-4 py-4">
+                                <div className="grid gap-6 py-4">
                                     <div className="space-y-2">
-                                        <Label htmlFor="property" className="text-xs font-bold uppercase tracking-wider text-slate-500">Property</Label>
+                                        <Label htmlFor="property" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Property</Label>
                                         <Select
                                             value={newTicket.property_link}
                                             onValueChange={(v) => setNewTicket({ ...newTicket, property_link: v, unit: "" })}
                                         >
-                                            <SelectTrigger className="rounded-xl border-slate-200">
+                                            <SelectTrigger className="rounded-lg border-border bg-card h-10 text-xs font-bold uppercase tracking-wider">
                                                 <SelectValue placeholder="Select Property" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -184,13 +184,13 @@ export default function MaintenancePage() {
                                         </Select>
                                     </div>
                                     <div className="space-y-2">
-                                        <Label htmlFor="unit" className="text-xs font-bold uppercase tracking-wider text-slate-500">Unit</Label>
+                                        <Label htmlFor="unit" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Unit</Label>
                                         <Select
                                             value={newTicket.unit}
                                             onValueChange={(v) => setNewTicket({ ...newTicket, unit: v })}
                                             disabled={!newTicket.property_link}
                                         >
-                                            <SelectTrigger className="rounded-xl border-slate-200">
+                                            <SelectTrigger className="rounded-lg border-border bg-card h-10 text-xs font-bold uppercase tracking-wider">
                                                 <SelectValue placeholder={newTicket.property_link ? "Select Unit" : "First select a property"} />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -201,22 +201,22 @@ export default function MaintenancePage() {
                                         </Select>
                                     </div>
                                     <div className="space-y-2">
-                                        <Label htmlFor="title" className="text-xs font-bold uppercase tracking-wider text-slate-500">Issue Title</Label>
+                                        <Label htmlFor="title" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Issue Title</Label>
                                         <Input
                                             id="title"
-                                            placeholder="e.g. AC not cooling"
-                                            className="rounded-xl border-slate-200"
+                                            placeholder="E.G. AC NOT COOLING"
+                                            className="rounded-lg border-border bg-card h-10 text-xs font-bold uppercase tracking-wider placeholder:opacity-50"
                                             value={newTicket.issue_title}
                                             onChange={(e) => setNewTicket({ ...newTicket, issue_title: e.target.value })}
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label htmlFor="priority" className="text-xs font-bold uppercase tracking-wider text-slate-500">Priority</Label>
+                                        <Label htmlFor="priority" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Priority</Label>
                                         <Select
                                             value={newTicket.priority}
                                             onValueChange={(v) => setNewTicket({ ...newTicket, priority: v })}
                                         >
-                                            <SelectTrigger className="rounded-xl border-slate-200">
+                                            <SelectTrigger className="rounded-lg border-border bg-card h-10 text-xs font-bold uppercase tracking-wider">
                                                 <SelectValue placeholder="Select Priority" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -228,11 +228,11 @@ export default function MaintenancePage() {
                                         </Select>
                                     </div>
                                     <div className="space-y-2">
-                                        <Label htmlFor="desc" className="text-xs font-bold uppercase tracking-wider text-slate-500">Description</Label>
+                                        <Label htmlFor="desc" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Description</Label>
                                         <Textarea
                                             id="desc"
-                                            placeholder="Detailed description of the issue..."
-                                            className="rounded-xl border-slate-200 min-h-[100px]"
+                                            placeholder="DETAILED DESCRIPTION OF THE ISSUE..."
+                                            className="rounded-lg border-border bg-card min-h-[100px] text-xs font-bold uppercase tracking-wider placeholder:opacity-50"
                                             value={newTicket.description}
                                             onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
                                         />
@@ -242,7 +242,7 @@ export default function MaintenancePage() {
                                     <Button
                                         onClick={handleCreateTicket}
                                         disabled={creating}
-                                        className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl h-10 font-bold"
+                                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-10 font-bold text-[10px] uppercase tracking-widest shadow-sm"
                                     >
                                         {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Log Maintenance Issue"}
                                     </Button>
@@ -253,41 +253,49 @@ export default function MaintenancePage() {
                 </div>
 
                 {/* Stat Cards */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <Card className="border-none shadow-sm rounded-2xl bg-white transition-all hover:translate-y-[-2px]">
-                        <CardContent className="p-6">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                    <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden hover:scale-[1.01] transition-all">
+                        <CardContent className="p-5">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Open Issues</span>
-                                <AlertCircle className="h-4 w-4 text-primary" />
+                                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Open Issues</span>
+                                <div className="h-8 w-8 rounded-md bg-primary/10 text-primary flex items-center justify-center border border-border">
+                                    <AlertCircle className="h-4 w-4" />
+                                </div>
                             </div>
-                            <p className="text-3xl font-black text-primary tracking-tight">{stats.open}</p>
+                            <p className="text-3xl font-black text-foreground tracking-tight">{stats.open}</p>
                         </CardContent>
                     </Card>
-                    <Card className="border-none shadow-sm rounded-2xl bg-white transition-all hover:translate-y-[-2px]">
-                        <CardContent className="p-6">
+                    <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden hover:scale-[1.01] transition-all">
+                        <CardContent className="p-5">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">High Priority</span>
-                                <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">High Priority</span>
+                                <div className="h-8 w-8 rounded-md bg-rose-500/10 text-rose-500 flex items-center justify-center border border-border">
+                                    <div className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
+                                </div>
                             </div>
-                            <p className="text-3xl font-black text-slate-800 tracking-tight">{stats.critical}</p>
+                            <p className="text-3xl font-black text-foreground tracking-tight">{stats.critical}</p>
                         </CardContent>
                     </Card>
-                    <Card className="border-none shadow-sm rounded-2xl bg-white transition-all hover:translate-y-[-2px]">
-                        <CardContent className="p-6">
+                    <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden hover:scale-[1.01] transition-all">
+                        <CardContent className="p-5">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">In Progress</span>
-                                <Clock className="h-4 w-4 text-blue-500" />
+                                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">In Progress</span>
+                                <div className="h-8 w-8 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center border border-border">
+                                    <Clock className="h-4 w-4" />
+                                </div>
                             </div>
-                            <p className="text-3xl font-black text-blue-500 tracking-tight">{stats.inProgress}</p>
+                            <p className="text-3xl font-black text-foreground tracking-tight">{stats.inProgress}</p>
                         </CardContent>
                     </Card>
-                    <Card className="border-none shadow-sm rounded-2xl bg-white transition-all hover:translate-y-[-2px]">
-                        <CardContent className="p-6">
+                    <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden hover:scale-[1.01] transition-all">
+                        <CardContent className="p-5">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Resolved Today</span>
-                                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Resolved Today</span>
+                                <div className="h-8 w-8 rounded-md bg-emerald-500/10 text-emerald-500 flex items-center justify-center border border-border">
+                                    <CheckCircle2 className="h-4 w-4" />
+                                </div>
                             </div>
-                            <p className="text-3xl font-black text-green-500 tracking-tight">{stats.resolved}</p>
+                            <p className="text-3xl font-black text-foreground tracking-tight">{stats.resolved}</p>
                         </CardContent>
                     </Card>
                 </div>
@@ -296,60 +304,60 @@ export default function MaintenancePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 overflow-x-auto pb-6">
                     {statuses.map((status) => (
                         <div key={status} className="flex flex-col gap-4 min-w-[280px]">
-                            <div className="flex items-center justify-between px-2 py-1 bg-slate-100/50 rounded-lg">
+                            <div className="flex items-center justify-between px-3 py-2 bg-muted/50 rounded-lg border border-border">
                                 <div className="flex items-center gap-2">
                                     <div className={cn(
-                                        "h-2.5 w-2.5 rounded-full",
+                                        "h-2 w-2 rounded-full",
                                         status === "Open" ? "bg-primary" :
                                             status === "In Progress" ? "bg-blue-500" :
-                                                status === "Resolved" ? "bg-green-500" : "bg-slate-400"
+                                                status === "Resolved" ? "bg-emerald-500" : "bg-muted-foreground"
                                     )} />
-                                    <h3 className="font-bold text-[10px] uppercase tracking-[0.1em] text-slate-500">{status}</h3>
+                                    <h3 className="font-bold text-[10px] uppercase tracking-[0.2em] text-foreground">{status}</h3>
                                 </div>
-                                <Badge variant="secondary" className="rounded-md px-1.5 py-0 text-[10px] font-black bg-white text-slate-500 shadow-sm">
+                                <Badge variant="outline" className="rounded-md px-1.5 py-0 text-[10px] font-black bg-card text-muted-foreground border-border shadow-sm">
                                     {tickets?.filter(t => t.ticket_status === status).length || 0}
                                 </Badge>
                             </div>
 
-                            <div className="flex flex-col gap-4 min-h-[500px] bg-slate-50/30 p-2 rounded-2xl border border-dashed border-slate-200">
+                            <div className="flex flex-col gap-4 min-h-[500px] bg-muted/20 p-2 rounded-lg border border-dashed border-border">
                                 {tickets?.filter(t => t.ticket_status === status).map((ticket) => (
-                                    <Card key={ticket.name} className="border-none shadow-sm rounded-xl hover:shadow-md transition-all group bg-white border border-slate-100">
-                                        <CardContent className="p-4 space-y-3">
+                                    <Card key={ticket.name} className="border border-border shadow-sm rounded-lg hover:shadow-md transition-all group bg-card overflow-hidden">
+                                        <CardContent className="p-4 space-y-4">
                                             <div className="flex justify-between items-start">
-                                                <Badge className={cn("text-[8px] font-black uppercase rounded-md tracking-tight border-none shadow-none", getPriorityColor(ticket.priority))}>
+                                                <Badge variant="outline" className={cn("text-[8px] font-black uppercase rounded-md tracking-tight px-2 py-0.5 border-none shadow-none", getPriorityColor(ticket.priority))}>
                                                     {ticket.priority}
                                                 </Badge>
-                                                <span className="text-[10px] font-bold text-slate-400">#{ticket.name.split("-").pop()}</span>
+                                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">#{ticket.name.split("-").pop()}</span>
                                             </div>
 
-                                            <div className="space-y-1">
-                                                <h4 className="font-bold text-sm leading-snug text-slate-800 group-hover:text-primary transition-colors">{ticket.issue_title}</h4>
-                                                <div className="flex items-center gap-1 text-slate-400">
+                                            <div className="space-y-1.5">
+                                                <h4 className="font-bold text-sm leading-snug text-foreground group-hover:text-primary transition-colors uppercase tracking-tight">{ticket.issue_title}</h4>
+                                                <div className="flex items-center gap-1.5 text-muted-foreground">
                                                     <MapPin className="h-3 w-3" />
-                                                    <span className="text-[10px] font-black uppercase tracking-tight">{ticket.unit}</span>
+                                                    <span className="text-[10px] font-bold uppercase tracking-widest">{ticket.unit}</span>
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-center justify-between py-2 border-t border-slate-100/50">
-                                                <div className="flex items-center gap-1.5 text-slate-600">
+                                            <div className="flex items-center justify-between py-2 border-t border-border">
+                                                <div className="flex items-center gap-2 text-muted-foreground">
                                                     <Wrench className="h-3 w-3" />
-                                                    <span className="text-[10px] font-bold text-slate-500 truncate max-w-[120px]">
+                                                    <span className="text-[10px] font-bold uppercase tracking-widest truncate max-w-[120px]">
                                                         {ticket.assigned_vendor || "UNASSIGNED"}
                                                     </span>
                                                 </div>
                                                 {ticket.actual_cost > 0 && (
-                                                    <span className="text-[10px] font-black text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded">
+                                                    <span className="text-[10px] font-black text-foreground bg-muted px-2 py-0.5 rounded-md border border-border">
                                                         ₹{ticket.actual_cost}
                                                     </span>
                                                 )}
                                             </div>
 
-                                            <div className="grid grid-cols-2 gap-2 mt-2">
+                                            <div className="grid grid-cols-2 gap-2">
                                                 {status === "Open" && (
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        className="h-8 text-[10px] font-black uppercase rounded-lg gap-1 border-blue-200 text-blue-600 hover:bg-blue-50 transition-colors"
+                                                        className="h-8 text-[9px] font-black uppercase rounded-md gap-1.5 border-blue-500/20 text-blue-500 hover:bg-blue-500/10 hover:text-blue-500 transition-colors"
                                                         onClick={() => updateStatus(ticket.name, "In Progress")}
                                                     >
                                                         Start <ArrowRight className="h-3 w-3" />
@@ -359,7 +367,7 @@ export default function MaintenancePage() {
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        className="h-8 text-[10px] font-black uppercase rounded-lg gap-1 border-green-200 text-green-600 hover:bg-green-50 transition-colors"
+                                                        className="h-8 text-[9px] font-black uppercase rounded-md gap-1.5 border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/10 hover:text-emerald-500 transition-colors"
                                                         onClick={() => updateStatus(ticket.name, "Resolved")}
                                                     >
                                                         Resolve <CheckCircle2 className="h-3 w-3" />
@@ -367,9 +375,9 @@ export default function MaintenancePage() {
                                                 )}
                                                 {(status === "Resolved" || status === "Open") && (
                                                     <Button
-                                                        variant="ghost"
+                                                        variant="outline"
                                                         size="sm"
-                                                        className="h-8 text-[10px] font-black uppercase rounded-lg hover:bg-slate-100 text-slate-400"
+                                                        className="h-8 text-[9px] font-black uppercase rounded-md hover:bg-muted text-muted-foreground border-border"
                                                     >
                                                         Details
                                                     </Button>
@@ -378,7 +386,7 @@ export default function MaintenancePage() {
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        className="h-8 text-[10px] font-black uppercase rounded-lg gap-1 border-slate-200 text-slate-600 hover:bg-slate-50"
+                                                        className="h-8 text-[9px] font-black uppercase rounded-md gap-1.5 border-border text-foreground hover:bg-muted"
                                                         onClick={() => updateStatus(ticket.name, "Closed")}
                                                     >
                                                         Archive
@@ -389,9 +397,9 @@ export default function MaintenancePage() {
                                     </Card>
                                 ))}
                                 {tickets?.filter(t => t.ticket_status === status).length === 0 && (
-                                    <div className="flex flex-col items-center justify-center py-12 text-center text-slate-200">
-                                        <Wrench className="h-8 w-8 mb-2 stroke-1 opacity-20" />
-                                        <p className="text-[10px] uppercase font-bold tracking-[0.2em] opacity-30">All Clear</p>
+                                    <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground/30">
+                                        <Wrench className="h-10 w-10 mb-2 stroke-[1.5px]" />
+                                        <p className="text-[10px] uppercase font-bold tracking-[0.3em]">All Clear</p>
                                     </div>
                                 )}
                             </div>

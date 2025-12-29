@@ -15,7 +15,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Building2, MapPin, Settings, Loader2 } from "lucide-react"
+import { Building2, MapPin, Settings, Loader2, Sparkles } from "lucide-react"
 import { useFrappeCreateDoc, useFrappeUpdateDoc, useFrappeGetDocList } from "frappe-react-sdk"
 import { toast } from "sonner"
 import { ImageUploader } from "@/components/ui/image-uploader"
@@ -114,26 +114,26 @@ export function PropertyDialog({ open, onOpenChange, initialData, onSuccess }: P
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-h-[90vh] sm:max-w-2xl bg-white p-0 flex flex-col overflow-hidden gap-0">
-                <DialogHeader className="px-6 pt-6 pb-4">
-                    <DialogTitle>{isEditing ? "Edit Property" : "Add New Property"}</DialogTitle>
-                    <DialogDescription>
+            <DialogContent className="max-h-[90vh] sm:max-w-2xl bg-card p-0 flex flex-col overflow-hidden gap-0 rounded-lg border border-border">
+                <DialogHeader className="px-6 pt-6 pb-4 border-b border-border bg-muted/30">
+                    <DialogTitle className="text-xl font-bold text-foreground">{isEditing ? "Edit Property" : "Add New Property"}</DialogTitle>
+                    <DialogDescription className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                         {isEditing ? "Update your property details" : "Add a new property to your portfolio"}
                     </DialogDescription>
                 </DialogHeader>
 
-                <Tabs defaultValue="basic" className="flex-1 flex flex-col overflow-hidden">
+                <Tabs defaultValue="basic" className="flex-1 flex flex-col overflow-hidden mt-4">
                     <div className="px-6">
-                        <TabsList className="grid w-full grid-cols-3 bg-muted/50 p-1">
-                            <TabsTrigger value="basic" className="gap-1.5 text-xs sm:text-sm">
+                        <TabsList className="grid w-full grid-cols-3 bg-muted p-1 rounded-lg border border-border">
+                            <TabsTrigger value="basic" className="gap-1.5 text-xs font-bold uppercase tracking-widest data-[state=active]:bg-card data-[state=active]:text-foreground rounded-md">
                                 <Building2 className="h-4 w-4" />
                                 <span className="hidden sm:inline">General</span>
                             </TabsTrigger>
-                            <TabsTrigger value="location" className="gap-1.5 text-xs sm:text-sm">
+                            <TabsTrigger value="location" className="gap-1.5 text-xs font-bold uppercase tracking-widest data-[state=active]:bg-card data-[state=active]:text-foreground rounded-md">
                                 <MapPin className="h-4 w-4" />
                                 <span className="hidden sm:inline">Location</span>
                             </TabsTrigger>
-                            <TabsTrigger value="media" className="gap-1.5 text-xs sm:text-sm">
+                            <TabsTrigger value="media" className="gap-1.5 text-xs font-bold uppercase tracking-widest data-[state=active]:bg-card data-[state=active]:text-foreground rounded-md">
                                 <Settings className="h-4 w-4" />
                                 <span className="hidden sm:inline">Media Gallery</span>
                             </TabsTrigger>
@@ -178,22 +178,22 @@ export function PropertyDialog({ open, onOpenChange, initialData, onSuccess }: P
 
                             <div className="grid gap-4 sm:grid-cols-3">
                                 <div className="sm:col-span-2 space-y-2">
-                                    <Label htmlFor="propertyName">Property Name</Label>
+                                    <Label htmlFor="propertyName" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Property Name</Label>
                                     <Input
                                         id="propertyName"
                                         placeholder="e.g., Ocean View Villa"
-                                        className="rounded-xl"
+                                        className="rounded-lg h-11 bg-muted/20 border-border font-bold"
                                         value={propertyName}
                                         onChange={(e) => setPropertyName(e.target.value)}
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="units">Total Units</Label>
+                                    <Label htmlFor="units" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Total Units</Label>
                                     <Input
                                         id="units"
                                         type="number"
                                         placeholder="e.g., 5"
-                                        className="rounded-xl"
+                                        className="rounded-lg h-11 bg-muted/20 border-border font-bold"
                                         value={units}
                                         onChange={(e) => setUnits(e.target.value)}
                                     />
@@ -201,12 +201,12 @@ export function PropertyDialog({ open, onOpenChange, initialData, onSuccess }: P
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="description">Description</Label>
+                                <Label htmlFor="description" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Description</Label>
                                 <Textarea
                                     id="description"
                                     placeholder="Describe your property..."
                                     rows={3}
-                                    className="rounded-xl resize-none"
+                                    className="rounded-lg resize-none bg-muted/20 border-border font-bold"
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
                                 />
@@ -215,23 +215,23 @@ export function PropertyDialog({ open, onOpenChange, initialData, onSuccess }: P
 
                         <TabsContent value="location" className="mt-4 space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="location">City</Label>
+                                <Label htmlFor="location" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">City</Label>
                                 <Input
                                     id="location"
                                     placeholder="e.g., Pondicherry"
-                                    className="rounded-xl"
+                                    className="rounded-lg h-11 bg-muted/20 border-border font-bold"
                                     value={location}
                                     onChange={(e) => setLocation(e.target.value)}
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="address">Full Address</Label>
+                                <Label htmlFor="address" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Full Address</Label>
                                 <Textarea
                                     id="address"
                                     placeholder="Enter the complete address..."
                                     rows={3}
-                                    className="rounded-xl resize-none"
+                                    className="rounded-lg resize-none bg-muted/20 border-border font-bold"
                                     value={address}
                                     onChange={(e) => setAddress(e.target.value)}
                                 />
@@ -239,21 +239,21 @@ export function PropertyDialog({ open, onOpenChange, initialData, onSuccess }: P
 
                             <div className="grid gap-4 sm:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label htmlFor="latitude">Latitude (Optional)</Label>
+                                    <Label htmlFor="latitude" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Latitude (Optional)</Label>
                                     <Input
                                         id="latitude"
                                         placeholder="e.g., 11.9416"
-                                        className="rounded-xl"
+                                        className="rounded-lg h-11 bg-muted/20 border-border font-bold"
                                         value={latitude}
                                         onChange={(e) => setLatitude(e.target.value)}
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="longitude">Longitude (Optional)</Label>
+                                    <Label htmlFor="longitude" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Longitude (Optional)</Label>
                                     <Input
                                         id="longitude"
                                         placeholder="e.g., 79.8083"
-                                        className="rounded-xl"
+                                        className="rounded-lg h-11 bg-muted/20 border-border font-bold"
                                         value={longitude}
                                         onChange={(e) => setLongitude(e.target.value)}
                                     />
@@ -288,16 +288,16 @@ export function PropertyDialog({ open, onOpenChange, initialData, onSuccess }: P
                     </div>
                 </Tabs>
 
-                <DialogFooter className="px-6 py-4 border-t border-gray-100 flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 sm:justify-end">
+                <DialogFooter className="px-6 py-4 border-t border-border bg-muted/30 flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 sm:justify-end">
                     <Button
                         variant="outline"
                         onClick={() => onOpenChange(false)}
-                        className="rounded-xl w-full sm:w-auto h-11 font-bold border-gray-200"
+                        className="rounded-lg w-full sm:w-auto h-11 font-bold border-border text-[10px] uppercase tracking-widest"
                     >
                         Cancel
                     </Button>
                     <Button
-                        className="bg-[#FF3D2E] hover:bg-[#e63225] text-white font-bold rounded-xl px-8 w-full sm:w-auto h-11"
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-lg px-8 w-full sm:w-auto h-11 shadow-sm text-[10px] uppercase tracking-widest"
                         onClick={handleSubmit}
                         disabled={!propertyName || isLoading}
                     >
@@ -307,7 +307,10 @@ export function PropertyDialog({ open, onOpenChange, initialData, onSuccess }: P
                                 Saving...
                             </>
                         ) : (
-                            isEditing ? "Save Changes" : "Create Property"
+                            <>
+                                {isEditing ? "Save Changes" : "Create Property"}
+                                <ArrowRight className="ml-2 h-4 w-4" />
+                            </>
                         )}
                     </Button>
                 </DialogFooter>

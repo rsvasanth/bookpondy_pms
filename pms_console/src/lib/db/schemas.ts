@@ -67,6 +67,7 @@ export const InquirySchema = {
         check_in_date: { type: 'string' },
         check_out_date: { type: 'string' },
         number_of_guests: { type: 'number' },
+        special_requests: { type: 'string' },
         modified: { type: 'string', maxLength: 100 }
     },
     required: ['name', 'modified', 'inquiry_status'],
@@ -266,4 +267,22 @@ export const UnitCategorySchema = {
     },
     required: ['name', 'category_name', 'modified'],
     indexes: ['modified']
+};
+
+export const GuestQuerySchema = {
+    title: 'guest query schema',
+    version: 0,
+    primaryKey: 'name',
+    type: 'object',
+    properties: {
+        name: { type: 'string', maxLength: 100 },
+        guest: { type: 'string', maxLength: 100 },
+        reservation: { type: 'string', maxLength: 100 },
+        status: { type: 'string', maxLength: 100 },
+        query_date: { type: 'string' },
+        query_text: { type: 'string' },
+        modified: { type: 'string', maxLength: 100 }
+    },
+    required: ['name', 'modified', 'guest', 'status', 'reservation', 'query_text'],
+    indexes: ['modified', 'guest', 'status']
 };

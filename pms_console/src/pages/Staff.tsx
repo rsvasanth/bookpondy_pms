@@ -27,114 +27,114 @@ export default function StaffPage() {
 
     return (
         <DashboardLayout>
-            <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <h1 className="text-xl font-bold tracking-tight text-slate-800">Staff Management</h1>
-                        <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
-                            Property personnel & roles
+            <div className="flex flex-col gap-8">
+                {/* Header */}
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="space-y-1">
+                        <h1 className="text-2xl font-bold tracking-tight text-foreground uppercase">Staff & Personnel</h1>
+                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                            Manage property personnel, roles, and designations.
                         </p>
                     </div>
-                    <Button className="bg-primary hover:bg-primary/90 text-white rounded-lg h-9 px-3 text-xs font-bold gap-1.5 shadow-sm transition-all hover:scale-105">
-                        <Plus className="h-3.5 w-3.5" />
-                        Add Staff Member
+                    <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-10 px-4 font-bold text-[10px] uppercase tracking-widest gap-2 shadow-sm">
+                        <Plus className="h-4 w-4" /> Add Staff Member
                     </Button>
                 </div>
 
                 {/* Toolbar */}
                 <div className="flex items-center gap-3">
                     <div className="relative w-full max-w-sm">
-                        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
-                            placeholder="Search staff by name or designation..."
-                            className="pl-8 h-9 rounded-lg border-slate-200 bg-white text-xs font-medium"
+                            placeholder="SEARCH STAFF BY NAME OR DESIGNATION..."
+                            className="pl-10 h-10 rounded-lg border-border bg-card text-[10px] font-bold uppercase tracking-widest shadow-sm focus-visible:ring-primary/20 placeholder:opacity-50"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
                 </div>
 
-                <Card className="border border-slate-100 shadow-sm rounded-xl overflow-hidden bg-white">
+                <Card className="border border-border shadow-sm rounded-lg overflow-hidden bg-card">
                     <div className="overflow-x-auto">
                         <Table>
-                            <TableHeader>
-                                <TableRow className="bg-slate-50/50 hover:bg-slate-50/50 border-b border-slate-50">
-                                    <TableHead className="py-3 px-4 w-12 pl-6"></TableHead>
-                                    <TableHead className="py-3 font-bold text-[10px] uppercase tracking-wider text-slate-400">Staff Member</TableHead>
-                                    <TableHead className="py-3 font-bold text-[10px] uppercase tracking-wider text-slate-400">Designation</TableHead>
-                                    <TableHead className="py-3 font-bold text-[10px] uppercase tracking-wider text-slate-400">Property</TableHead>
-                                    <TableHead className="py-3 font-bold text-[10px] uppercase tracking-wider text-slate-400">Contact</TableHead>
-                                    <TableHead className="py-3 font-bold text-[10px] uppercase tracking-wider text-slate-400">Status</TableHead>
-                                    <TableHead className="text-right py-3 pr-6 font-bold text-[10px] uppercase tracking-wider text-slate-400">Actions</TableHead>
+                            <TableHeader className="bg-muted/50">
+                                <TableRow className="hover:bg-transparent border-b border-border">
+                                    <TableHead className="py-4 px-6 w-16"></TableHead>
+                                    <TableHead className="py-4 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Staff Member</TableHead>
+                                    <TableHead className="py-4 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Designation</TableHead>
+                                    <TableHead className="py-4 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Property</TableHead>
+                                    <TableHead className="py-4 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Contact Details</TableHead>
+                                    <TableHead className="py-4 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Status</TableHead>
+                                    <TableHead className="text-right py-4 pr-8 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {isLoading ? (
                                     <TableRow>
                                         <TableCell colSpan={7} className="h-32 text-center">
-                                            <Loader2 className="h-5 w-5 animate-spin mx-auto text-slate-300" />
+                                            <Loader2 className="h-5 w-5 animate-spin mx-auto text-muted-foreground" />
                                         </TableCell>
                                     </TableRow>
                                 ) : filteredStaff.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={7} className="h-32 text-center text-slate-400 text-xs font-medium uppercase tracking-wide">
-                                            No staff members found
+                                        <TableCell colSpan={7} className="h-32 text-center text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+                                            No staff members discovered
                                         </TableCell>
                                     </TableRow>
                                 ) : (
                                     filteredStaff.map((staff) => (
-                                        <TableRow key={staff.name} className="hover:bg-slate-50/50 transition-colors border-b border-slate-50 group">
-                                            <TableCell className="py-2 px-4 pl-6 w-12">
-                                                <Avatar className="h-8 w-8 border border-slate-100">
-                                                    <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-bold">
-                                                        <User className="h-3.5 w-3.5" />
+                                        <TableRow key={staff.name} className="hover:bg-muted/30 transition-colors border-b border-border group last:border-0">
+                                            <TableCell className="py-6 px-6">
+                                                <Avatar className="h-10 w-10 border border-border rounded-lg">
+                                                    <AvatarFallback className="bg-muted text-primary text-[10px] font-bold rounded-lg uppercase">
+                                                        <User className="h-4 w-4" />
                                                     </AvatarFallback>
                                                 </Avatar>
                                             </TableCell>
-                                            <TableCell className="py-2 px-4">
-                                                <span className="text-xs font-bold text-slate-800">{staff.staff_name}</span>
+                                            <TableCell className="py-6">
+                                                <span className="text-xs font-black text-foreground uppercase tracking-tight">{staff.staff_name}</span>
                                             </TableCell>
-                                            <TableCell className="py-2 px-4">
-                                                <Badge variant="outline" className="text-[9px] font-bold uppercase bg-slate-50 border-slate-200 text-slate-500 rounded-md px-1.5 py-0.5">
+                                            <TableCell className="py-6">
+                                                <Badge variant="outline" className="text-[9px] font-black uppercase bg-muted/50 border-border text-muted-foreground rounded-md px-2 py-0.5 tracking-widest">
                                                     {staff.designation}
                                                 </Badge>
                                             </TableCell>
-                                            <TableCell className="py-2 px-4">
-                                                <span className="text-xs font-medium text-slate-600">{staff.property}</span>
+                                            <TableCell className="py-6">
+                                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.1em]">{staff.property || "ALL PROPERTIES"}</span>
                                             </TableCell>
-                                            <TableCell className="py-2 px-4">
-                                                <div className="flex flex-col gap-0.5">
-                                                    <div className="flex items-center gap-1.5 text-xs font-medium text-slate-600">
-                                                        <Mail className="h-3 w-3 text-slate-400" />
+                                            <TableCell className="py-6">
+                                                <div className="flex flex-col gap-1.5">
+                                                    <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-tight">
+                                                        <Mail className="h-3 w-3 opacity-50" />
                                                         {staff.email}
                                                     </div>
-                                                    <div className="flex items-center gap-1.5 text-xs font-medium text-slate-600">
-                                                        <Phone className="h-3 w-3 text-slate-400" />
+                                                    <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-tight">
+                                                        <Phone className="h-3 w-3 opacity-50" />
                                                         {staff.phone}
                                                     </div>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="py-2 px-4">
+                                            <TableCell className="py-6">
                                                 <Badge className={cn(
-                                                    "text-[9px] font-bold uppercase rounded-md px-1.5 py-0 border-none shadow-none",
-                                                    staff.status === "Active" ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-500"
+                                                    "text-[8px] font-black uppercase rounded-md px-2 py-0.5 border-none shadow-none tracking-widest",
+                                                    staff.status === "Active" ? "bg-emerald-500/10 text-emerald-500" : "bg-muted text-muted-foreground"
                                                 )}>
                                                     {staff.status}
                                                 </Badge>
                                             </TableCell>
-                                            <TableCell className="text-right pr-6 py-2">
+                                            <TableCell className="text-right pr-8 py-6">
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
-                                                        <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-slate-100 text-slate-400">
-                                                            <MoreHorizontal className="h-3.5 w-3.5" />
+                                                        <Button variant="outline" size="icon" className="h-8 w-8 rounded-md bg-card border-border hover:bg-muted text-muted-foreground shadow-sm">
+                                                            <MoreHorizontal className="h-4 w-4" />
                                                         </Button>
                                                     </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end" className="w-40 rounded-xl p-1 shadow-lg border-slate-100">
-                                                        <DropdownMenuItem className="rounded-lg text-xs font-bold cursor-pointer focus:bg-slate-50">
-                                                            <Eye className="mr-2 h-3.5 w-3.5" /> View Details
+                                                    <DropdownMenuContent align="end" className="w-48 rounded-lg p-1 shadow-lg border-border bg-card">
+                                                        <DropdownMenuItem className="rounded-md text-[10px] font-black uppercase tracking-widest cursor-pointer focus:bg-muted px-3 py-2.5">
+                                                            <Eye className="mr-3 h-4 w-4 opacity-70" /> View Details
                                                         </DropdownMenuItem>
-                                                        <DropdownMenuItem className="rounded-lg text-xs font-bold cursor-pointer focus:bg-slate-50">
-                                                            <Pencil className="mr-2 h-3.5 w-3.5" /> Edit Profile
+                                                        <DropdownMenuItem className="rounded-md text-[10px] font-black uppercase tracking-widest cursor-pointer focus:bg-muted px-3 py-2.5">
+                                                            <Pencil className="mr-3 h-4 w-4 opacity-70" /> Edit Profile
                                                         </DropdownMenuItem>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>

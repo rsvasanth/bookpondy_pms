@@ -31,13 +31,25 @@ export default function SchedulerPage() {
 
     return (
         <DashboardLayout>
-            <div className="flex flex-col h-full flex-1">
-                <div className="bg-white border border-slate-100 rounded-2xl shadow-sm p-3 flex-1 overflow-hidden flex flex-col h-full">
-                    <SchedulerProvider initialState={schedulerEvents}>
-                        <div className="h-full flex-1 min-h-0">
-                            <SchedulerWrapper />
-                        </div>
-                    </SchedulerProvider>
+            <div className="flex flex-col gap-8 h-full">
+                {/* Header */}
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="space-y-1">
+                        <h1 className="text-2xl font-bold tracking-tight text-foreground uppercase">Property Scheduler</h1>
+                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                            Manage reservations, unit assignments, and occupancy.
+                        </p>
+                    </div>
+                </div>
+
+                <div className="flex-1 min-h-0">
+                    <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden flex flex-col h-full">
+                        <SchedulerProvider initialState={schedulerEvents}>
+                            <div className="h-full flex-1">
+                                <SchedulerWrapper />
+                            </div>
+                        </SchedulerProvider>
+                    </Card>
                 </div>
             </div>
         </DashboardLayout>

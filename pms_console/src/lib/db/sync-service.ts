@@ -10,7 +10,7 @@ const api = axios.create({
 });
 
 const DOCTYPE_FIELDS: Record<string, string[]> = {
-    'Reservation': ["name", "guest_name", "check_in_date", "check_out_date", "reservation_status", "total_amount", "property", "allocated_unit", "modified", "guest_email", "guest_phone", "unit_category", "special_requests"],
+    'Reservation': ["name", "guest_name", "check_in_date", "check_out_date", "reservation_status", "total_amount", "property", "allocated_unit", "modified", "guest_email", "guest_phone", "unit_category", "special_requests", "is_identity_verified", "is_rental_agreement_signed", "is_security_deposit_collected", "is_checkin_guide_sent", "advance_paid"],
     'Property': ["name", "property_name", "property_type", "location_description", "total_units", "total_rooms", "average_rating", "banner_image", "status", "modified"],
     'Booking Inquiry': ["name", "guest_name", "inquiry_status", "property_interested", "inquiry_date", "modified", "guest_email", "guest_phone", "unit_category", "check_in_date", "check_out_date", "number_of_guests", "special_requests"],
     'Housekeeping Task': ["name", "unit", "task_type", "status", "priority", "scheduled_time", "modified"],
@@ -18,11 +18,12 @@ const DOCTYPE_FIELDS: Record<string, string[]> = {
     'Folio': ["name", "name", "reservation", "grand_total", "invoice_status", "status", "creation", "modified", "invoice_number"],
     'Unit': ["name", "unit_no", "property", "unit_category", "status", "modified"],
     'Guest': ["name", "guest_name", "email", "phone", "total_visits", "total_spend", "last_visit_date", "return_guest", "modified"],
-    'Staff': ["name", "staff_name", "designation", "property", "status", "email", "phone", "modified"],
+    'Staff': ["name", "staff_name", "designation", "role", "property", "status", "email", "phone", "modified"],
     'Guest Communication': ["name", "guest", "communication_date", "communication_type", "status", "subject", "message", "modified"],
     'Property Portfolio': ["name", "portfolio_name", "description", "owner_user", "modified"],
     'Unit Category': ["name", "category_name", "property", "modified"],
-    'Sales Invoice': ["name", "customer_name", "status", "grand_total", "due_date", "modified"]
+    'Sales Invoice': ["name", "customer_name", "status", "grand_total", "due_date", "modified"],
+    'Guest Query': ["name", "guest", "reservation", "status", "query_date", "query_text", "modified"]
 };
 
 const DOCTYPE_MAP: Record<string, string> = {
@@ -38,7 +39,8 @@ const DOCTYPE_MAP: Record<string, string> = {
     'Guest Communication': 'communications',
     'Property Portfolio': 'portfolios',
     'Unit Category': 'unit_categories',
-    'Sales Invoice': 'invoices'
+    'Sales Invoice': 'invoices',
+    'Guest Query': 'guest_queries'
 };
 
 export async function pullSync() {

@@ -140,10 +140,10 @@ export default function PropertiesPage() {
   })
 
   const stats = [
-    { label: "Total Properties", value: properties.length || 0, icon: Building2, color: "text-blue-600", bg: "bg-blue-50" },
-    { label: "Active", value: properties.filter(p => p.status === "active").length || 0, icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-50" },
+    { label: "Total Properties", value: properties.length || 0, icon: Building2, color: "text-foreground", bg: "bg-muted" },
+    { label: "Active", value: properties.filter(p => p.status === "active").length || 0, icon: CheckCircle2, color: "text-emerald-500", bg: "bg-emerald-500/10" },
     { label: "Total Units", value: properties.reduce((acc, curr) => acc + curr.units, 0), icon: Home, color: "text-primary", bg: "bg-primary/10" },
-    { label: "Maintenance", value: properties.filter(p => p.status === "maintenance").length || 0, icon: AlertCircle, color: "text-amber-600", bg: "bg-amber-50" },
+    { label: "Maintenance", value: properties.filter(p => p.status === "maintenance").length || 0, icon: AlertCircle, color: "text-amber-500", bg: "bg-amber-500/10" },
   ]
 
   return (
@@ -160,8 +160,8 @@ export default function PropertiesPage() {
           {/* Header */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-slate-800">Properties</h1>
-              <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
+              <h1 className="text-xl font-bold tracking-tight text-foreground">Properties</h1>
+              <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
                 Manage your real estate assets
               </p>
             </div>
@@ -170,14 +170,14 @@ export default function PropertiesPage() {
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                 <Input
                   placeholder="Search properties..."
-                  className="pl-8 h-9 rounded-lg border-slate-200 bg-white text-xs font-medium"
+                  className="pl-8 h-9 rounded-lg border-border bg-card text-xs font-bold"
                   value={propertySearch}
                   onChange={(e) => setPropertySearch(e.target.value)}
                 />
               </div>
               <Button
                 onClick={handleAddNew}
-                className="bg-primary hover:bg-primary/90 text-white rounded-lg h-9 px-3 text-xs font-bold gap-1.5 shadow-sm transition-all hover:scale-105"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-9 px-4 text-xs font-bold gap-1.5 shadow-sm transition-all"
               >
                 <Plus className="h-3.5 w-3.5" /> Add Property
               </Button>
@@ -187,15 +187,15 @@ export default function PropertiesPage() {
           {/* Stats Row */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {stats.map((stat) => (
-              <Card key={stat.label} className="border border-slate-100 shadow-sm rounded-xl bg-white transition-all hover:shadow-md">
+              <Card key={stat.label} className="border border-border shadow-sm rounded-lg bg-card overflow-hidden">
                 <CardContent className="p-3">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{stat.label}</span>
-                    <div className={cn("p-1.5 rounded-lg", stat.bg)}>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{stat.label}</span>
+                    <div className={cn("p-1.5 rounded-md border border-border", stat.bg)}>
                       <stat.icon className={cn("h-3.5 w-3.5", stat.color)} />
                     </div>
                   </div>
-                  <p className="text-2xl font-black text-slate-800 tracking-tight">{stat.value}</p>
+                  <p className="text-2xl font-black text-foreground tracking-tight">{stat.value}</p>
                 </CardContent>
               </Card>
             ))}
@@ -203,37 +203,37 @@ export default function PropertiesPage() {
 
           <Tabs defaultValue="grid" className="w-full space-y-4">
             <div className="flex items-center justify-between">
-              <TabsList className="bg-slate-100/50 p-1 rounded-lg h-9">
-                <TabsTrigger value="grid" className="rounded-md h-7 px-3 text-[10px] font-bold uppercase tracking-wider gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-slate-800">
+              <TabsList className="bg-muted p-1 rounded-lg h-9 border border-border">
+                <TabsTrigger value="grid" className="rounded-md h-7 px-3 text-[10px] font-bold uppercase tracking-widest gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-foreground">
                   <LayoutGrid className="h-3 w-3" /> Grid
                 </TabsTrigger>
-                <TabsTrigger value="list" className="rounded-md h-7 px-3 text-[10px] font-bold uppercase tracking-wider gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-slate-800">
+                <TabsTrigger value="list" className="rounded-md h-7 px-3 text-[10px] font-bold uppercase tracking-widest gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-foreground">
                   <List className="h-3 w-3" /> List
                 </TabsTrigger>
               </TabsList>
             </div>
 
             <TabsContent value="list" className="mt-0">
-              <Card className="border border-slate-100 shadow-sm rounded-xl overflow-hidden bg-white">
+              <Card className="border border-border shadow-sm rounded-lg overflow-hidden bg-card">
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-slate-50 bg-slate-50/50">
+                      <tr className="border-b border-border bg-muted/50">
                         <th className="text-left py-3 px-4 w-10">
                           <Checkbox
                             checked={selectedProperties.length === properties.length && properties.length > 0}
                             onCheckedChange={toggleSelectAll}
-                            className="border-slate-300 h-4 w-4 rounded-[4px]"
+                            className="border-border h-4 w-4 rounded-sm"
                           />
                         </th>
-                        <th className="text-left py-3 px-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Property</th>
-                        <th className="text-left py-3 px-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Type</th>
-                        <th className="text-left py-3 px-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Inventory</th>
-                        <th className="text-left py-3 px-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Status</th>
-                        <th className="text-right py-3 px-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Actions</th>
+                        <th className="text-left py-3 px-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Property</th>
+                        <th className="text-left py-3 px-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Type</th>
+                        <th className="text-left py-3 px-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Inventory</th>
+                        <th className="text-left py-3 px-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Status</th>
+                        <th className="text-right py-3 px-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-50">
+                    <tbody className="divide-y divide-border">
                       {isLoading ? (
                         <tr>
                           <td colSpan={6} className="h-32 text-center">
@@ -258,7 +258,7 @@ export default function PropertiesPage() {
                             </td>
                             <td className="py-2.5 px-4">
                               <div className="flex items-center gap-3">
-                                <div className="h-10 w-14 rounded-md bg-slate-100 overflow-hidden relative border border-slate-100">
+                                <div className="h-10 w-14 rounded-md bg-muted overflow-hidden relative border border-border">
                                   <img
                                     src={property.image}
                                     alt={property.name}
@@ -266,8 +266,8 @@ export default function PropertiesPage() {
                                   />
                                 </div>
                                 <div className="flex flex-col">
-                                  <span className="text-xs font-bold text-slate-800">{property.name}</span>
-                                  <span className="text-[10px] font-medium text-slate-400 flex items-center gap-1">
+                                  <span className="text-xs font-bold text-foreground">{property.name}</span>
+                                  <span className="text-[10px] font-bold text-muted-foreground flex items-center gap-1 uppercase tracking-wider">
                                     <MapPin className="h-2.5 w-2.5" />
                                     {property.location}
                                   </span>
@@ -275,18 +275,18 @@ export default function PropertiesPage() {
                               </div>
                             </td>
                             <td className="py-2.5 px-4">
-                              <Badge variant="outline" className="text-[9px] font-bold uppercase bg-slate-50 border-slate-200 text-slate-500 rounded-md px-1.5 py-0.5">
+                              <Badge variant="outline" className="text-[9px] font-bold uppercase bg-muted/50 border-border text-foreground rounded-md px-1.5 py-0.5">
                                 {property.type}
                               </Badge>
                             </td>
                             <td className="py-2.5 px-4">
-                              <span className="text-xs font-bold text-slate-700">{property.units} Units</span>
+                              <span className="text-xs font-bold text-foreground">{property.units} Units</span>
                             </td>
                             <td className="py-2.5 px-4">
                               <Badge className={cn(
-                                "text-[9px] font-bold uppercase px-1.5 py-0 border-none shadow-none rounded-[4px]",
-                                property.status === "active" ? "bg-emerald-50 text-emerald-600" :
-                                  property.status === "maintenance" ? "bg-amber-50 text-amber-600" : "bg-slate-100 text-slate-500"
+                                "text-[9px] font-bold uppercase px-1.5 py-0 border-none shadow-none rounded-sm",
+                                property.status === "active" ? "bg-emerald-500/10 text-emerald-500" :
+                                  property.status === "maintenance" ? "bg-amber-500/10 text-amber-500" : "bg-muted text-muted-foreground"
                               )}>
                                 {property.status}
                               </Badge>
@@ -294,18 +294,18 @@ export default function PropertiesPage() {
                             <td className="py-2.5 px-4 text-right">
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-slate-100 text-slate-400">
+                                  <Button variant="ghost" size="icon" className="h-7 w-7 rounded-md hover:bg-muted text-muted-foreground">
                                     <MoreHorizontal className="h-3.5 w-3.5" />
                                   </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-40 rounded-xl p-1 shadow-lg border-slate-100">
-                                  <DropdownMenuItem className="rounded-lg text-xs font-bold cursor-pointer focus:bg-slate-50" onClick={() => handleViewDetails(property)}>
+                                <DropdownMenuContent align="end" className="w-40 rounded-lg p-1 shadow-lg border-border bg-card">
+                                  <DropdownMenuItem className="rounded-md text-[10px] font-bold uppercase tracking-widest cursor-pointer focus:bg-muted" onClick={() => handleViewDetails(property)}>
                                     View Details
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem className="rounded-lg text-xs font-bold cursor-pointer focus:bg-slate-50" onClick={() => handleEdit(property)}>
+                                  <DropdownMenuItem className="rounded-md text-[10px] font-bold uppercase tracking-widest cursor-pointer focus:bg-muted" onClick={() => handleEdit(property)}>
                                     Edit Property
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem className="rounded-lg text-xs font-bold text-red-600 focus:text-red-700 focus:bg-red-50 cursor-pointer" onClick={() => setDeletingProperty(property.id)}>
+                                  <DropdownMenuItem className="rounded-md text-[10px] font-bold uppercase tracking-widest text-red-500 focus:text-red-600 focus:bg-red-500/10 cursor-pointer" onClick={() => setDeletingProperty(property.id)}>
                                     Delete
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
@@ -332,40 +332,39 @@ export default function PropertiesPage() {
                   </div>
                 ) : (
                   filteredProperties.map((property) => (
-                    <Card key={property.id} className="overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-all rounded-xl group bg-white cursor-pointer hover:border-[#ff3924]/20" onClick={() => handleViewDetails(property)}>
-                      <div className="relative h-40 overflow-hidden">
+                    <Card key={property.id} className="overflow-hidden border border-border shadow-sm hover:shadow-md transition-all rounded-lg group bg-card cursor-pointer" onClick={() => handleViewDetails(property)}>
+                      <div className="relative h-44 overflow-hidden">
                         <img
                           src={property.image}
                           alt={property.name}
                           className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80" />
                         <div className="absolute top-2 right-2">
                           <Badge className={cn(
-                            "text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-[4px] border-none shadow-sm backdrop-blur-md",
-                            property.status === "active" ? "bg-emerald-500/90 text-white" :
-                              property.status === "maintenance" ? "bg-amber-500/90 text-white" : "bg-slate-800/80 text-white"
+                            "text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-sm border-none shadow-sm backdrop-blur-md",
+                            property.status === "active" ? "bg-emerald-500 text-white" :
+                              property.status === "maintenance" ? "bg-amber-500 text-white" : "bg-muted text-foreground"
                           )}>
                             {property.status}
                           </Badge>
                         </div>
-                        <div className="absolute bottom-3 left-3 right-3 text-white">
-                          <h3 className="font-bold text-base leading-tight mb-0.5 text-white/95">{property.name}</h3>
-                          <p className="text-[9px] font-bold uppercase tracking-widest text-white/70 flex items-center gap-1">
+                      </div>
+                      <CardContent className="p-4 space-y-3">
+                        <div>
+                          <h3 className="font-bold text-base leading-tight text-foreground">{property.name}</h3>
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1 mt-1">
                             <MapPin className="h-2.5 w-2.5" />
                             {property.location}
                           </p>
                         </div>
-                      </div>
-                      <CardContent className="p-3">
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between pt-3 border-t border-border">
                           <div className="space-y-0.5">
-                            <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 block">Type</span>
-                            <span className="text-xs font-bold text-slate-700">{property.type}</span>
+                            <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground block">Type</span>
+                            <span className="text-xs font-bold text-foreground">{property.type}</span>
                           </div>
                           <div className="space-y-0.5 text-right">
-                            <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 block">Inventory</span>
-                            <span className="text-xs font-bold text-slate-700">{property.units} Units</span>
+                            <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground block">Inventory</span>
+                            <span className="text-xs font-bold text-foreground">{property.units} Units</span>
                           </div>
                         </div>
                       </CardContent>
@@ -377,17 +376,17 @@ export default function PropertiesPage() {
           </Tabs>
 
           <AlertDialog open={!!deletingProperty} onOpenChange={() => setDeletingProperty(null)}>
-            <AlertDialogContent className="rounded-2xl border-none shadow-lg bg-white p-6 max-w-sm">
+            <AlertDialogContent className="rounded-lg border border-border shadow-lg bg-card p-6 max-w-sm">
               <AlertDialogHeader>
-                <AlertDialogTitle className="text-lg font-bold text-slate-800">Delete Property?</AlertDialogTitle>
-                <AlertDialogDescription className="text-xs text-slate-500 font-medium">
+                <AlertDialogTitle className="text-lg font-bold text-foreground">Delete Property?</AlertDialogTitle>
+                <AlertDialogDescription className="text-xs text-muted-foreground font-bold uppercase tracking-wider">
                   This action cannot be undone. This will permanently delete the property.
                 </AlertDialogDescription>
               </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel className="rounded-xl border-slate-200 h-9 font-bold text-xs">Cancel</AlertDialogCancel>
+              <AlertDialogFooter className="mt-6">
+                <AlertDialogCancel className="rounded-lg border-border h-9 font-bold text-[10px] uppercase tracking-widest">Cancel</AlertDialogCancel>
                 <AlertDialogAction
-                  className="bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl h-9 text-xs"
+                  className="bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg h-9 text-[10px] uppercase tracking-widest"
                   onClick={handleDelete}
                   disabled={isDeleting}
                 >

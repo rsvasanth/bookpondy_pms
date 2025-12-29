@@ -39,25 +39,25 @@ export default function InvoicesPage() {
 
     const getStatusColor = (status: string) => {
         switch (status?.toLowerCase()) {
-            case 'paid': return 'bg-green-100 text-green-700 border-green-200'
-            case 'finalized': return 'bg-blue-100 text-blue-700 border-blue-200'
-            case 'sent': return 'bg-purple-100 text-purple-700 border-purple-200'
-            case 'cancelled': return 'bg-red-100 text-red-700 border-red-200'
-            default: return 'bg-gray-100 text-gray-700 border-gray-200'
+            case 'paid': return 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+            case 'finalized': return 'bg-blue-500/10 text-blue-500 border-blue-500/20'
+            case 'sent': return 'bg-violet-500/10 text-violet-500 border-violet-500/20'
+            case 'cancelled': return 'bg-rose-500/10 text-rose-500 border-rose-500/20'
+            default: return 'bg-muted text-muted-foreground border-border'
         }
     }
 
     if (selectedInvoice) {
         return (
             <DashboardLayout>
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-8">
                     <div className="flex items-center gap-4">
-                        <Button variant="ghost" size="icon" onClick={() => setSelectedInvoice(null)} className="rounded-xl">
+                        <Button variant="ghost" size="icon" onClick={() => setSelectedInvoice(null)} className="rounded-lg h-10 w-10 hover:bg-muted text-muted-foreground transition-colors">
                             <ChevronLeft className="h-5 w-5" />
                         </Button>
-                        <div>
-                            <h1 className="text-xl font-bold tracking-tight">Invoice Details</h1>
-                            <p className="text-xs text-muted-foreground uppercase font-bold tracking-widest">{selectedInvoice}</p>
+                        <div className="space-y-1">
+                            <h1 className="text-xl font-bold tracking-tight text-foreground uppercase">Invoice Details</h1>
+                            <p className="text-[10px] text-muted-foreground uppercase font-black tracking-[0.2em]">{selectedInvoice}</p>
                         </div>
                     </div>
                     <InvoiceDetailView folioName={selectedInvoice} onBack={() => setSelectedInvoice(null)} />
@@ -68,18 +68,18 @@ export default function InvoicesPage() {
 
     return (
         <DashboardLayout>
-            <div className="flex flex-col gap-6">
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold tracking-tight">Invoices & Billing</h1>
-                        <p className="text-sm text-muted-foreground">Manage your property's financial transactions and guest folios.</p>
+            <div className="flex flex-col gap-8">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="space-y-1">
+                        <h1 className="text-2xl font-bold tracking-tight text-foreground uppercase">Invoices & Billing</h1>
+                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Manage your property's financial transactions and guest folios.</p>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="relative w-[300px]">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
                                 placeholder="Search invoice # or guest..."
-                                className="pl-9 h-10 rounded-xl bg-white border-muted shadow-sm"
+                                className="pl-10 h-10 rounded-lg bg-card border-border shadow-sm text-xs font-bold uppercase tracking-wider focus:ring-primary/20"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
@@ -87,53 +87,62 @@ export default function InvoicesPage() {
                     </div>
                 </div>
 
-                <Card className="border-none shadow-sm rounded-2xl overflow-hidden bg-white">
+                <Card className="border border-border shadow-sm rounded-lg overflow-hidden bg-card">
                     <Table>
-                        <TableHeader className="bg-gray-50/50">
-                            <TableRow className="border-muted hover:bg-transparent">
-                                <TableHead className="font-bold text-[10px] uppercase tracking-wider pl-6">Invoice #</TableHead>
-                                <TableHead className="font-bold text-[10px] uppercase tracking-wider">Folio / Reservation</TableHead>
-                                <TableHead className="font-bold text-[10px] uppercase tracking-wider">Amount</TableHead>
-                                <TableHead className="font-bold text-[10px] uppercase tracking-wider">Status</TableHead>
-                                <TableHead className="font-bold text-[10px] uppercase tracking-wider">Date</TableHead>
-                                <TableHead className="text-right font-bold text-[10px] uppercase tracking-wider pr-6">Action</TableHead>
+                        <TableHeader className="bg-muted/50">
+                            <TableRow className="border-b border-border hover:bg-transparent transition-none">
+                                <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] pl-6 h-12 text-muted-foreground">Invoice #</TableHead>
+                                <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] h-12 text-muted-foreground">Folio / Reservation</TableHead>
+                                <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] h-12 text-muted-foreground">Amount</TableHead>
+                                <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] h-12 text-muted-foreground">Status</TableHead>
+                                <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] h-12 text-muted-foreground">Date</TableHead>
+                                <TableHead className="text-right font-bold text-[10px] uppercase tracking-[0.2em] pr-6 h-12 text-muted-foreground">Action</TableHead>
                             </TableRow>
                         </TableHeader>
-                        <TableBody>
+                        <TableBody className="divide-y divide-border">
                             {isLoading ? (
                                 <TableRow>
-                                    <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">Loading folios...</TableCell>
+                                    <TableCell colSpan={6} className="h-48 text-center">
+                                        <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                                            <p className="text-[10px] font-bold uppercase tracking-[0.2em]">Loading folios...</p>
+                                        </div>
+                                    </TableCell>
                                 </TableRow>
                             ) : filteredInvoices?.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">No invoices found.</TableCell>
+                                    <TableCell colSpan={6} className="h-48 text-center">
+                                        <div className="flex flex-col items-center gap-2 text-muted-foreground/40">
+                                            <Search className="h-8 w-8 mb-2 stroke-1" />
+                                            <p className="text-[10px] font-bold uppercase tracking-[0.2em]">No invoices found</p>
+                                        </div>
+                                    </TableCell>
                                 </TableRow>
                             ) : (
                                 filteredInvoices?.map((folio) => (
-                                    <TableRow key={folio.name} className="border-muted/50 hover:bg-gray-50/50 group transition-colors">
-                                        <TableCell className="pl-6 font-bold text-sm">
-                                            {folio.invoice_number || <span className="text-muted-foreground text-xs font-normal italic">Draft</span>}
+                                    <TableRow key={folio.name} className="hover:bg-muted/30 group transition-all border-none">
+                                        <TableCell className="pl-6 py-5 font-black text-sm text-foreground uppercase tracking-tight">
+                                            {folio.invoice_number || <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-50 tracking-widest italic">Draft</span>}
                                         </TableCell>
-                                        <TableCell>
-                                            <div className="flex flex-col">
-                                                <span className="text-sm font-medium">{folio.name}</span>
-                                                <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">{folio.reservation}</span>
+                                        <TableCell className="py-5">
+                                            <div className="flex flex-col gap-0.5">
+                                                <span className="text-sm font-bold text-foreground uppercase tracking-tight">{folio.name}</span>
+                                                <span className="text-[9px] text-muted-foreground uppercase font-bold tracking-[0.1em]">{folio.reservation}</span>
                                             </div>
                                         </TableCell>
-                                        <TableCell className="font-bold">₹{folio.grand_total?.toLocaleString('en-IN')}</TableCell>
-                                        <TableCell>
-                                            <Badge className={cn("rounded-lg px-2 py-0.5 text-[10px] font-bold uppercase border", getStatusColor(folio.invoice_status))}>
+                                        <TableCell className="py-5 font-black text-sm text-foreground">₹{folio.grand_total?.toLocaleString('en-IN')}</TableCell>
+                                        <TableCell className="py-5">
+                                            <Badge className={cn("rounded-sm px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest border shadow-none", getStatusColor(folio.invoice_status))}>
                                                 {folio.invoice_status || folio.status}
                                             </Badge>
                                         </TableCell>
-                                        <TableCell className="text-xs text-muted-foreground font-medium">
+                                        <TableCell className="py-5 text-[10px] text-muted-foreground font-bold uppercase tracking-tight">
                                             {new Date(folio.creation).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                                         </TableCell>
-                                        <TableCell className="text-right pr-6">
+                                        <TableCell className="text-right pr-6 py-5">
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
-                                                className="rounded-xl h-8 px-3 font-bold text-xs text-primary hover:text-primary hover:bg-primary/5"
+                                                className="rounded-md h-9 px-4 font-bold text-[10px] uppercase tracking-widest text-primary hover:text-primary hover:bg-primary/10 transition-colors"
                                                 onClick={() => setSelectedInvoice(folio.name)}
                                             >
                                                 View Invoice
@@ -183,124 +192,128 @@ function InvoiceDetailView({ folioName }: { folioName: string, onBack: () => voi
         }
     }
 
-    if (isLoading) return <div className="h-64 flex items-center justify-center text-muted-foreground">Loading invoice details...</div>
+    if (isLoading) return <div className="h-64 flex items-center justify-center"><div className="flex flex-col items-center gap-2 text-muted-foreground"><p className="text-[10px] font-bold uppercase tracking-[0.2em]">Loading invoice details...</p></div></div>
 
-    if (!details) return <div className="h-64 flex items-center justify-center text-red-500">Invoice not found.</div>
+    if (!details) return <div className="h-64 flex items-center justify-center text-rose-500 font-bold uppercase text-xs tracking-widest">Invoice not found</div>
 
     return (
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2">
-                <Card className="border-none shadow-xl rounded-2xl bg-white overflow-hidden p-0">
-                    <div className="p-12" id="invoice-printable">
-                        <div className="flex justify-between items-start mb-12">
-                            <div className="space-y-2">
-                                <div className="h-10 w-40 bg-primary/10 rounded-lg flex items-center justify-center text-primary font-black italic">
+                <Card className="border border-border shadow-xl rounded-lg bg-card overflow-hidden p-0">
+                    <div className="p-12 bg-white text-slate-900 shadow-inner" id="invoice-printable">
+                        <div className="flex justify-between items-start mb-16">
+                            <div className="space-y-4">
+                                <div className="h-12 w-48 bg-slate-900 rounded-sm flex items-center justify-center text-white font-black italic tracking-tighter text-xl">
                                     BOOKPONDY
                                 </div>
-                                <div className="text-sm text-muted-foreground leading-relaxed">
+                                <div className="text-xs font-bold text-slate-500 leading-relaxed uppercase tracking-widest">
                                     Pondicherry, India<br />
                                     GSTIN: 34AAAAA0000A1Z5<br />
                                     support@bookpondy.com
                                 </div>
                             </div>
                             <div className="text-right">
-                                <h2 className="text-4xl font-black text-primary/20 tracking-tighter mb-2">INVOICE</h2>
-                                <p className="font-bold text-sm">#{details.invoice_number}</p>
-                                <p className="text-xs text-muted-foreground font-medium">Date: {details.invoice_date || details.creation_date}</p>
+                                <h2 className="text-5xl font-black text-slate-200 tracking-tighter mb-4 uppercase">INVOICE</h2>
+                                <p className="font-black text-sm uppercase tracking-tight text-slate-900">#{details.invoice_number}</p>
+                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Date: {details.invoice_date || details.creation_date}</p>
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-12 mb-12">
-                            <div>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3">Invoice To</p>
-                                <h3 className="font-bold text-lg mb-1">{details.guest_name}</h3>
-                                <p className="text-sm text-muted-foreground">{details.guest_email}</p>
-                                <p className="text-sm text-muted-foreground">{details.guest_phone}</p>
+                        <div className="grid grid-cols-2 gap-16 mb-16 border-y border-slate-100 py-10">
+                            <div className="space-y-1">
+                                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-4">Invoice To</p>
+                                <h3 className="font-black text-xl text-slate-900 uppercase tracking-tight">{details.guest_name}</h3>
+                                <p className="text-xs font-bold text-slate-500 uppercase tracking-tight">{details.guest_email}</p>
+                                <p className="text-xs font-bold text-slate-500 uppercase tracking-tight">{details.guest_phone}</p>
                             </div>
-                            <div className="text-right">
-                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3">Reservation Details</p>
-                                <p className="text-sm font-bold">{details.property_name}</p>
-                                <p className="text-sm text-muted-foreground">{new Date(details.check_in_date).toLocaleDateString()} - {new Date(details.check_out_date).toLocaleDateString()}</p>
-                                <p className="text-xs font-bold text-primary mt-1">Nights: {Math.ceil((new Date(details.check_out_date).getTime() - new Date(details.check_in_date).getTime()) / (1000 * 3600 * 24))}</p>
+                            <div className="text-right space-y-1">
+                                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-4">Reservation Details</p>
+                                <p className="text-sm font-black text-slate-900 uppercase tracking-tight ">{details.property_name}</p>
+                                <p className="text-xs font-bold text-slate-500 uppercase">{new Date(details.check_in_date).toLocaleDateString()} — {new Date(details.check_out_date).toLocaleDateString()}</p>
+                                <div className="inline-block bg-slate-100 border border-slate-200 px-3 py-1 rounded-sm text-[9px] font-black uppercase text-slate-600 tracking-widest mt-2">
+                                    Nights: {Math.ceil((new Date(details.check_out_date).getTime() - new Date(details.check_in_date).getTime()) / (1000 * 3600 * 24))}
+                                </div>
                             </div>
                         </div>
 
-                        <Table className="mb-12">
-                            <TableHeader className="border-t-2 border-b-2 border-[#0A0A0A] bg-transparent">
-                                <TableRow className="hover:bg-transparent">
-                                    <TableHead className="font-black text-[#0A0A0A] uppercase text-xs pl-0">Description</TableHead>
-                                    <TableHead className="text-right font-black text-[#0A0A0A] uppercase text-xs">Qty</TableHead>
-                                    <TableHead className="text-right font-black text-[#0A0A0A] uppercase text-xs">Price</TableHead>
-                                    <TableHead className="text-right font-black text-[#0A0A0A] uppercase text-xs pr-0">Total</TableHead>
+                        <Table className="mb-16">
+                            <TableHeader className="border-y-2 border-slate-900 bg-transparent">
+                                <TableRow className="hover:bg-transparent transition-none border-none">
+                                    <TableHead className="font-black text-slate-900 uppercase text-[10px] tracking-[0.2em] pl-0 h-14">Description</TableHead>
+                                    <TableHead className="text-right font-black text-slate-900 uppercase text-[10px] tracking-[0.2em] h-14">Qty</TableHead>
+                                    <TableHead className="text-right font-black text-slate-900 uppercase text-[10px] tracking-[0.2em] h-14">Price</TableHead>
+                                    <TableHead className="text-right font-black text-slate-900 uppercase text-[10px] tracking-[0.2em] pr-0 h-14">Total</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {details.charges?.map((charge: any) => (
-                                    <TableRow key={charge.name} className="border-muted/50 hover:bg-transparent">
-                                        <TableCell className="pl-0 py-4">
-                                            <p className="font-bold text-sm">{charge.charge_type}</p>
-                                            <p className="text-xs text-muted-foreground">Standard property charge</p>
+                                    <TableRow key={charge.name} className="border-b border-slate-100 hover:bg-transparent transition-all">
+                                        <TableCell className="pl-0 py-6">
+                                            <p className="font-black text-sm text-slate-900 uppercase tracking-tight">{charge.charge_type}</p>
+                                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Standard property charge</p>
                                         </TableCell>
-                                        <TableCell className="text-right font-medium text-sm">1</TableCell>
-                                        <TableCell className="text-right font-medium text-sm">₹{charge.amount?.toLocaleString('en-IN')}</TableCell>
-                                        <TableCell className="text-right font-bold text-sm pr-0">₹{charge.amount?.toLocaleString('en-IN')}</TableCell>
+                                        <TableCell className="text-right font-bold text-sm text-slate-600">1</TableCell>
+                                        <TableCell className="text-right font-bold text-sm text-slate-600">₹{charge.amount?.toLocaleString('en-IN')}</TableCell>
+                                        <TableCell className="text-right font-black text-sm text-slate-900 pr-0">₹{charge.amount?.toLocaleString('en-IN')}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
                         </Table>
 
                         <div className="flex justify-end">
-                            <div className="w-full max-w-[240px] space-y-3">
-                                <div className="flex justify-between text-sm">
-                                    <span className="font-medium text-muted-foreground">Subtotal</span>
-                                    <span className="font-bold">₹{details.subtotal?.toLocaleString('en-IN')}</span>
+                            <div className="w-full max-w-[280px] space-y-4">
+                                <div className="flex justify-between text-[11px] font-bold uppercase tracking-widest">
+                                    <span className="text-slate-400 font-black tracking-[0.1em]">Subtotal</span>
+                                    <span className="text-slate-900 font-black">₹{details.subtotal?.toLocaleString('en-IN')}</span>
                                 </div>
-                                <div className="flex justify-between text-sm">
-                                    <span className="font-medium text-muted-foreground">SGST (9%)</span>
-                                    <span className="font-bold">₹{details.sgst_amount?.toLocaleString('en-IN')}</span>
+                                <div className="flex justify-between text-[11px] font-bold uppercase tracking-widest">
+                                    <span className="text-slate-400 font-black tracking-[0.1em]">SGST (9%)</span>
+                                    <span className="text-slate-900 font-black">₹{details.sgst_amount?.toLocaleString('en-IN')}</span>
                                 </div>
-                                <div className="flex justify-between text-sm border-b pb-3">
-                                    <span className="font-medium text-muted-foreground">CGST (9%)</span>
-                                    <span className="font-bold">₹{details.cgst_amount?.toLocaleString('en-IN')}</span>
+                                <div className="flex justify-between text-[11px] font-bold uppercase tracking-widest border-b border-slate-100 pb-5">
+                                    <span className="text-slate-400 font-black tracking-[0.1em]">CGST (9%)</span>
+                                    <span className="text-slate-900 font-black">₹{details.cgst_amount?.toLocaleString('en-IN')}</span>
                                 </div>
-                                <div className="flex justify-between items-center pt-1">
-                                    <span className="font-black text-xs uppercase tracking-widest text-primary">Grand Total</span>
-                                    <span className="font-black text-2xl tracking-tighter">₹{details.total_amount?.toLocaleString('en-IN')}</span>
+                                <div className="flex justify-between items-center pt-2">
+                                    <span className="font-black text-[10px] uppercase tracking-[0.25em] text-primary">Grand Total</span>
+                                    <span className="font-black text-3xl tracking-tighter text-slate-900">₹{details.total_amount?.toLocaleString('en-IN')}</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="mt-20 pt-8 border-t border-muted/50 text-center">
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Thank you for staying with BookPondy</p>
+                        <div className="mt-24 pt-10 border-t border-slate-100 text-center">
+                            <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.5em]">Thank you for staying with BookPondy</p>
                         </div>
                     </div>
                 </Card>
             </div>
 
-            <div className="space-y-6">
-                <Card className="border-none shadow-sm rounded-2xl bg-white p-6">
-                    <h3 className="font-bold text-lg mb-4">Invoice Actions</h3>
-                    <div className="flex flex-col gap-3">
+            <div className="space-y-8">
+                <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden transition-all">
+                    <div className="bg-muted/30 px-6 py-5 border-b border-border">
+                        <h3 className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Invoice Actions</h3>
+                    </div>
+                    <div className="p-6 space-y-3">
                         {details.invoice_status === 'Draft' ? (
-                            <Button className="w-full h-11 rounded-xl bg-primary text-white font-bold" onClick={handleFinalize}>
+                            <Button className="w-full h-11 rounded-md bg-primary text-primary-foreground font-bold text-[10px] uppercase tracking-widest shadow-sm" onClick={handleFinalize}>
                                 <CheckCircle2 className="mr-2 h-4 w-4" />
                                 Finalize Invoice
                             </Button>
                         ) : (
-                            <Button className="w-full h-11 rounded-xl bg-primary text-white font-bold" onClick={handleSendEmail}>
+                            <Button className="w-full h-11 rounded-md bg-emerald-500 text-white hover:bg-emerald-600 font-bold text-[10px] uppercase tracking-widest shadow-sm" onClick={handleSendEmail}>
                                 <Mail className="mr-2 h-4 w-4" />
                                 Email to Guest
                             </Button>
                         )}
 
-                        <Button variant="outline" className="w-full h-11 rounded-xl border-muted font-bold" onClick={() => window.print()}>
+                        <Button variant="outline" className="w-full h-11 rounded-md border-border font-bold text-[10px] uppercase tracking-widest hover:bg-muted transition-colors" onClick={() => window.print()}>
                             <Printer className="mr-2 h-4 w-4" />
                             Print Invoice
                         </Button>
 
                         <Button
                             variant="outline"
-                            className="w-full h-11 rounded-xl border-muted font-bold text-blue-600 border-blue-100 hover:bg-blue-50"
+                            className="w-full h-11 rounded-md border-border font-bold text-[10px] uppercase tracking-widest text-blue-500 border-blue-500/20 hover:bg-blue-500/5 transition-colors"
                             onClick={handleDownloadPDF}
                         >
                             <Download className="mr-2 h-4 w-4" />
@@ -309,46 +322,49 @@ function InvoiceDetailView({ folioName }: { folioName: string, onBack: () => voi
                     </div>
                 </Card>
 
-                <Card className="border-none shadow-sm rounded-2xl bg-white p-6">
-                    <h3 className="font-bold text-lg mb-4">Payment Info</h3>
-                    <div className="space-y-4">
-                        <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100">
-                            <div className="flex items-center gap-3">
-                                <div className="h-8 w-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-primary">
-                                    <CreditCard className="h-4 w-4" />
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Status</p>
-                                    <p className="font-bold text-sm uppercase">{details.status}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100">
-                            <div className="flex items-center gap-3">
-                                <div className="h-8 w-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-primary">
-                                    <HistoryIcon className="h-4 w-4" />
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Method</p>
-                                    <p className="font-bold text-sm uppercase">{details.payment_method || 'Unpaid'}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {details.refund_amount > 0 && (
-                            <div className="p-4 rounded-xl bg-red-50 border border-red-100">
-                                <div className="flex items-center gap-2 text-red-700 mb-1">
-                                    <AlertCircle className="h-4 w-4" />
-                                    <span className="font-bold text-xs uppercase tracking-widest">Refund Processed</span>
-                                </div>
-                                <p className="font-bold text-red-900">₹{details.refund_amount.toLocaleString('en-IN')}</p>
-                                <p className="text-[10px] text-red-600 mt-1">{details.refund_reason}</p>
-                            </div>
-                        )}
+                    <div className=\"bg-muted/30 px-6 py-5 border-b border-border\">
+                        <h3 className=\"font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground\">Payment Info</h3>
                     </div>
-                </Card>
-            </div>
-        </div>
+                    <div className=\"p-6 space-y-4\">
+        < div className =\"flex items-center justify-between p-4 rounded-md bg-muted/20 border border-border\">
+            < div className =\"flex items-center gap-4\">
+                < div className =\"h-10 w-10 rounded-md bg-card shadow-sm flex items-center justify-center text-primary border border-border\">
+                    < CreditCard className =\"h-5 w-5\" />
+                                </div >
+                                <div>
+                                    <p className=\"text-[9px] font-black uppercase text-muted-foreground tracking-[0.2em] mb-1\">Status</p>
+                                    <p className=\"font-black text-xs uppercase text-foreground tracking-tight\">{details.status}</p>
+                                </div >
+                            </div >
+                        </div >
+
+        <div className=\"flex items-center justify-between p-4 rounded-md bg-muted/20 border border-border\">
+            < div className =\"flex items-center gap-4\">
+                < div className =\"h-10 w-10 rounded-md bg-card shadow-sm flex items-center justify-center text-primary border border-border\">
+                    < HistoryIcon className =\"h-5 w-5\" />
+                                </div >
+                                <div>
+                                    <p className=\"text-[9px] font-black uppercase text-muted-foreground tracking-[0.2em] mb-1\">Method</p>
+                                    <p className=\"font-black text-xs uppercase text-foreground tracking-tight\">{details.payment_method || 'Unpaid'}</p>
+                                </div >
+                            </div >
+                        </div >
+
+    {
+        details.refund_amount > 0 && (
+            <div className=\"p-4 rounded-md bg-rose-500/5 border border-rose-500/20\">
+            <div className =\"flex items-center gap-2 text-rose-500 mb-2\">
+            <AlertCircle className =\"h-4 w-4\" />
+            <span className =\"font-black text-[10px] uppercase tracking-widest\">Refund Processed</span>
+                                </div>
+        <p className=\"font-black text-lg text-rose-600 tracking-tight\">₹{details.refund_amount.toLocaleString('en-IN')}</p>
+            < p className =\"text-[10px] font-bold text-rose-500/60 uppercase tracking-tight mt-1\">{details.refund_reason}</p>
+                            </div >
+                        )
+}
+                    </div >
+                </Card >
+            </div >
+        </div >
     )
 }

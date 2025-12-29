@@ -29,26 +29,26 @@ interface DashboardListWidgetProps {
 
 export function DashboardListWidget({ title, icon, items, isLoading, className, renderItemActions }: DashboardListWidgetProps) {
     return (
-        <Card className={cn("border border-slate-100 shadow-sm rounded-xl bg-white transition-all hover:shadow-md hover:border-[#ff3924]/30", className)}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-slate-50 p-3">
-                <CardTitle className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                    <span className="w-6 h-6 rounded flex items-center justify-center bg-slate-50 text-slate-500">
+        <Card className={cn("border border-border shadow-sm rounded-lg bg-card transition-all hover:shadow-md", className)}>
+            <CardHeader className="flex flex-row items-center justify-between pb-3 border-b border-border p-4 bg-muted/30">
+                <CardTitle className="text-[10px] font-black text-muted-foreground flex items-center gap-2 uppercase tracking-[0.2em]">
+                    <span className="w-5 h-5 rounded flex items-center justify-center bg-card border border-border text-foreground shadow-sm">
                         {icon}
                     </span>
-                    {title} <span className="text-slate-400 font-medium">({items.length})</span>
+                    {title} <span className="text-muted-foreground/50">({items.length})</span>
                 </CardTitle>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:bg-slate-50 rounded-lg">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:bg-muted rounded-md">
                     <MoreHorizontal className="h-4 w-4" />
                 </Button>
             </CardHeader>
-            <CardContent className="p-3 pt-1">
+            <CardContent className="p-4 pt-2">
                 {isLoading ? (
-                    <div className="flex items-center justify-center py-6">
-                        <Loader2 className="h-6 w-6 animate-spin text-slate-300" />
+                    <div className="flex items-center justify-center py-12">
+                        <Loader2 className="h-6 w-6 animate-spin text-primary/20" />
                     </div>
                 ) : items.length === 0 ? (
-                    <div className="text-center py-6 text-slate-400 text-xs font-medium uppercase tracking-wide">
-                        No items found
+                    <div className="text-center py-12 text-muted-foreground/40 text-[10px] font-bold uppercase tracking-[0.3em]">
+                        NO RECORDS FOUND
                     </div>
                 ) : (
                     <div className="flex flex-col">
@@ -56,30 +56,28 @@ export function DashboardListWidget({ title, icon, items, isLoading, className, 
                             <div
                                 key={item.id}
                                 className={cn(
-                                    "flex items-center justify-between py-3",
-                                    index !== items.length - 1 && "border-b border-slate-50"
+                                    "flex items-center justify-between py-4 group",
+                                    index !== items.length - 1 && "border-b border-border/50"
                                 )}
                             >
                                 <div className="flex-1 min-w-0 pr-4">
-                                    <div className="flex items-center gap-2 mb-0.5">
-                                        <h4 className="text-sm font-semibold text-slate-800 truncate">{item.title}</h4>
-                                    </div>
-                                    <p className="text-xs text-slate-400 truncate font-medium">{item.subtitle}</p>
+                                    <h4 className="text-xs font-black text-foreground truncate uppercase tracking-tight group-hover:text-primary transition-colors">{item.title}</h4>
+                                    <p className="text-[10px] text-muted-foreground truncate font-bold uppercase tracking-widest mt-0.5 opacity-70">{item.subtitle}</p>
                                 </div>
 
                                 <div className="flex items-center gap-3">
                                     {item.status && (
                                         <Badge
-                                            variant="secondary"
+                                            variant="outline"
                                             className={cn(
-                                                "rounded md:px-2 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide shadow-none border-none",
-                                                item.status === "Urgent" && "bg-rose-50 text-rose-600",
-                                                item.status === "High" && "bg-orange-50 text-orange-600",
-                                                item.status === "Open" && "bg-amber-50 text-amber-600",
-                                                item.status === "In Progress" && "bg-[#ff3924]/10 text-[#ff3924]",
-                                                item.status === "Resolved" && "bg-emerald-50 text-emerald-600",
-                                                item.status === "New" && "bg-purple-50 text-purple-600",
-                                                !["Urgent", "High", "Open", "In Progress", "Resolved", "New"].includes(item.status) && "bg-slate-100 text-slate-500"
+                                                "rounded-md px-2 py-0.5 text-[8px] font-black uppercase tracking-tight shadow-none border-none",
+                                                item.status === "Urgent" && "bg-rose-500/10 text-rose-500",
+                                                item.status === "High" && "bg-orange-500/10 text-orange-500",
+                                                item.status === "Open" && "bg-amber-500/10 text-amber-500",
+                                                item.status === "In Progress" && "bg-blue-500/10 text-blue-500",
+                                                item.status === "Resolved" && "bg-emerald-500/10 text-emerald-500",
+                                                item.status === "New" && "bg-indigo-500/10 text-indigo-500",
+                                                !["Urgent", "High", "Open", "In Progress", "Resolved", "New"].includes(item.status) && "bg-muted text-muted-foreground"
                                             )}
                                         >
                                             {item.status}
@@ -87,12 +85,11 @@ export function DashboardListWidget({ title, icon, items, isLoading, className, 
                                     )}
 
                                     {item.value && (
-                                        <span className="text-sm font-bold text-[#0f0f14] tabular-nums tracking-tight">
+                                        <span className="text-sm font-bold text-foreground tabular-nums tracking-tight">
                                             {item.value}
                                         </span>
                                     )}
 
-                                    {/* Action slot if needed, hidden on smaller screens usually or simplified */}
                                     {renderItemActions && (
                                         <div className="hidden sm:flex ml-2">
                                             {renderItemActions(item)}
@@ -105,7 +102,7 @@ export function DashboardListWidget({ title, icon, items, isLoading, className, 
                 )}
                 <Button
                     variant="ghost"
-                    className="w-full mt-2 text-xs font-bold text-[#ff3924] hover:bg-slate-50 hover:text-[#d6301e] h-9 gap-1"
+                    className="w-full mt-2 text-xs font-bold text-foreground hover:bg-muted h-9 gap-1"
                 >
                     View All <ArrowRight className="h-3 w-3" />
                 </Button>

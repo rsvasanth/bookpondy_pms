@@ -28,7 +28,7 @@ let dbPromise: Promise<any> | null = null;
 
 const create = async () => {
     const db = await createRxDatabase({
-        name: 'pms_console_db_v9',
+        name: 'pms_console_db_v11',
         storage: getRxStorageDexie(),
     });
 

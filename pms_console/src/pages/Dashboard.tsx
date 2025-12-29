@@ -107,7 +107,7 @@ export default function DashboardPage() {
   // --- Render Helpers ---
   const renderBookingActions = () => (
     <div className="flex gap-1">
-      <Button variant="outline" size="icon" className="h-7 w-7 rounded-lg hover:bg-[#ff3924] hover:text-white border-slate-200 transition-colors">
+      <Button variant="outline" size="icon" className="h-7 w-7 rounded-lg hover:bg-muted border-border transition-colors">
         <ArrowRightCircle className="h-3.5 w-3.5" />
       </Button>
     </div>
@@ -115,7 +115,7 @@ export default function DashboardPage() {
 
   const renderTaskActions = () => (
     <div className="flex gap-1">
-      <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg text-slate-400 hover:bg-slate-50 transition-colors">
+      <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg text-muted-foreground hover:bg-muted transition-colors">
         <CheckCircle2 className="h-3.5 w-3.5" />
       </Button>
     </div>
@@ -123,102 +123,106 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col space-y-6 pb-12">
-
-        {/* Header Section from HTML */}
-        {/* Header Removed - Moved to DashboardLayout */}
-
-        {/* Main Content Container - Fluid Layout */}
-        <div className="w-full space-y-6 px-2">
-
-
-
-
-          {/* Stats Row */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <DashboardStatsCard
-              title="Total Bookings"
-              value="24"
-              trend="up"
-              trendValue="3 new today"
-              icon={CalendarDays}
-            />
-            <DashboardStatsCard
-              title="Active Guests"
-              value="18"
-              trend="up"
-              trendValue="2 check-ins"
-              icon={Users}
-            />
-            <DashboardStatsCard
-              title="Pending Tasks"
-              value="12"
-              trend="down"
-              trendValue="4 completed"
-              icon={Activity}
-            />
-            <DashboardStatsCard
-              title="Revenue Today"
-              value="₹12.4k"
-              trend="up"
-              trendValue="8% avg"
-              icon={Banknote}
-            />
-          </div>
-
-          <DashboardFilters />
-
-          {/* Main Widget Grid - Masonry-lite layout */}
-          {/* Main Widget Grid - optimized for density */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-
-            <DashboardListWidget
-              title="Upcoming Bookings"
-              icon={<CalendarDays className="h-4 w-4" />}
-              items={bookingItems.slice(0, 10)}
-              isLoading={bookingsLoading}
-              renderItemActions={renderBookingActions}
-              className="xl:col-span-1"
-            />
-
-            <DashboardListWidget
-              title="Housekeeping Tasks"
-              icon={<Brush className="h-4 w-4" />}
-              items={hkItems.slice(0, 10)}
-              isLoading={hkLoading}
-              renderItemActions={renderTaskActions}
-              className="xl:col-span-1"
-            />
-
-            <DashboardListWidget
-              title="Maintenance Issues"
-              icon={<Wrench className="h-4 w-4" />}
-              items={maintItems.slice(0, 10)}
-              isLoading={maintLoading}
-              renderItemActions={renderTaskActions}
-              className="xl:col-span-1"
-            />
-
-            <div className="flex flex-col gap-6 xl:col-span-1">
-              <DashboardListWidget
-                title="Booking Enquiries"
-                icon={<MessageSquareMore className="h-4 w-4" />}
-                items={enquiryItems.slice(0, 5)}
-                isLoading={enquiryLoading}
-                renderItemActions={() => <Button size="sm" variant="ghost" className="h-7 text-xs">Reply</Button>}
-              />
-              <DashboardListWidget
-                title="Invoices to Process"
-                icon={<FileText className="h-4 w-4" />}
-                items={invoiceItems.slice(0, 5)}
-                isLoading={invoiceLoading}
-                renderItemActions={() => <Button size="sm" variant="ghost" className="h-7 text-xs">View</Button>}
-              />
-            </div>
-
+      <div className="flex flex-col gap-8 pb-12">
+        {/* Header Section */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-2">
+          <div className="space-y-1">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground uppercase">Property Dashboard</h1>
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+              Live overview of your property performance and operations.
+            </p>
           </div>
         </div>
+
+        {/* Filters Row */}
+        <div className="px-2">
+          <DashboardFilters />
+        </div>
+
+        {/* Stats Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <DashboardStatsCard
+            title="Total Bookings"
+            value="24"
+            trend="up"
+            trendValue="3 new today"
+            icon={CalendarDays}
+          />
+          <DashboardStatsCard
+            title="Active Guests"
+            value="18"
+            trend="up"
+            trendValue="2 check-ins"
+            icon={Users}
+          />
+          <DashboardStatsCard
+            title="Pending Tasks"
+            value="12"
+            trend="down"
+            trendValue="4 completed"
+            icon={Activity}
+          />
+          <DashboardStatsCard
+            title="Revenue Today"
+            value="₹12.4k"
+            trend="up"
+            trendValue="8% avg"
+            icon={Banknote}
+          />
+        </div>
+
+        <DashboardFilters />
+
+        {/* Main Widget Grid - optimized for density */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+          <DashboardListWidget
+            title="Upcoming Bookings"
+            icon={<CalendarDays className="h-4 w-4" />}
+            items={bookingItems.slice(0, 10)}
+            isLoading={bookingsLoading}
+            renderItemActions={renderBookingActions}
+            className="xl:col-span-1"
+          />
+
+          <DashboardListWidget
+            title="Housekeeping Tasks"
+            icon={<Brush className="h-4 w-4" />}
+            items={hkItems.slice(0, 10)}
+            isLoading={hkLoading}
+            renderItemActions={renderTaskActions}
+            className="xl:col-span-1"
+          />
+
+          <DashboardListWidget
+            title="Maintenance Issues"
+            icon={<Wrench className="h-4 w-4" />}
+            items={maintItems.slice(0, 10)}
+            isLoading={maintLoading}
+            renderItemActions={renderTaskActions}
+            className="xl:col-span-1"
+          />
+
+          <div className="flex flex-col gap-6 xl:col-span-1">
+            <DashboardListWidget
+              title="Booking Enquiries"
+              icon={<MessageSquareMore className="h-4 w-4" />}
+              items={enquiryItems.slice(0, 5)}
+              isLoading={enquiryLoading}
+              renderItemActions={() => <Button size="sm" variant="ghost" className="h-7 text-xs font-bold">Reply</Button>}
+            />
+            <DashboardListWidget
+              title="Invoices to Process"
+              icon={<FileText className="h-4 w-4" />}
+              items={invoiceItems.slice(0, 5)}
+              isLoading={invoiceLoading}
+              renderItemActions={() => <Button size="sm" variant="ghost" className="h-7 text-xs font-bold">View</Button>}
+            />
+          </div>
+
+        </div>
       </div>
-    </DashboardLayout>
+    </div>
+    </DashboardLayout >
   )
 }

@@ -25,25 +25,25 @@ export function DashboardStatsCard({
     const isNeutral = trend === "neutral"
 
     return (
-        <Card className={cn("border border-slate-100 shadow-sm rounded-xl bg-white transition-all hover:translate-y-[-1px] hover:shadow-md", className)}>
+        <Card className={cn("border border-border shadow-sm rounded-lg bg-card transition-all hover:shadow-md", className)}>
             <CardContent className="p-4">
-                <div className="flex flex-col gap-0.5">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{title}</span>
-                    <div className="flex items-end justify-between mt-1">
-                        <span className="text-2xl font-black text-[#0f0f14] tracking-tight">{value}</span>
+                <div className="flex flex-col gap-1">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{title}</span>
+                    <div className="flex items-end justify-between">
+                        <span className="text-3xl font-black text-foreground tracking-tighter">{value}</span>
                         {trend && (
                             <span className={cn(
-                                "text-[10px] font-bold mb-1",
-                                isPositive && "text-[#10b981]",
-                                !isPositive && !isNeutral && "text-[#ef4444]",
-                                isNeutral && "text-slate-400"
+                                "text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md",
+                                isPositive && "bg-emerald-500/10 text-emerald-600",
+                                !isPositive && !isNeutral && "bg-rose-500/10 text-rose-600",
+                                isNeutral && "bg-muted text-muted-foreground"
                             )}>
                                 {isPositive ? "↑" : isNeutral ? "-" : "↓"} {trendValue}
                             </span>
                         )}
                     </div>
                     {subtext && (
-                        <p className="text-[10px] text-slate-500 font-medium mt-0.5 opacity-90">{subtext}</p>
+                        <p className="text-[10px] text-muted-foreground font-medium mt-0.5">{subtext}</p>
                     )}
                 </div>
             </CardContent>

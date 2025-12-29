@@ -9,6 +9,7 @@
     "naming_series",
     "staff_name",
     "designation",
+    "role",
     "status",
     "column_break_1",
     "property",
@@ -38,6 +39,14 @@
       "in_list_view": 1,
       "label": "Designation",
       "options": "Manager\nHousekeeping\nReceptionist\nMaintenance\nChef\nSecurity",
+      "reqd": 1
+    },
+    {
+      "fieldname": "role",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Role",
+      "options": "Administrator\nManager\nFront Desk\nHousekeeping",
       "reqd": 1
     },
     {

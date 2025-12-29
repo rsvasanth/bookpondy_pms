@@ -65,50 +65,50 @@ export default function FinancialsPage() {
 
     return (
         <DashboardLayout>
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-8">
                 {/* Header */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold tracking-tight">Financial Analytics</h1>
-                        <p className="text-sm text-muted-foreground">Monitor your property performance and revenue trends.</p>
+                    <div className="space-y-1">
+                        <h1 className="text-2xl font-bold tracking-tight text-foreground uppercase">Financial Analytics</h1>
+                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Monitor your property performance and revenue trends.</p>
                     </div>
                     <div className="flex items-center gap-2">
                         <Select value={portfolioId} onValueChange={setPortfolioId}>
-                            <SelectTrigger className="w-[180px] h-10 rounded-xl bg-white border-muted shadow-sm">
+                            <SelectTrigger className="w-[180px] h-10 rounded-lg bg-card border-border shadow-sm text-[10px] font-bold uppercase tracking-widest focus:ring-primary">
                                 <SelectValue placeholder="All Portfolios" />
                             </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All Portfolios</SelectItem>
+                            <SelectContent className="rounded-lg border-border">
+                                <SelectItem value="all" className="text-[10px] font-bold uppercase">All Portfolios</SelectItem>
                                 {portfolios?.map(p => (
-                                    <SelectItem key={p.name} value={p.name}>{p.portfolio_name}</SelectItem>
+                                    <SelectItem key={p.name} value={p.name} className="text-[10px] font-bold uppercase">{p.portfolio_name}</SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
 
                         <Select value={propertyId} onValueChange={setPropertyId}>
-                            <SelectTrigger className="w-[200px] h-10 rounded-xl bg-white border-muted shadow-sm">
+                            <SelectTrigger className="w-[180px] h-10 rounded-lg bg-card border-border shadow-sm text-[10px] font-bold uppercase tracking-widest focus:ring-primary">
                                 <SelectValue placeholder="Select Property" />
                             </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All Properties</SelectItem>
+                            <SelectContent className="rounded-lg border-border">
+                                <SelectItem value="all" className="text-[10px] font-bold uppercase">All Properties</SelectItem>
                                 {properties?.map(p => (
-                                    <SelectItem key={p.name} value={p.name}>{p.property_name}</SelectItem>
+                                    <SelectItem key={p.name} value={p.name} className="text-[10px] font-bold uppercase">{p.property_name}</SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
 
                         <Select value={period} onValueChange={setPeriod}>
-                            <SelectTrigger className="w-[150px] h-10 rounded-xl bg-white border-muted shadow-sm">
+                            <SelectTrigger className="w-[150px] h-10 rounded-lg bg-card border-border shadow-sm text-[10px] font-bold uppercase tracking-widest focus:ring-primary">
                                 <SelectValue placeholder="Period" />
                             </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="thisMonth">This Month</SelectItem>
-                                <SelectItem value="last30days">Last 30 Days</SelectItem>
-                                <SelectItem value="thisYear">This Year</SelectItem>
+                            <SelectContent className="rounded-lg border-border">
+                                <SelectItem value="thisMonth" className="text-[10px] font-bold uppercase">This Month</SelectItem>
+                                <SelectItem value="last30days" className="text-[10px] font-bold uppercase">Last 30 Days</SelectItem>
+                                <SelectItem value="thisYear" className="text-[10px] font-bold uppercase">This Year</SelectItem>
                             </SelectContent>
                         </Select>
 
-                        <Button variant="outline" size="icon" className="h-10 w-10 mt-0 rounded-xl bg-white border-muted shadow-sm">
+                        <Button variant="outline" size="icon" className="h-10 w-10 mt-0 rounded-lg bg-card border-border hover:bg-muted shadow-sm transition-colors">
                             <Download className="h-4 w-4" />
                         </Button>
                     </div>
@@ -152,13 +152,15 @@ export default function FinancialsPage() {
 
                 {/* Charts Section */}
                 <div className="grid gap-6 lg:grid-cols-3">
-                    <Card className="lg:col-span-2 border-none shadow-sm rounded-2xl bg-white/50 backdrop-blur-sm">
-                        <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <Card className="lg:col-span-2 border border-border shadow-sm rounded-lg bg-card">
+                        <CardHeader className="flex flex-row items-center justify-between pb-4 bg-muted/30 px-6 pt-6">
                             <div className="space-y-1">
-                                <CardTitle className="text-lg font-bold">Revenue Trend</CardTitle>
-                                <CardDescription>Daily revenue performance for the selected period</CardDescription>
+                                <CardTitle className="text-sm font-bold uppercase tracking-tight">Revenue Trend</CardTitle>
+                                <CardDescription className="text-[10px] font-bold uppercase tracking-widest">Daily performance metrics</CardDescription>
                             </div>
-                            <LineChartIcon className="h-5 w-5 text-muted-foreground" />
+                            <div className="h-9 w-9 rounded-md bg-primary/10 text-primary flex items-center justify-center border border-border">
+                                <LineChartIcon className="h-5 w-5" />
+                            </div>
                         </CardHeader>
                         <CardContent>
                             <div className="h-[350px] mt-4">
@@ -197,13 +199,15 @@ export default function FinancialsPage() {
                         </CardContent>
                     </Card>
 
-                    <Card className="border-none shadow-sm rounded-2xl bg-white/50 backdrop-blur-sm">
-                        <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <Card className="border border-border shadow-sm rounded-lg bg-card">
+                        <CardHeader className="flex flex-row items-center justify-between pb-4 bg-muted/30 px-6 pt-6">
                             <div className="space-y-1">
-                                <CardTitle className="text-lg font-bold">Revenue Breakdown</CardTitle>
-                                <CardDescription>By revenue stream</CardDescription>
+                                <CardTitle className="text-sm font-bold uppercase tracking-tight">Breakdown</CardTitle>
+                                <CardDescription className="text-[10px] font-bold uppercase tracking-widest">By revenue stream</CardDescription>
                             </div>
-                            <PieChartIcon className="h-5 w-5 text-muted-foreground" />
+                            <div className="h-9 w-9 rounded-md bg-emerald-500/10 text-emerald-500 flex items-center justify-center border border-border">
+                                <PieChartIcon className="h-5 w-5" />
+                            </div>
                         </CardHeader>
                         <CardContent>
                             <div className="h-[300px] flex items-center justify-center">
@@ -232,11 +236,11 @@ export default function FinancialsPage() {
                             <div className="space-y-3 mt-4">
                                 {breakdownData.map((item, index) => (
                                     <div key={item.name} className="flex items-center justify-between text-sm">
-                                        <div className="flex items-center gap-2">
-                                            <div className="h-2 w-2 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
-                                            <span className="font-medium">{item.name}</span>
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-2 w-2 rounded-full shadow-sm" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
+                                            <span className="font-bold uppercase tracking-tight">{item.name}</span>
                                         </div>
-                                        <span className="font-bold">{formatCurrency(item.value)}</span>
+                                        <span className="font-bold text-foreground">{formatCurrency(item.value)}</span>
                                     </div>
                                 ))}
                             </div>
@@ -245,59 +249,55 @@ export default function FinancialsPage() {
                 </div>
 
                 {/* Metrics Row */}
-                <Card className="border-none shadow-sm rounded-2xl bg-white">
-                    <CardHeader>
-                        <CardTitle className="text-lg font-bold">Operational Metrics</CardTitle>
-                        <CardDescription>Detailed breakdown of your property's operational performance.</CardDescription>
+                <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden">
+                    <CardHeader className="bg-muted/30 px-6 py-6 border-b border-border">
+                        <CardTitle className="text-sm font-bold uppercase tracking-tight">Operational Metrics</CardTitle>
+                        <CardDescription className="text-[10px] font-bold uppercase tracking-widest">Detailed performance statistics</CardDescription>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-0">
                         <Table>
-                            <TableHeader>
-                                <TableRow className="border-muted hover:bg-transparent">
-                                    <TableHead className="font-bold text-[10px] uppercase tracking-wider">Metric</TableHead>
-                                    <TableHead className="text-right font-bold text-[10px] uppercase tracking-wider">Value</TableHead>
-                                    <TableHead className="text-right font-bold text-[10px] uppercase tracking-wider">Target</TableHead>
-                                    <TableHead className="text-right font-bold text-[10px] uppercase tracking-wider">Status</TableHead>
+                            <TableHeader className="bg-muted/50">
+                                <TableRow className="hover:bg-transparent border-border">
+                                    <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground p-6 border-b border-border">Metric</TableHead>
+                                    <TableHead className="text-right font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground p-6 border-b border-border">Value</TableHead>
+                                    <TableHead className="text-right font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground p-6 border-b border-border">Target</TableHead>
+                                    <TableHead className="text-right font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground p-6 border-b border-border">Status</TableHead>
                                 </TableRow>
                             </TableHeader>
-                            <TableBody>
-                                <TableRow className="border-muted/50">
-                                    <TableCell className="font-medium">Total Reservations</TableCell>
-                                    <TableCell className="text-right font-bold">{summary?.booking_count || 0}</TableCell>
-                                    <TableCell className="text-right text-muted-foreground">--</TableCell>
-                                    <TableCell className="text-right">
-                                        <span className="bg-green-100 text-green-700 px-2 py-1 rounded-md text-[10px] font-bold uppercase">Healthy</span>
+                                    <TableCell className=\"p-6 text-right text-[10px] font-bold text-muted-foreground uppercase\">--</TableCell>
+                                    <TableCell className=\"p-6 text-right\">
+                                        <span className=\"bg-emerald-500/10 text-emerald-500 px-3 py-1 rounded-sm text-[9px] font-bold uppercase tracking-widest\">Healthy</span>
                                     </TableCell>
                                 </TableRow>
-                                <TableRow className="border-muted/50">
-                                    <TableCell className="font-medium">Cancellations</TableCell>
-                                    <TableCell className="text-right font-bold text-red-500">{summary?.cancellation_count || 0}</TableCell>
-                                    <TableCell className="text-right text-muted-foreground">{"< 5%"}</TableCell>
-                                    <TableCell className="text-right">
-                                        <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-md text-[10px] font-bold uppercase">Watch</span>
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow className="border-muted/50">
-                                    <TableCell className="font-medium">Available Nights</TableCell>
-                                    <TableCell className="text-right font-bold">{summary?.available_nights || 0}</TableCell>
-                                    <TableCell className="text-right text-muted-foreground">--</TableCell>
-                                    <TableCell className="text-right">
-                                        <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded-md text-[10px] font-bold uppercase">System</span>
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow className="border-muted/50">
-                                    <TableCell className="font-medium">Occupied Nights</TableCell>
-                                    <TableCell className="text-right font-bold">{summary?.total_nights_occupied || 0}</TableCell>
-                                    <TableCell className="text-right text-muted-foreground">--</TableCell>
-                                    <TableCell className="text-right">
-                                        <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-md text-[10px] font-bold uppercase">Active</span>
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                    </CardContent>
-                </Card>
-            </div>
-        </DashboardLayout>
+                                <TableRow className=\"hover:bg-muted/30 transition-all border-none\">
+                                    <TableCell className=\"p-6 font-bold text-sm text-foreground uppercase tracking-tight\">Cancellations</TableCell>
+                                    <TableCell className=\"p-6 text-right font-black text-sm text-rose-500\">{summary?.cancellation_count || 0}</TableCell>
+        < TableCell className =\"p-6 text-right text-[10px] font-bold text-muted-foreground uppercase\">{" < 5 % "}</TableCell>
+            < TableCell className =\"p-6 text-right\">
+                < span className =\"bg-amber-500/10 text-amber-500 px-3 py-1 rounded-sm text-[9px] font-bold uppercase tracking-widest\">Watch</span>
+                                    </TableCell >
+                                </TableRow >
+        <TableRow className=\"hover:bg-muted/30 transition-all border-none\">
+            < TableCell className =\"p-6 font-bold text-sm text-foreground uppercase tracking-tight\">Available Nights</TableCell>
+                < TableCell className =\"p-6 text-right font-black text-sm text-foreground\">{summary?.available_nights || 0}</TableCell>
+                    < TableCell className =\"p-6 text-right text-[10px] font-bold text-muted-foreground uppercase\">--</TableCell>
+                        < TableCell className =\"p-6 text-right\">
+                            < span className =\"bg-muted text-muted-foreground px-3 py-1 rounded-sm text-[9px] font-bold uppercase tracking-widest\">System</span>
+                                    </TableCell >
+                                </TableRow >
+        <TableRow className=\"hover:bg-muted/30 transition-all border-none\">
+            < TableCell className =\"p-6 font-bold text-sm text-foreground uppercase tracking-tight\">Occupied Nights</TableCell>
+                < TableCell className =\"p-6 text-right font-black text-sm text-foreground\">{summary?.total_nights_occupied || 0}</TableCell>
+                    < TableCell className =\"p-6 text-right text-[10px] font-bold text-muted-foreground uppercase\">--</TableCell>
+                        < TableCell className =\"p-6 text-right\">
+                            < span className =\"bg-primary/10 text-primary px-3 py-1 rounded-sm text-[9px] font-bold uppercase tracking-widest\">Active</span>
+                                    </TableCell >
+                                </TableRow >
+                            </TableBody >
+                        </Table >
+                    </CardContent >
+                </Card >
+            </div >
+        </DashboardLayout >
     )
 }
