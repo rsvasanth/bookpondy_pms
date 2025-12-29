@@ -264,40 +264,36 @@ export default function FinancialsPage() {
                                     <TableHead className="text-right font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground p-6 border-b border-border">Status</TableHead>
                                 </TableRow>
                             </TableHeader>
-                                    <TableCell className=\"p-6 text-right text-[10px] font-bold text-muted-foreground uppercase\">--</TableCell>
-                                    <TableCell className=\"p-6 text-right\">
-                                        <span className=\"bg-emerald-500/10 text-emerald-500 px-3 py-1 rounded-sm text-[9px] font-bold uppercase tracking-widest\">Healthy</span>
+                            <TableBody>
+                                <TableRow className="hover:bg-muted/30 transition-all border-none">
+                                    <TableCell className="p-6 font-bold text-sm text-foreground uppercase tracking-tight">Cancellations</TableCell>
+                                    <TableCell className="p-6 text-right font-black text-sm text-rose-500">{summary?.cancellation_count || 0}</TableCell>
+                                    <TableCell className="p-6 text-right text-[10px] font-bold text-muted-foreground uppercase">{`< 5%`}</TableCell>
+                                    <TableCell className="p-6 text-right">
+                                        <span className="bg-amber-500/10 text-amber-500 px-3 py-1 rounded-sm text-[9px] font-bold uppercase tracking-widest">Watch</span>
                                     </TableCell>
                                 </TableRow>
-                                <TableRow className=\"hover:bg-muted/30 transition-all border-none\">
-                                    <TableCell className=\"p-6 font-bold text-sm text-foreground uppercase tracking-tight\">Cancellations</TableCell>
-                                    <TableCell className=\"p-6 text-right font-black text-sm text-rose-500\">{summary?.cancellation_count || 0}</TableCell>
-        < TableCell className =\"p-6 text-right text-[10px] font-bold text-muted-foreground uppercase\">{" < 5 % "}</TableCell>
-            < TableCell className =\"p-6 text-right\">
-                < span className =\"bg-amber-500/10 text-amber-500 px-3 py-1 rounded-sm text-[9px] font-bold uppercase tracking-widest\">Watch</span>
-                                    </TableCell >
-                                </TableRow >
-        <TableRow className=\"hover:bg-muted/30 transition-all border-none\">
-            < TableCell className =\"p-6 font-bold text-sm text-foreground uppercase tracking-tight\">Available Nights</TableCell>
-                < TableCell className =\"p-6 text-right font-black text-sm text-foreground\">{summary?.available_nights || 0}</TableCell>
-                    < TableCell className =\"p-6 text-right text-[10px] font-bold text-muted-foreground uppercase\">--</TableCell>
-                        < TableCell className =\"p-6 text-right\">
-                            < span className =\"bg-muted text-muted-foreground px-3 py-1 rounded-sm text-[9px] font-bold uppercase tracking-widest\">System</span>
-                                    </TableCell >
-                                </TableRow >
-        <TableRow className=\"hover:bg-muted/30 transition-all border-none\">
-            < TableCell className =\"p-6 font-bold text-sm text-foreground uppercase tracking-tight\">Occupied Nights</TableCell>
-                < TableCell className =\"p-6 text-right font-black text-sm text-foreground\">{summary?.total_nights_occupied || 0}</TableCell>
-                    < TableCell className =\"p-6 text-right text-[10px] font-bold text-muted-foreground uppercase\">--</TableCell>
-                        < TableCell className =\"p-6 text-right\">
-                            < span className =\"bg-primary/10 text-primary px-3 py-1 rounded-sm text-[9px] font-bold uppercase tracking-widest\">Active</span>
-                                    </TableCell >
-                                </TableRow >
-                            </TableBody >
-                        </Table >
-                    </CardContent >
-                </Card >
-            </div >
-        </DashboardLayout >
+                                <TableRow className="hover:bg-muted/30 transition-all border-none">
+                                    <TableCell className="p-6 font-bold text-sm text-foreground uppercase tracking-tight">Available Nights</TableCell>
+                                    <TableCell className="p-6 text-right font-black text-sm text-foreground">{summary?.available_nights || 0}</TableCell>
+                                    <TableCell className="p-6 text-right text-[10px] font-bold text-muted-foreground uppercase">--</TableCell>
+                                    <TableCell className="p-6 text-right">
+                                        <span className="bg-muted text-muted-foreground px-3 py-1 rounded-sm text-[9px] font-bold uppercase tracking-widest">System</span>
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow className="hover:bg-muted/30 transition-all border-none">
+                                    <TableCell className="p-6 font-bold text-sm text-foreground uppercase tracking-tight">Occupied Nights</TableCell>
+                                    <TableCell className="p-6 text-right font-black text-sm text-foreground">{summary?.total_nights_occupied || 0}</TableCell>
+                                    <TableCell className="p-6 text-right text-[10px] font-bold text-muted-foreground uppercase">--</TableCell>
+                                    <TableCell className="p-6 text-right">
+                                        <span className="bg-primary/10 text-primary px-3 py-1 rounded-sm text-[9px] font-bold uppercase tracking-widest">Active</span>
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
+            </div>
+        </DashboardLayout>
     )
 }
