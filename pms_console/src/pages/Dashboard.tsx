@@ -222,7 +222,6 @@ export default function DashboardPage() {
 
         </div>
       </div>
-    </div>
-    </DashboardLayout >
+    </DashboardLayout>
   )
 }
