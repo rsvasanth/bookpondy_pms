@@ -322,48 +322,47 @@ function InvoiceDetailView({ folioName }: { folioName: string, onBack: () => voi
                     </div>
                 </Card>
 
-                    <div className=\"bg-muted/30 px-6 py-5 border-b border-border\">
-                        <h3 className=\"font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground\">Payment Info</h3>
+                <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden transition-all">
+                    <div className="bg-muted/30 px-6 py-5 border-b border-border">
+                        <h3 className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Payment Info</h3>
                     </div>
-                    <div className=\"p-6 space-y-4\">
-        < div className =\"flex items-center justify-between p-4 rounded-md bg-muted/20 border border-border\">
-            < div className =\"flex items-center gap-4\">
-                < div className =\"h-10 w-10 rounded-md bg-card shadow-sm flex items-center justify-center text-primary border border-border\">
-                    < CreditCard className =\"h-5 w-5\" />
-                                </div >
-                                <div>
-                                    <p className=\"text-[9px] font-black uppercase text-muted-foreground tracking-[0.2em] mb-1\">Status</p>
-                                    <p className=\"font-black text-xs uppercase text-foreground tracking-tight\">{details.status}</p>
-                                </div >
-                            </div >
-                        </div >
-
-        <div className=\"flex items-center justify-between p-4 rounded-md bg-muted/20 border border-border\">
-            < div className =\"flex items-center gap-4\">
-                < div className =\"h-10 w-10 rounded-md bg-card shadow-sm flex items-center justify-center text-primary border border-border\">
-                    < HistoryIcon className =\"h-5 w-5\" />
-                                </div >
-                                <div>
-                                    <p className=\"text-[9px] font-black uppercase text-muted-foreground tracking-[0.2em] mb-1\">Method</p>
-                                    <p className=\"font-black text-xs uppercase text-foreground tracking-tight\">{details.payment_method || 'Unpaid'}</p>
-                                </div >
-                            </div >
-                        </div >
-
-    {
-        details.refund_amount > 0 && (
-            <div className=\"p-4 rounded-md bg-rose-500/5 border border-rose-500/20\">
-            <div className =\"flex items-center gap-2 text-rose-500 mb-2\">
-            <AlertCircle className =\"h-4 w-4\" />
-            <span className =\"font-black text-[10px] uppercase tracking-widest\">Refund Processed</span>
+                    <div className="p-6 space-y-4">
+                        <div className="flex items-center justify-between p-4 rounded-md bg-muted/20 border border-border">
+                            <div className="flex items-center gap-4">
+                                <div className="h-10 w-10 rounded-md bg-card shadow-sm flex items-center justify-center text-primary border border-border">
+                                    <CreditCard className="h-5 w-5" />
                                 </div>
-        <p className=\"font-black text-lg text-rose-600 tracking-tight\">₹{details.refund_amount.toLocaleString('en-IN')}</p>
-            < p className =\"text-[10px] font-bold text-rose-500/60 uppercase tracking-tight mt-1\">{details.refund_reason}</p>
-                            </div >
-                        )
-}
-                    </div >
-                </Card >
+                                <div>
+                                    <p className="text-[9px] font-black uppercase text-muted-foreground tracking-[0.2em] mb-1">Status</p>
+                                    <p className="font-black text-xs uppercase text-foreground tracking-tight">{details.status}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between p-4 rounded-md bg-muted/20 border border-border">
+                            <div className="flex items-center gap-4">
+                                <div className="h-10 w-10 rounded-md bg-card shadow-sm flex items-center justify-center text-primary border border-border">
+                                    <HistoryIcon className="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <p className="text-[9px] font-black uppercase text-muted-foreground tracking-[0.2em] mb-1">Method</p>
+                                    <p className="font-black text-xs uppercase text-foreground tracking-tight">{details.payment_method || 'Unpaid'}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {details.refund_amount > 0 && (
+                            <div className="p-4 rounded-md bg-rose-500/5 border border-rose-500/20">
+                                <div className="flex items-center gap-2 text-rose-500 mb-2">
+                                    <AlertCircle className="h-4 w-4" />
+                                    <span className="font-black text-[10px] uppercase tracking-widest">Refund Processed</span>
+                                </div>
+                                <p className="font-black text-lg text-rose-600 tracking-tight">₹{details.refund_amount.toLocaleString('en-IN')}</p>
+                                <p className="text-[10px] font-bold text-rose-500/60 uppercase tracking-tight mt-1">{details.refund_reason}</p>
+                            </div>
+                        )}
+                    </div>
+                </Card>
             </div >
         </div >
     )
