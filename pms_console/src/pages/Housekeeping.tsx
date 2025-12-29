@@ -90,8 +90,8 @@ export default function HousekeepingPage() {
                                     <div className={cn("h-8 w-8 rounded-md flex items-center justify-center border border-border", stat.bg, stat.color)}>
                                         <stat.icon className="h-4 w-4" />
                                     </div>
-                                }
-                                    <p className="text-3xl font-black text-foreground tracking-tight">{stat.value}</p>
+                                </div>
+                                <p className="text-3xl font-black text-foreground tracking-tight">{stat.value}</p>
                             </CardContent>
                         </Card>
                     ))}
