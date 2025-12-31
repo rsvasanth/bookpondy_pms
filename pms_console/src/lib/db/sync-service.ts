@@ -10,19 +10,19 @@ const api = axios.create({
 });
 
 const DOCTYPE_FIELDS: Record<string, string[]> = {
-    'Reservation': ["name", "guest_name", "check_in_date", "check_out_date", "reservation_status", "total_amount", "property", "allocated_unit", "modified", "guest_email", "guest_phone", "unit_category", "special_requests", "is_identity_verified", "is_rental_agreement_signed", "is_security_deposit_collected", "is_checkin_guide_sent", "advance_paid"],
+    'Reservation': ["name", "guest", "guest_name", "check_in_date", "check_out_date", "reservation_status", "total_amount", "property", "allocated_unit", "modified", "guest_email", "guest_phone", "unit_category", "special_requests", "is_identity_verified", "is_rental_agreement_signed", "is_security_deposit_collected", "is_checkin_guide_sent", "advance_paid"],
     'Property': ["name", "property_name", "property_type", "location_description", "total_units", "total_rooms", "average_rating", "banner_image", "status", "modified"],
-    'Booking Inquiry': ["name", "guest_name", "inquiry_status", "property_interested", "inquiry_date", "modified", "guest_email", "guest_phone", "unit_category", "check_in_date", "check_out_date", "number_of_guests", "special_requests"],
+    'Booking Inquiry': ["name"],
     'Housekeeping Task': ["name", "unit", "task_type", "status", "priority", "scheduled_time", "modified"],
     'Maintenance Ticket': ["name", "issue_title", "unit", "ticket_status", "priority", "creation", "modified"],
     'Folio': ["name", "name", "reservation", "grand_total", "invoice_status", "status", "creation", "modified", "invoice_number"],
     'Unit': ["name", "unit_no", "property", "unit_category", "status", "modified"],
     'Guest': ["name", "guest_name", "email", "phone", "total_visits", "total_spend", "last_visit_date", "return_guest", "modified"],
     'Staff': ["name", "staff_name", "designation", "role", "property", "status", "email", "phone", "modified"],
-    'Guest Communication': ["name", "guest", "communication_date", "communication_type", "status", "subject", "message", "modified"],
+    'Guest Communication': ["name", "guest", "communication_date", "communication_type", "status", "subject", "content", "modified"],
     'Property Portfolio': ["name", "portfolio_name", "description", "owner_user", "modified"],
     'Unit Category': ["name", "category_name", "property", "modified"],
-    'Sales Invoice': ["name", "customer_name", "status", "grand_total", "due_date", "modified"],
+
     'Guest Query': ["name", "guest", "reservation", "status", "query_date", "query_text", "modified"]
 };
 
@@ -39,12 +39,13 @@ const DOCTYPE_MAP: Record<string, string> = {
     'Guest Communication': 'communications',
     'Property Portfolio': 'portfolios',
     'Unit Category': 'unit_categories',
-    'Sales Invoice': 'invoices',
+
     'Guest Query': 'guest_queries'
 };
 
 export async function pullSync() {
     const db = await getDB();
+    console.log("Sync Service v2 (Fixes Applied)");
 
     for (const [doctype, collectionName] of Object.entries(DOCTYPE_MAP)) {
         try {
@@ -109,8 +110,16 @@ export async function pushSync() {
             console.log(`Sync: Pushed ${operation} for ${doctype} ${name || ''}`);
         } catch (error: any) {
             console.error(`Sync: Failed to push outbox item ${item.id}:`, error.response?.data || error.message);
-            // We might want to implement a retry limit or specific handling for 403/404
-            break; // Stop processing further items to preserve order
+
+            // Critical fix: Remove invalid items that will never succeed (417 Expectation Failed or MandatoryError)
+            const isMandatoryError = JSON.stringify(error.response?.data || "").includes("MandatoryError");
+            if (error.response?.status === 417 || isMandatoryError) {
+                console.warn(`Sync: Removing invalid item ${item.id} from outbox to unblock queue.`);
+                await item.remove();
+            } else {
+                // Break for transient errors to preserve order, but continue for non-blocking errors if we implemented that
+                break;
+            }
         }
     }
 }

@@ -1,113 +1,75 @@
+import React from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { Button } from "@/components/ui/button"
 import { useLocalDoc, useLocalMutation, useLocalDocList, useLocalCreate } from "@/hooks/use-local-data"
 import {
     ArrowLeft,
-    Mail,
-    Phone,
     Calendar,
-    CreditCard,
-    Printer,
-    MessageSquare,
-    CheckSquare,
-    Shield,
-    Sparkles,
-    UserCog,
-    Send,
-    MessageCircle,
-    HelpCircle,
-    MoreHorizontal,
+    CheckCircle2,
     Clock,
-    Wallet
+    CreditCard,
+    Mail,
+    MessageSquare,
+    Phone,
+    Send,
+    Shield,
+    User,
+    Home,
+    AlertTriangle,
+    FileText,
+    MapPin,
+    Users,
+    Bed
 } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { format, isValid } from "date-fns"
-import { Separator } from "@/components/ui/separator"
-import { Progress } from "@/components/ui/progress"
 import { Textarea } from "@/components/ui/textarea"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from "@/components/ui/sheet"
+import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Progress } from "@/components/ui/progress";
+import { GuestChatPanel } from "@/components/GuestChatPanel";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { format, isValid } from "date-fns"
+import { cn, safeFormatDate } from "@/lib/utils"
 
-const safeFormatDate = (date: any, formatStr: string) => {
-    try {
-        const d = new Date(date)
-        if (!isValid(d)) return "N/A"
-        return format(d, formatStr)
-    } catch (e) {
-        return "N/A"
-    }
-}
+
 
 export default function BookingDetailsPage() {
     const navigate = useNavigate()
     const { id } = useParams<{ id: string }>()
-
     const { data: booking, isLoading } = useLocalDoc("Reservation", id!)
     const { mutate } = useLocalMutation()
 
-    // --- Derived Payment Logic ---
-    const isPaid = ["Received", "Refunded"].includes(booking?.payment_status)
-    // Fallback to advance_paid if not fully paid
-    const paidAmount = isPaid ? booking?.total_amount : (booking?.advance_paid || 0)
-    const dueAmount = (booking?.total_amount || 0) - (paidAmount || 0)
-
-    // --- Notes Logic ---
-    const handleSaveNotes = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-        const newNotes = e.target.value
-        if (newNotes !== booking.notes) {
-            mutate('Reservation', booking.name, { notes: newNotes })
-        }
-    }
-
-    // --- Onboarding Logic ---
-    const onboardingSteps = [
-        { key: 'is_identity_verified', label: "Identity Verified", done: !!booking?.is_identity_verified },
-        { key: 'is_rental_agreement_signed', label: "Rental Agreement Signed", done: !!booking?.is_rental_agreement_signed },
-        { key: 'is_security_deposit_collected', label: "Security Collected", done: !!booking?.is_security_deposit_collected },
-        { key: 'is_checkin_guide_sent', label: "Guide Sent", done: !!booking?.is_checkin_guide_sent },
-    ]
-    const completedSteps = onboardingSteps.filter(s => s.done).length
-    const progress = (completedSteps / onboardingSteps.length) * 100
-
-    const handleToggleOnboarding = (key: string, currentVal: boolean) => {
-        mutate('Reservation', booking.name, { [key]: !currentVal ? 1 : 0 })
-    }
-
-    // --- Guest Queries Logic ---
+    // Chat Logic
     const { data: queries } = useLocalDocList('Guest Query', { selector: { reservation: id } })
     const { create: createQuery } = useLocalCreate()
+    const [messageInput, setMessageInput] = React.useState("")
 
-    const handleLogQuery = () => {
-        const text = prompt("Enter guest query:")
-        if (text) {
-            createQuery('Guest Query', {
-                reservation: id,
-                guest: booking.guest,
-                query_text: text,
-                status: 'Open',
-                query_date: new Date().toISOString()
-            })
+    const handleSendMessage = () => {
+        if (!messageInput.trim()) return
+
+        if (!booking.guest) {
+            alert("Cannot log query: Guest information is missing. Please wait for sync to complete.")
+            return
         }
+
+        createQuery('Guest Query', {
+            reservation: id,
+            guest: booking.guest,
+            query_text: messageInput,
+            status: 'Open',
+            query_date: new Date().toISOString()
+        })
+        setMessageInput("")
     }
 
     if (isLoading) {
         return (
             <DashboardLayout>
                 <div className="flex h-full items-center justify-center">
-                    <div className="flex flex-col items-center gap-4">
-                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                        <p className="text-xs font-medium text-slate-500 animate-pulse">Loading...</p>
-                    </div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                 </div>
             </DashboardLayout>
         )
@@ -117,332 +79,367 @@ export default function BookingDetailsPage() {
         return (
             <DashboardLayout>
                 <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
-                    <h2 className="text-xl font-bold text-gray-800">Booking Not Found</h2>
+                    <h2 className="text-xl font-bold">Booking Not Found</h2>
                     <Button onClick={() => navigate("/bookings")}>Back to Bookings</Button>
                 </div>
             </DashboardLayout>
         )
     }
 
-    const getStatusStyles = (status: string) => {
+    const isPaid = ["Received", "Refunded"].includes(booking?.payment_status)
+    const paidAmount = isPaid ? booking?.total_amount : (booking?.advance_paid || 0)
+    const dueAmount = (booking?.total_amount || 0) - (paidAmount || 0)
+    const paymentProgress = booking?.total_amount > 0 ? (paidAmount / booking.total_amount) * 100 : 0
+
+    const getStatusVariant = (status: string) => {
         switch (status) {
-            case "Confirmed": return "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-            case "Checked-In": return "bg-blue-500/10 text-blue-500 border-blue-500/20"
-            case "Checked-Out": return "bg-muted text-muted-foreground border-border"
-            case "Cancelled": return "bg-rose-500/10 text-rose-500 border-rose-500/20"
-            default: return "bg-muted text-muted-foreground border-border"
+            case "Confirmed": return "default"
+            case "Checked-In": return "secondary"
+            case "Cancelled": return "destructive"
+            default: return "outline"
         }
     }
 
     return (
         <DashboardLayout>
-            <div className="flex flex-col space-y-3 pb-8 w-full max-w-screen-2xl mx-auto px-2">
+            <div className="flex flex-col space-y-6 p-6 max-w-7xl mx-auto w-full min-h-screen">
 
-                {/* Compact Header */}
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between py-2">
+                {/* Header */}
+                <div className="flex items-center justify-between col-span-3">
                     <div className="flex items-center gap-4">
-                        <Button variant="outline" size="icon" onClick={() => navigate("/bookings")} className="h-10 w-10 border-border bg-card hover:bg-muted rounded-lg shadow-sm">
-                            <ArrowLeft className="h-5 w-5 text-muted-foreground" />
+                        <Button variant="outline" size="icon" onClick={() => navigate("/bookings")}>
+                            <ArrowLeft className="h-4 w-4" />
                         </Button>
                         <div>
                             <div className="flex items-center gap-3">
-                                <h1 className="text-2xl font-black text-foreground uppercase tracking-tight leading-none">
-                                    {booking.guest_name}
-                                </h1>
-                                <Badge variant="outline" className={cn("text-[10px] font-black uppercase px-3 py-1 rounded-md border shadow-none tracking-tight", getStatusStyles(booking.reservation_status))}>
+                                <h1 className="text-2xl font-bold">{booking.guest_name}</h1>
+                                <Badge variant={getStatusVariant(booking.reservation_status)}>
                                     {booking.reservation_status}
                                 </Badge>
                             </div>
-                            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em] mt-1.5 opacity-60">
-                                {booking.name} <span className="mx-2 opacity-30">•</span> {booking.property}
-                            </p>
+                            <p className="text-sm text-muted-foreground font-mono">{booking.name}</p>
                         </div>
                     </div>
-                    {/* ... (Header Actions same as before) ... */}
-                    <div className="flex items-center gap-2">
-                        <Sheet>
-                            <SheetTrigger asChild>
-                                <Button variant="outline" size="sm" className="h-8 gap-2 bg-card hidden sm:flex border-border text-foreground hover:bg-muted font-bold">
-                                    <MessageCircle className="h-3.5 w-3.5" />
-                                    Communication
-                                </Button>
-                            </SheetTrigger>
-                            <SheetContent className="w-[400px] sm:w-[540px] flex flex-col p-0 gap-0">
-                                <SheetHeader className="p-4 border-b border-border bg-muted/50">
-                                    <SheetTitle className="flex items-center gap-2 text-base">
-                                        <MessageSquare className="h-4 w-4 text-primary" />
-                                        Communication Hub
-                                    </SheetTitle>
-                                    <SheetDescription className="text-xs">
-                                        Chat with {booking.guest_name}
-                                    </SheetDescription>
-                                </SheetHeader>
-                                {/* Chat Interface */}
-                                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-muted/30">
-                                    <div className="flex gap-3">
-                                        <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-secondary-foreground font-bold text-xs shrink-0">SYS</div>
-                                        <div className="bg-card p-3 rounded-lg shadow-sm border border-border max-w-[85%]">
-                                            <p className="text-[10px] font-bold text-muted-foreground mb-1">System • Yesterday</p>
-                                            <p className="text-sm text-foreground">Booking confirmation #{booking.name} sent via Email.</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex gap-3 flex-row-reverse">
-                                        <Avatar className="h-8 w-8 shrink-0">
-                                            <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${booking.guest_name}`} />
-                                            <AvatarFallback>{booking.guest_name[0]}</AvatarFallback>
-                                        </Avatar>
-                                        <div className="bg-primary p-3 rounded-lg shadow-sm border border-primary max-w-[85%] text-primary-foreground">
-                                            <p className="text-[10px] font-bold text-primary-foreground/70 mb-1">Guest • 2h ago</p>
-                                            <p className="text-sm">Hi! Is it possible to check in an hour early? Our flight lands at 10 AM.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="p-4 border-t border-border">
-                                    <div className="relative">
-                                        <Textarea placeholder="Type a message..." className="min-h-[80px] bg-muted/50 border-border resize-none pr-12 text-sm" />
-                                        <Button size="icon" className="absolute bottom-2 right-2 h-8 w-8 rounded-lg bg-primary hover:bg-primary/90">
-                                            <Send className="h-4 w-4 text-primary-foreground" />
-                                        </Button>
-                                    </div>
-                                </div>
-                            </SheetContent>
-                        </Sheet>
-
-                        <Button variant="ghost" size="icon" className="h-8 w-8 sm:hidden">
-                            <MoreHorizontal className="h-4 w-4 text-foreground" />
+                    <div className="flex gap-2">
+                        <Button variant="outline" size="sm">
+                            <Mail className="mr-2 h-4 w-4" />
+                            Email
                         </Button>
-                        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs h-8 shadow-sm px-4 rounded-lg" size="sm">
-                            {(booking.reservation_status === "Confirmed") ? "Check-In" : "Manage"}
+                        <Button size="sm">
+                            {booking.reservation_status === "Confirmed" ? "Check-In Guest" : "Update Status"}
                         </Button>
                     </div>
                 </div>
 
-                {/* Dashboard-Style Layout - High Density */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+                {/* Outstanding Balance Alert */}
+                {dueAmount > 0 && (
+                    <Alert variant="destructive">
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertTitle>Payment Pending</AlertTitle>
+                        <AlertDescription>
+                            ₹{dueAmount.toLocaleString()} balance due. Please collect before check-in.
+                        </AlertDescription>
+                    </Alert>
+                )}
 
-                    {/* LEFT COLUMN: Context (Guest & Stay) */}
-                    <div className="lg:col-span-3 space-y-4">
+                {/* Primary Information - Guest & Stay Details (2 Column) */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 col-span-3 max-h-[calc(100vh-200px)] overflow-y-auto">
 
-                        {/* Guest Profile */}
-                        <Card className="rounded-lg shadow-sm border-border overflow-hidden transition-all hover:shadow-md bg-card">
-                            <CardHeader className="py-3 px-4 border-b border-border bg-muted/30">
-                                <CardTitle className="text-[10px] font-black flex items-center justify-between text-muted-foreground uppercase tracking-[0.2em]">
-                                    Guest Discover
-                                    <Badge variant="outline" className="text-[8px] font-black uppercase bg-primary/10 text-primary border-none rounded-md px-1.5 py-0">Elite Guest</Badge>
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="p-3">
-                                <div className="flex items-center gap-3 mb-3">
-                                    <Avatar className="h-10 w-10 border border-border shadow-sm">
-                                        <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${booking.guest_name}`} />
-                                        <AvatarFallback className="bg-muted text-muted-foreground">{booking.guest_name[0]}</AvatarFallback>
-                                    </Avatar>
+                    {/* Guest Information Card */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-lg">Guest Information</CardTitle>
+                            <CardDescription>Contact details and verification status</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            {/* Guest Profile */}
+                            <div className="flex items-start gap-4">
+                                <Avatar className="h-16 w-16 border">
+                                    <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${booking.guest_name}`} />
+                                    <AvatarFallback className="text-lg">{booking.guest_name?.[0]}</AvatarFallback>
+                                </Avatar>
+                                <div className="flex-1 min-w-0">
+                                    <p className="font-semibold text-lg">{booking.guest_name}</p>
+                                    <p className="text-sm text-muted-foreground">Guest ID: {booking.guest || "N/A"}</p>
+                                </div>
+                            </div>
+
+                            <Separator />
+
+                            {/* Contact Details */}
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-3">
+                                    <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
+                                        <Mail className="h-4 w-4 text-muted-foreground" />
+                                    </div>
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="font-bold text-xs text-foreground truncate">{booking.guest_name}</h3>
-                                        <div className="flex items-center gap-1 mt-0.5">
-                                            {booking.guest_id_image ? (
-                                                <span className="text-[9px] font-bold text-emerald-600 bg-emerald-100/50 px-1.5 py-0.5 rounded-sm flex items-center gap-1 w-fit">
-                                                    <Shield className="h-2.5 w-2.5" /> ID Verified
-                                                </span>
-                                            ) : (
-                                                <span className="text-[9px] font-bold text-destructive bg-destructive/10 px-1.5 py-0.5 rounded-sm">ID Unverified</span>
-                                            )}
-                                        </div>
+                                        <p className="text-xs text-muted-foreground">Email Address</p>
+                                        <p className="text-sm font-medium truncate">{booking.guest_email || "Not provided"}</p>
                                     </div>
                                 </div>
+                                <div className="flex items-center gap-3">
+                                    <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
+                                        <Phone className="h-4 w-4 text-muted-foreground" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-muted-foreground">Phone Number</p>
+                                        <p className="text-sm font-medium">{booking.guest_phone || "Not provided"}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <Separator />
+
+                            {/* Verification Checklist */}
+                            <div className="space-y-2">
+                                <p className="text-sm font-semibold mb-3">Verification Checklist</p>
                                 <div className="space-y-2">
-                                    <div className="flex items-center gap-2 text-xs">
-                                        <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center shrink-0">
-                                            <Mail className="h-3 w-3 text-muted-foreground" />
-                                        </div>
-                                        <span className="text-muted-foreground truncate text-[11px] font-medium">{booking.guest_email || "No Email"}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2 text-xs">
-                                        <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center shrink-0">
-                                            <Phone className="h-3 w-3 text-muted-foreground" />
-                                        </div>
-                                        <span className="text-muted-foreground text-[11px] font-medium">{booking.guest_phone || "No Phone"}</span>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Stay Details */}
-                        <Card className="rounded-lg shadow-sm border-border overflow-hidden transition-all hover:shadow-md bg-card">
-                            <CardHeader className="py-3 px-4 border-b border-border bg-muted/30">
-                                <CardTitle className="text-[10px] font-black flex items-center gap-2 text-muted-foreground uppercase tracking-[0.2em]">
-                                    <Calendar className="h-4 w-4 text-foreground opacity-50" /> Stay Discovery
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="p-4 space-y-4">
-                                <div className="grid grid-cols-2 gap-3 text-center">
-                                    <div className="bg-muted/50 p-2 rounded-lg border border-border">
-                                        <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest block mb-1">Check-In</span>
-                                        <span className="font-black text-xs text-foreground uppercase tracking-tight">{safeFormatDate(booking.check_in_date, "MMM dd")}</span>
-                                    </div>
-                                    <div className="bg-muted/50 p-2 rounded-lg border border-border">
-                                        <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest block mb-1">Check-Out</span>
-                                        <span className="font-black text-xs text-foreground uppercase tracking-tight">{safeFormatDate(booking.check_out_date, "MMM dd")}</span>
-                                    </div>
-                                </div>
-                                <div className="flex justify-between items-center bg-muted/30 p-3 rounded-lg border border-border">
-                                    <div className="flex items-center gap-3">
-                                        <div className="h-7 w-7 rounded-lg bg-card border border-border flex items-center justify-center text-primary font-black text-[10px] shadow-sm uppercase">
-                                            {booking.allocated_unit?.substring(0, 2) || "NA"}
-                                        </div>
-                                        <div>
-                                            <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.1em] leading-none">Unit</p>
-                                            <p className="text-xs font-black text-foreground leading-tight uppercase tracking-tight mt-0.5">{booking.allocated_unit || "Unassigned"}</p>
-                                        </div>
-                                    </div>
-                                    <Badge variant="outline" className="bg-background border-border text-muted-foreground text-[8px] font-black uppercase rounded-md tracking-tighter h-5 px-2">
-                                        {booking.unit_category || "Standard"}
-                                    </Badge>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                    </div>
-
-                    {/* RIGHT COLUMN: Business (Financials, Onboarding, Queries) */}
-                    <div className="lg:col-span-9 space-y-4">
-
-                        {/* Financials Row */}
-                        <div className="grid grid-cols-3 gap-4">
-                            <Card className="rounded-lg shadow-sm border-border bg-primary text-primary-foreground overflow-hidden">
-                                <CardContent className="p-4 flex items-center justify-between">
-                                    <div>
-                                        <p className="text-[9px] font-black text-primary-foreground/70 uppercase tracking-[0.2em] mb-1">Total Value</p>
-                                        <p className="text-2xl font-black leading-none tracking-tighter">₹{booking.total_amount?.toLocaleString()}</p>
-                                    </div>
-                                    <div className="h-10 w-10 rounded-lg bg-primary-foreground/10 flex items-center justify-center border border-primary-foreground/10">
-                                        <Wallet className="h-5 w-5 text-primary-foreground" />
-                                    </div>
-                                </CardContent>
-                            </Card>
-                            <Card className="rounded-lg shadow-sm border-border bg-card">
-                                <CardContent className="p-4 flex items-center justify-between">
-                                    <div>
-                                        <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Settled</p>
-                                        <p className="text-2xl font-black text-emerald-600 leading-none tracking-tighter">₹{paidAmount?.toLocaleString()}</p>
-                                    </div>
-                                    <div className="h-10 w-10 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/10">
-                                        <CheckSquare className="h-5 w-5 text-emerald-600" />
-                                    </div>
-                                </CardContent>
-                            </Card>
-                            <Card className="rounded-lg shadow-sm border-border bg-card">
-                                <CardContent className="p-4 flex items-center justify-between">
-                                    <div>
-                                        <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Outstanding</p>
-                                        <p className="text-2xl font-black text-rose-600 leading-none tracking-tighter">₹{dueAmount?.toLocaleString()}</p>
-                                    </div>
-                                    <div className="h-10 w-10 rounded-lg bg-rose-500/10 flex items-center justify-center border border-rose-500/10">
-                                        <Clock className="h-5 w-5 text-rose-600" />
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </div>
-
-                        {/* Guest Queries & Onboarding Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
-
-                            {/* Guest Queries */}
-                            <Card className="rounded-lg shadow-sm border-border h-full flex flex-col transition-all hover:shadow-md bg-card">
-                                <CardHeader className="py-3 px-4 border-b border-border bg-muted/30 flex flex-row items-center justify-between space-y-0">
-                                    <CardTitle className="text-[10px] font-black flex items-center gap-2 text-muted-foreground uppercase tracking-[0.2em]">
-                                        <HelpCircle className="h-4 w-4 text-foreground opacity-50" />
-                                        Inbound Queries
-                                    </CardTitle>
-                                    <Badge variant="outline" className="bg-card text-foreground border-border text-[9px] font-black rounded-md h-5 px-2">{queries.length}</Badge>
-                                </CardHeader>
-                                <CardContent className="p-0 flex-1 flex flex-col">
-                                    <div className="divide-y divide-border/50 flex-1 overflow-y-auto max-h-[220px]">
-                                        {queries.length === 0 && (
-                                            <div className="p-12 text-center text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/30">NO QUERIES DISCOVERED.</div>
+                                    <div className="flex items-center justify-between py-1.5">
+                                        <span className="text-sm">Identity Verification</span>
+                                        {booking.is_identity_verified ? (
+                                            <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
+                                                <CheckCircle2 className="mr-1 h-3 w-3" />
+                                                Verified
+                                            </Badge>
+                                        ) : (
+                                            <Badge variant="outline" className="text-muted-foreground">Pending</Badge>
                                         )}
-                                        {queries.map((q) => (
-                                            <div key={q.name} className="p-4 hover:bg-muted/30 transition-colors flex items-start gap-4 group">
-                                                <div className="mt-1">
-                                                    {q.status === "Open" ? (
-                                                        <div className="h-2 w-2 rounded-full bg-amber-500 animate-pulse shadow-[0_0_0_2px_rgba(245,158,11,0.2)]" />
-                                                    ) : (
-                                                        <CheckSquare className="h-4 w-4 text-emerald-500" />
-                                                    )}
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="text-[11px] font-black text-foreground line-clamp-2 uppercase tracking-tight group-hover:text-primary transition-colors">{q.query_text}</p>
-                                                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-1 opacity-50">{safeFormatDate(q.query_date, "MMM dd, HH:mm")}</p>
-                                                </div>
-                                            </div>
-                                        ))}
                                     </div>
-                                    <div className="p-3 border-t border-border mt-auto bg-muted/20">
-                                        <Button onClick={handleLogQuery} variant="outline" size="sm" className="w-full text-[10px] h-9 text-muted-foreground hover:bg-muted hover:text-foreground font-black uppercase tracking-widest rounded-lg border-border bg-card shadow-sm">
-                                            + Log New Guest Query
-                                        </Button>
+                                    <div className="flex items-center justify-between py-1.5">
+                                        <span className="text-sm">Rental Agreement</span>
+                                        {booking.is_rental_agreement_signed ? (
+                                            <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
+                                                <CheckCircle2 className="mr-1 h-3 w-3" />
+                                                Signed
+                                            </Badge>
+                                        ) : (
+                                            <Badge variant="outline" className="text-muted-foreground">Pending</Badge>
+                                        )}
                                     </div>
-                                </CardContent>
-                            </Card>
-
-                            {/* Onboarding Monitor */}
-                            <Card className="rounded-lg shadow-sm border-border h-full flex flex-col transition-all hover:shadow-md bg-card">
-                                <CardHeader className="py-3 px-4 border-b border-border bg-muted/30 flex flex-row items-center justify-between space-y-0">
-                                    <CardTitle className="text-[10px] font-black flex items-center gap-2 text-muted-foreground uppercase tracking-[0.2em]">
-                                        <Shield className="h-4 w-4 text-foreground opacity-50" />
-                                        Compliance Tracker
-                                    </CardTitle>
-                                    <span className="text-[9px] font-black text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/10 uppercase tracking-tighter">{Math.round(progress)}% COMPLETED</span>
-                                </CardHeader>
-                                <CardContent className="p-4 flex-1">
-                                    <Progress value={progress} className="h-1.5 mb-4 bg-muted border border-border" />
-                                    <div className="space-y-3">
-                                        {onboardingSteps.map((step, idx) => (
-                                            <div
-                                                key={idx}
-                                                className="flex items-center gap-3 group cursor-pointer"
-                                                onClick={() => handleToggleOnboarding(step.key, step.done)}
-                                            >
-                                                <div className={`h-4 w-4 rounded-md border flex items-center justify-center shrink-0 transition-all ${step.done ? "bg-emerald-500 border-emerald-500 text-white shadow-sm" : "border-border bg-card group-hover:border-primary/50"}`}>
-                                                    {step.done && <CheckSquare className="h-3 w-3" />}
-                                                </div>
-                                                <span className={`text-[11px] font-black uppercase tracking-tight transition-all leading-none ${step.done ? "text-muted-foreground/40 line-through decoration-muted" : "text-foreground group-hover:text-primary"}`}>
-                                                    {step.label}
-                                                </span>
-                                            </div>
-                                        ))}
+                                    <div className="flex items-center justify-between py-1.5">
+                                        <span className="text-sm">Security Deposit</span>
+                                        {booking.is_security_deposit_collected ? (
+                                            <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
+                                                <CheckCircle2 className="mr-1 h-3 w-3" />
+                                                Collected
+                                            </Badge>
+                                        ) : (
+                                            <Badge variant="outline" className="text-muted-foreground">Pending</Badge>
+                                        )}
                                     </div>
-                                </CardContent>
-                            </Card>
-
-                        </div>
-
-                        {/* Operations / Notes */}
-                        <Card className="rounded-lg shadow-sm border-border bg-card overflow-hidden transition-all hover:shadow-md">
-                            <CardHeader className="py-3 px-4 border-b border-border bg-muted/30">
-                                <CardTitle className="text-[10px] font-black flex items-center gap-2 text-muted-foreground uppercase tracking-[0.2em]">
-                                    <UserCog className="h-4 w-4 text-foreground opacity-50" /> Strategic Intelligence
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="p-4">
-                                <div className="flex gap-3">
-                                    <Textarea
-                                        className="h-20 text-xs font-bold uppercase tracking-tight resize-none bg-muted/20 border-border text-foreground placeholder:text-muted-foreground/40 focus:bg-background transition-colors min-h-[80px] rounded-lg p-3"
-                                        placeholder="INPUT OPERATIONAL INTELLIGENCE OR STAFF NOTES..."
-                                        defaultValue={booking.notes}
-                                        onBlur={handleSaveNotes}
-                                    />
-                                    <Button size="icon" className="h-20 w-12 shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg shadow-md transition-all active:scale-95">
-                                        <Send className="h-5 w-5" />
-                                    </Button>
                                 </div>
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </CardContent>
+                    </Card>
 
-                    </div>
+                    {/* Stay Details Card */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-lg">Stay Details</CardTitle>
+                            <CardDescription>Check-in dates and accommodation</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            {/* Property & Unit */}
+                            <div className="space-y-4">
+                                <div className="flex items-start gap-3">
+                                    <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center">
+                                        <Home className="h-4 w-4 text-primary" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-xs text-muted-foreground">Property</p>
+                                        <p className="font-semibold">{booking.property}</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
+                                        <Bed className="h-4 w-4 text-muted-foreground" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-xs text-muted-foreground">Unit Assignment</p>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <Badge variant="secondary">{booking.unit_category}</Badge>
+                                            <span className="text-sm font-medium">{booking.allocated_unit || "Not assigned"}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
+                            <Separator />
+
+                            {/* Dates */}
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                        <Calendar className="h-3.5 w-3.5" />
+                                        Check-in
+                                    </div>
+                                    <p className="font-semibold">{safeFormatDate(booking.check_in_date, "MMM dd, yyyy")}</p>
+                                    <p className="text-xs text-muted-foreground">12:00 PM</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                        <Calendar className="h-3.5 w-3.5" />
+                                        Check-out
+                                    </div>
+                                    <p className="font-semibold">{safeFormatDate(booking.check_out_date, "MMM dd, yyyy")}</p>
+                                    <p className="text-xs text-muted-foreground">11:00 AM</p>
+                                </div>
+                            </div>
+
+                            <Separator />
+
+                            {/* Summary Stats */}
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                        <Clock className="h-3.5 w-3.5" />
+                                        Duration
+                                    </div>
+                                    <p className="text-2xl font-bold">{booking.nights || 1}</p>
+                                    <p className="text-xs text-muted-foreground">Nights</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                        <Users className="h-3.5 w-3.5" />
+                                        Guests
+                                    </div>
+                                    <p className="text-2xl font-bold">{booking.number_of_guests || 2}</p>
+                                    <p className="text-xs text-muted-foreground">People</p>
+                                </div>
+                            </div>
+
+                            <Separator />
+
+                            {/* Special Requests */}
+                            {booking.special_requests && (
+                                <div className="space-y-2">
+                                    <div className="flex items-center gap-2 text-sm font-semibold">
+                                        <FileText className="h-4 w-4" />
+                                        Special Requests
+                                    </div>
+                                    <div className="bg-muted/50 rounded-lg p-3 text-sm">
+                                        {booking.special_requests}
+                                    </div>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Financial Overview (Full Width) */}
+                <Card className="border-primary/20 col-span-3">
+                    <CardHeader>
+                        <CardTitle className="text-lg">Financial Summary</CardTitle>
+                        <CardDescription>Payment status and breakdown</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* Total Amount */}
+                            <div className="space-y-2">
+                                <p className="text-sm text-muted-foreground">Total Amount</p>
+                                <p className="text-3xl font-bold">₹{booking.total_amount?.toLocaleString() || 0}</p>
+                                <p className="text-xs text-muted-foreground">
+                                    {booking.nights} nights × ₹{booking.room_rate_per_night?.toLocaleString() || 0}
+                                </p>
+                            </div>
+
+                            {/* Payment Progress */}
+                            <div className="space-y-3">
+                                <div className="space-y-1">
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-muted-foreground">Amount Paid</span>
+                                        <span className="font-semibold text-emerald-600">₹{paidAmount?.toLocaleString() || 0}</span>
+                                    </div>
+                                    <Progress value={paymentProgress} className="h-2" />
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-muted-foreground">Balance Due</span>
+                                    <span className={cn("font-semibold", dueAmount > 0 ? "text-destructive" : "text-muted-foreground")}>
+                                        ₹{dueAmount?.toLocaleString() || 0}
+                                    </span>
+                                </div>
+                                <div className="text-xs text-muted-foreground">
+                                    {Math.round(paymentProgress)}% paid
+                                </div>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex flex-col gap-2">
+                                <Button variant="outline" size="sm" className="w-full">
+                                    <CreditCard className="mr-2 h-4 w-4" />
+                                    Record Payment
+                                </Button>
+                                <Button variant="outline" size="sm" className="w-full">
+                                    <FileText className="mr-2 h-4 w-4" />
+                                    Generate Invoice
+                                </Button>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+
+
+
+
+
+
+                {/* Quick Actions & Metadata */}
+                <div className="space-y-6">
+                    {/* Quick Actions */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-base">Quick Actions</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                            <Button variant="outline" className="w-full justify-start">
+                                <Mail className="mr-2 h-4 w-4" />
+                                Send Check-in Instructions
+                            </Button>
+                            <Button variant="outline" className="w-full justify-start">
+                                <Shield className="mr-2 h-4 w-4" />
+                                Request ID Verification
+                            </Button>
+                            <Button variant="outline" className="w-full justify-start">
+                                <FileText className="mr-2 h-4 w-4" />
+                                Generate Rental Agreement
+                            </Button>
+                            <Separator className="my-2" />
+                            <Button variant="outline" className="w-full justify-start text-destructive hover:text-destructive">
+                                <AlertTriangle className="mr-2 h-4 w-4" />
+                                Cancel Reservation
+                            </Button>
+                        </CardContent>
+                    </Card>
+
+                    {/* Booking Metadata */}
+                    <Card className="bg-muted/30">
+                        <CardHeader>
+                            <CardTitle className="text-base">Booking Information</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-3 text-sm">
+                            <div className="flex justify-between">
+                                <span className="text-muted-foreground">Source</span>
+                                <Badge variant="outline">{booking.reservation_source || "Direct"}</Badge>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-muted-foreground">Created On</span>
+                                <span>{safeFormatDate(booking.creation, "MMM dd, yyyy")}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-muted-foreground">Last Updated</span>
+                                <span>{safeFormatDate(booking.modified, "MMM dd 'at' HH:mm")}</span>
+                            </div>
+                            <Separator />
+                            <div className="flex justify-between">
+                                <span className="text-muted-foreground">Booking ID</span>
+                                <code className="text-xs bg-background px-2 py-1 rounded">{booking.name}</code>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
+            <GuestChatPanel queries={queries} guestName={booking.guest_name} onSend={createQuery} />
         </DashboardLayout>
     )
 }
