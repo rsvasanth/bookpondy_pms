@@ -7,6 +7,7 @@
     "field_order": [
         "name1",
         "type",
+        "value_type",
         "amount"
     ],
     "fields": [
@@ -23,6 +24,14 @@
             "in_list_view": 1,
             "label": "Type",
             "options": "Discount\nSurcharge",
+            "reqd": 1
+        },
+        {
+            "fieldname": "value_type",
+            "fieldtype": "Select",
+            "label": "Value Type",
+            "options": "Fixed\nPercentage",
+            "default": "Fixed",
             "reqd": 1
         },
         {

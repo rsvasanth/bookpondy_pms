@@ -13,7 +13,36 @@ class Reservation(Document):
 		self.calculate_totals()
 		self.check_availability()
 		
+	def on_submit(self):
+		if self.reservation_status == "Confirmed":
+			self.trigger_confirmation_communication()
+
+	def trigger_confirmation_communication(self):
+		"""Create and send booking confirmation."""
+		subject = f"Booking Confirmed: {self.name} at {self.property}"
+		content = f"""
+		Dear {self.guest_name},
+		
+		Your booking at {self.property} is confirmed!
+		
+		Check-in: {self.check_in_date}
+		Check-out: {self.check_out_date}
+		Total Amount: {self.total_amount}
+		
+		Thank you for choosing us!
+		"""
+		
+		frappe.get_doc({
+			"doctype": "Guest Communication",
+			"guest": self.guest,
+			"communication_type": "Email",
+			"status": "Pending",
+			"subject": subject,
+			"content": content
+		}).insert(ignore_permissions=True).submit()
+
 	def after_insert(self):
+		# Existing after_insert logic... (ensure we don't overwrite)
 		notify(
 			message=f"New booking received from {self.source} for {self.guest_name}",
 			title="New Reservation",
@@ -173,12 +202,34 @@ class Reservation(Document):
 				frappe.throw("Check-out date must be after Check-in date")
 
 	def calculate_totals(self):
-		self.subtotal_room_charges = flt(self.room_rate_per_night) * flt(self.nights)
-		self.total_amount = (
-			flt(self.subtotal_room_charges)
-			+ flt(self.extras_and_services)
-			- flt(self.discount_amount)
-		)
+		if self.rate_plan:
+			plan = frappe.get_doc("Rate Plan", self.rate_plan)
+			price_data = plan.calculate_total_price(self.check_in_date, self.check_out_date, self.number_of_guests)
+			
+			self.subtotal_room_charges = price_data.get("base_total", 0)
+			# Modifiers from rate plan are included in total from engine, but we want to store separately ideally.
+			# For now, let's treat (Total - Base) as "Rate Plan Charges" if we dont have a field.
+			# Or just trust the engine's total and add our local extras.
+			
+			rate_plan_total = price_data.get("total_amount", 0)
+			
+			self.total_amount = (
+				flt(rate_plan_total)
+				+ flt(self.extras_and_services)
+				- flt(self.discount_amount)
+			)
+			self.room_rate_per_night = 0 # Not applicable single rate anymore, or avg?
+			if self.nights > 0:
+				self.room_rate_per_night = flt(self.subtotal_room_charges) / self.nights
+
+		else:
+			# Legacy/Simple Calculation
+			self.subtotal_room_charges = flt(self.room_rate_per_night) * flt(self.nights)
+			self.total_amount = (
+				flt(self.subtotal_room_charges)
+				+ flt(self.extras_and_services)
+				- flt(self.discount_amount)
+			)
 
 	@staticmethod
 	def get_availability(property_name, start_date, end_date):

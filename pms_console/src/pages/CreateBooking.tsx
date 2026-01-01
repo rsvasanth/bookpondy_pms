@@ -47,6 +47,9 @@ export default function CreateBookingPage() {
     const [guestIdNumber, setGuestIdNumber] = useState("")
     const [guestIdUrl, setGuestIdUrl] = useState("")
     const [specialRequests, setSpecialRequests] = useState("")
+    const [bookingSource, setBookingSource] = useState("Direct")
+    const [selectedChannel, setSelectedChannel] = useState("")
+    const [otaBookingId, setOtaBookingId] = useState("")
 
     // Data Fetching
     const { data: propertiesList } = useLocalDocList("Property")
@@ -58,6 +61,9 @@ export default function CreateBookingPage() {
     })
     const { data: guestsList } = useLocalDocList("Guest", {
         selector: guestPhone ? { phone: guestPhone } : (guestEmail ? { email: guestEmail } : { _id: 'none' })
+    })
+    const { data: channelsList } = useLocalDocList("Channel Config", {
+        selector: { channel_type: "OTA", is_active: 1 }
     })
 
     // Calculations
@@ -129,7 +135,9 @@ export default function CreateBookingPage() {
                 special_requests: specialRequests,
                 room_rate_per_night: baseRate,
                 reservation_status: "Confirmed",
-                reservation_source: "Direct"
+                reservation_source: bookingSource,
+                source_channel: bookingSource === "OTA" ? selectedChannel : undefined,
+                marketplace_booking_id: bookingSource === "OTA" ? otaBookingId : undefined
             })
 
             toast.success("Booking created successfully!")

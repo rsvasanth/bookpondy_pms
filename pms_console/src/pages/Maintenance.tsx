@@ -121,14 +121,14 @@ export default function MaintenancePage() {
                 {/* Header */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="space-y-1">
-                        <h1 className="text-2xl font-bold tracking-tight text-foreground uppercase">Maintenance & Engineering</h1>
-                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                        <h1 className="text-xl font-bold tracking-tight text-foreground uppercase">Maintenance & Engineering</h1>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                             Track facility issues, repairs, and vendor assignments.
                         </p>
                     </div>
                     <div className="flex items-center gap-2">
                         <Select value={propertyId} onValueChange={setPropertyId}>
-                            <SelectTrigger className="w-[180px] h-10 rounded-lg bg-card border-border shadow-sm text-xs font-bold uppercase tracking-wider">
+                            <SelectTrigger className="w-[180px] h-8 rounded-lg bg-card border-border shadow-sm text-[10px] font-bold uppercase tracking-wider">
                                 <SelectValue placeholder="All Properties" />
                             </SelectTrigger>
                             <SelectContent>
@@ -140,7 +140,7 @@ export default function MaintenancePage() {
                         </Select>
 
                         <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-                            <SelectTrigger className="w-[150px] h-10 rounded-lg bg-card border-border shadow-sm text-xs font-bold uppercase tracking-wider">
+                            <SelectTrigger className="w-[150px] h-8 rounded-lg bg-card border-border shadow-sm text-[10px] font-bold uppercase tracking-wider">
                                 <SelectValue placeholder="All Priorities" />
                             </SelectTrigger>
                             <SelectContent>
@@ -154,7 +154,7 @@ export default function MaintenancePage() {
 
                         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
                             <DialogTrigger asChild>
-                                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-10 px-4 font-bold text-[10px] uppercase tracking-widest gap-2 shadow-sm">
+                                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-8 px-4 font-bold text-[10px] uppercase tracking-widest gap-2 shadow-sm">
                                     <Plus className="h-4 w-4" /> Log Issue
                                 </Button>
                             </DialogTrigger>
@@ -252,49 +252,49 @@ export default function MaintenancePage() {
                 </div>
 
                 {/* Stat Cards */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden hover:scale-[1.01] transition-all">
-                        <CardContent className="p-5">
+                        <CardContent className="p-4">
                             <div className="flex items-center justify-between mb-2">
                                 <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Open Issues</span>
-                                <div className="h-8 w-8 rounded-md bg-primary/10 text-primary flex items-center justify-center border border-border">
-                                    <AlertCircle className="h-4 w-4" />
+                                <div className="h-6 w-6 rounded-md bg-primary/10 text-primary flex items-center justify-center border border-border">
+                                    <AlertCircle className="h-3.5 w-3.5" />
                                 </div>
                             </div>
-                            <p className="text-3xl font-black text-foreground tracking-tight">{stats.open}</p>
+                            <p className="text-2xl font-black text-foreground tracking-tight">{stats.open}</p>
                         </CardContent>
                     </Card>
                     <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden hover:scale-[1.01] transition-all">
-                        <CardContent className="p-5">
+                        <CardContent className="p-4">
                             <div className="flex items-center justify-between mb-2">
                                 <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">High Priority</span>
-                                <div className="h-8 w-8 rounded-md bg-rose-500/10 text-rose-500 flex items-center justify-center border border-border">
-                                    <div className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
+                                <div className="h-6 w-6 rounded-md bg-rose-500/10 text-rose-500 flex items-center justify-center border border-border">
+                                    <div className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" />
                                 </div>
                             </div>
-                            <p className="text-3xl font-black text-foreground tracking-tight">{stats.critical}</p>
+                            <p className="text-2xl font-black text-foreground tracking-tight">{stats.critical}</p>
                         </CardContent>
                     </Card>
                     <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden hover:scale-[1.01] transition-all">
-                        <CardContent className="p-5">
+                        <CardContent className="p-4">
                             <div className="flex items-center justify-between mb-2">
                                 <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">In Progress</span>
-                                <div className="h-8 w-8 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center border border-border">
-                                    <Clock className="h-4 w-4" />
+                                <div className="h-6 w-6 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center border border-border">
+                                    <Clock className="h-3.5 w-3.5" />
                                 </div>
                             </div>
-                            <p className="text-3xl font-black text-foreground tracking-tight">{stats.inProgress}</p>
+                            <p className="text-2xl font-black text-foreground tracking-tight">{stats.inProgress}</p>
                         </CardContent>
                     </Card>
                     <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden hover:scale-[1.01] transition-all">
-                        <CardContent className="p-5">
+                        <CardContent className="p-4">
                             <div className="flex items-center justify-between mb-2">
                                 <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Resolved Today</span>
-                                <div className="h-8 w-8 rounded-md bg-emerald-500/10 text-emerald-500 flex items-center justify-center border border-border">
-                                    <CheckCircle2 className="h-4 w-4" />
+                                <div className="h-6 w-6 rounded-md bg-emerald-500/10 text-emerald-500 flex items-center justify-center border border-border">
+                                    <CheckCircle2 className="h-3.5 w-3.5" />
                                 </div>
                             </div>
-                            <p className="text-3xl font-black text-foreground tracking-tight">{stats.resolved}</p>
+                            <p className="text-2xl font-black text-foreground tracking-tight">{stats.resolved}</p>
                         </CardContent>
                     </Card>
                 </div>
@@ -318,34 +318,34 @@ export default function MaintenancePage() {
                                 </Badge>
                             </div>
 
-                            <div className="flex flex-col gap-4 min-h-[500px] bg-muted/20 p-2 rounded-lg border border-dashed border-border">
+                            <div className="flex flex-col gap-3 min-h-[500px] bg-muted/20 p-2 rounded-lg border border-dashed border-border">
                                 {tickets?.filter(t => t.ticket_status === status).map((ticket) => (
                                     <Card key={ticket.name} className="border border-border shadow-sm rounded-lg hover:shadow-md transition-all group bg-card overflow-hidden">
-                                        <CardContent className="p-4 space-y-4">
+                                        <CardContent className="p-3 space-y-3">
                                             <div className="flex justify-between items-start">
                                                 <Badge variant="outline" className={cn("text-[8px] font-black uppercase rounded-md tracking-tight px-2 py-0.5 border-none shadow-none", getPriorityColor(ticket.priority))}>
                                                     {ticket.priority}
                                                 </Badge>
-                                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">#{ticket.name.split("-").pop()}</span>
+                                                <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">#{ticket.name.split("-").pop()}</span>
                                             </div>
 
-                                            <div className="space-y-1.5">
-                                                <h4 className="font-bold text-sm leading-snug text-foreground group-hover:text-primary transition-colors uppercase tracking-tight">{ticket.issue_title}</h4>
+                                            <div className="space-y-1">
+                                                <h4 className="font-bold text-xs leading-snug text-foreground group-hover:text-primary transition-colors uppercase tracking-tight line-clamp-2">{ticket.issue_title}</h4>
                                                 <div className="flex items-center gap-1.5 text-muted-foreground">
                                                     <MapPin className="h-3 w-3" />
-                                                    <span className="text-[10px] font-bold uppercase tracking-widest">{ticket.unit}</span>
+                                                    <span className="text-[9px] font-bold uppercase tracking-widest">{ticket.unit}</span>
                                                 </div>
                                             </div>
 
                                             <div className="flex items-center justify-between py-2 border-t border-border">
                                                 <div className="flex items-center gap-2 text-muted-foreground">
                                                     <Wrench className="h-3 w-3" />
-                                                    <span className="text-[10px] font-bold uppercase tracking-widest truncate max-w-[120px]">
+                                                    <span className="text-[9px] font-bold uppercase tracking-widest truncate max-w-[120px]">
                                                         {ticket.assigned_vendor || "UNASSIGNED"}
                                                     </span>
                                                 </div>
                                                 {ticket.actual_cost > 0 && (
-                                                    <span className="text-[10px] font-black text-foreground bg-muted px-2 py-0.5 rounded-md border border-border">
+                                                    <span className="text-[9px] font-black text-foreground bg-muted px-2 py-0.5 rounded-md border border-border">
                                                         ₹{ticket.actual_cost}
                                                     </span>
                                                 )}
@@ -356,7 +356,7 @@ export default function MaintenancePage() {
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        className="h-8 text-[9px] font-black uppercase rounded-md gap-1.5 border-blue-500/20 text-blue-500 hover:bg-blue-500/10 hover:text-blue-500 transition-colors"
+                                                        className="h-7 text-[9px] font-black uppercase rounded-md gap-1.5 border-blue-500/20 text-blue-500 hover:bg-blue-500/10 hover:text-blue-500 transition-colors"
                                                         onClick={() => updateStatus(ticket.name, "In Progress")}
                                                     >
                                                         Start <ArrowRight className="h-3 w-3" />
@@ -366,7 +366,7 @@ export default function MaintenancePage() {
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        className="h-8 text-[9px] font-black uppercase rounded-md gap-1.5 border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/10 hover:text-emerald-500 transition-colors"
+                                                        className="h-7 text-[9px] font-black uppercase rounded-md gap-1.5 border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/10 hover:text-emerald-500 transition-colors"
                                                         onClick={() => updateStatus(ticket.name, "Resolved")}
                                                     >
                                                         Resolve <CheckCircle2 className="h-3 w-3" />
@@ -376,7 +376,7 @@ export default function MaintenancePage() {
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        className="h-8 text-[9px] font-black uppercase rounded-md hover:bg-muted text-muted-foreground border-border"
+                                                        className="h-7 text-[9px] font-black uppercase rounded-md hover:bg-muted text-muted-foreground border-border"
                                                     >
                                                         Details
                                                     </Button>
@@ -385,7 +385,7 @@ export default function MaintenancePage() {
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        className="h-8 text-[9px] font-black uppercase rounded-md gap-1.5 border-border text-foreground hover:bg-muted"
+                                                        className="h-7 text-[9px] font-black uppercase rounded-md gap-1.5 border-border text-foreground hover:bg-muted"
                                                         onClick={() => updateStatus(ticket.name, "Closed")}
                                                     >
                                                         Archive

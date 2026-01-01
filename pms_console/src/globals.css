@@ -30,6 +30,8 @@
   --chart-3: 197 37% 24%;
   --chart-4: 43 74% 66%;
   --chart-5: 27 87% 67%;
+  --brand-primary: 6 100% 57%;
+  /* #ff3924 equivalent in HSL roughly, or strict conversion */
 }
 
 .dark {
@@ -60,7 +62,7 @@
 }
 
 @theme inline {
-  --font-sans: "Inter", "Inter Fallback", system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
   --font-mono: "Geist Mono", "Geist Mono Fallback";
 
   /* Convert to hsl() format for Tailwind compatibility */
@@ -88,6 +90,7 @@
   --color-chart-3: hsl(var(--chart-3));
   --color-chart-4: hsl(var(--chart-4));
   --color-chart-5: hsl(var(--chart-5));
+  --color-brand-primary: hsl(var(--brand-primary));
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

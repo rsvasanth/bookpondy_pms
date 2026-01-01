@@ -114,3 +114,64 @@ class TestReservation(FrappeTestCase):
         day1 = next(d for d in data if d['date'] == str(getdate(check_in)))
         self.assertEqual(day1['status'], 'Booked')
         self.assertEqual(day1['unit_id'], self.unit.name)
+
+    def test_rate_plan_pricing(self):
+        # Create Rate Plan (Base 2000)
+        plan = frappe.get_doc({
+            "doctype": "Rate Plan",
+            "plan_name": "Integration Test Plan",
+            "unit_category": self.category.name,
+            "property": self.property.name,
+            "base_rate": 2000
+        }).insert(ignore_permissions=True)
+
+        check_in = add_days(today(), 10)
+        check_out = add_days(today(), 12) # 2 nights
+
+        res = frappe.get_doc({
+            "doctype": "Reservation",
+            "guest": self.guest.name,
+            "property": self.property.name,
+            "allocated_unit": self.unit.name,
+            "unit_category": self.category.name,
+            "rate_plan": plan.name,
+            "check_in_date": check_in,
+            "check_out_date": check_out,
+            "reservation_status": "Confirmed",
+            "source": "Direct",
+            "extras_and_services": 500,
+            "discount_amount": 100
+        })
+        res.insert(ignore_permissions=True)
+        
+        # Expected:
+        # 2 Nights @ 2000 = 4000
+        # Extras: 500
+        # Discount: 100
+        # Total: 4400
+        self.assertEqual(res.total_amount, 4400.0)
+        self.assertEqual(res.subtotal_room_charges, 4000.0)
+
+    def test_communication_trigger(self):
+        # Create Confirmed Reservation
+        res = frappe.get_doc({
+            "doctype": "Reservation",
+            "guest": self.guest.name,
+            "property": self.property.name,
+            "allocated_unit": self.unit.name,
+            "unit_category": self.category.name,
+            "check_in_date": add_days(today(), 20),
+            "check_out_date": add_days(today(), 22),
+            "reservation_status": "Confirmed",
+            "source": "Direct",
+            "room_rate_per_night": 5000
+        }).insert(ignore_permissions=True)
+        
+        # Submit triggers communication
+        res.submit()
+        
+        # Verify Guest Communication created
+        comm = frappe.get_all("Guest Communication", filters={"guest": self.guest.name}, fields=["subject", "status"])
+        self.assertTrue(len(comm) > 0)
+        self.assertEqual(comm[0].status, "Sent") # Should be 'Sent' if email succeeds, or 'Pending'/'Failed' mock
+        self.assertIn("Booking Confirmed", comm[0].subject)

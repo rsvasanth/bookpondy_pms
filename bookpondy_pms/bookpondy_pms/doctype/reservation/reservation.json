@@ -20,6 +20,7 @@
         "source_channel",
         "marketplace_booking_id",
         "section_break_booking",
+        "rate_plan",
         "unit_category",
         "allocated_unit",
         "check_in_date",
@@ -148,6 +149,12 @@
             "fieldname": "section_break_booking",
             "fieldtype": "Section Break",
             "label": "Booking Details"
+        },
+        {
+            "fieldname": "rate_plan",
+            "fieldtype": "Link",
+            "label": "Rate Plan",
+            "options": "Rate Plan"
         },
         {
             "fieldname": "unit_category",

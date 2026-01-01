@@ -1,7 +1,15 @@
 "use client"
 
-
 import { cn } from "@/lib/utils"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 export interface DashboardFiltersProps {
     className?: string
@@ -29,61 +37,64 @@ export function DashboardFilters({
     onSearchChange
 }: DashboardFiltersProps) {
     return (
-        <div className={cn("flex flex-col md:flex-row items-end gap-3 bg-white p-3 rounded-xl border border-slate-100 shadow-sm mb-4", className)}>
+        <div className={cn("flex flex-col md:flex-row items-end gap-3 bg-card p-3 rounded-xl border border-border shadow-sm mb-4", className)}>
 
             <div className="flex flex-col gap-1 flex-1 w-full md:w-auto">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-[#6b7280]">Search</label>
+                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Search</Label>
                 <div className="relative">
-                    <input
+                    <Input
                         type="text"
                         value={searchTerm}
                         onChange={(e) => onSearchChange?.(e.target.value)}
                         placeholder="Search Guest, Reservation ID..."
-                        className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-[#0f0f14] focus:outline-none focus:ring-2 focus:ring-[#ff3924]/20 focus:border-[#ff3924] transition-all"
+                        className="h-9 w-full rounded-lg bg-background border-input focus-visible:ring-brand-primary transition-all"
                     />
                 </div>
             </div>
 
             <div className="flex flex-col gap-1 w-full md:w-auto">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-[#6b7280]">Property</label>
-                <select
-                    value={selectedProperty}
-                    onChange={(e) => onPropertyChange?.(e.target.value)}
-                    className="h-9 w-full md:w-[200px] appearance-none rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-[#0f0f14] focus:outline-none focus:ring-2 focus:ring-[#ff3924]/20 focus:border-[#ff3924] transition-all cursor-pointer"
-                >
-                    <option value="">All Properties</option>
-                    {properties.map((p) => (
-                        <option key={p.name} value={p.name}>{p.property_name}</option>
-                    ))}
-                </select>
+                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Property</Label>
+                <Select value={selectedProperty} onValueChange={onPropertyChange}>
+                    <SelectTrigger className="h-9 w-full md:w-[200px] rounded-lg bg-background border-input focus:ring-brand-primary">
+                        <SelectValue placeholder="All Properties" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="ALL_PROPERTIES_SENTINEL">All Properties</SelectItem>
+                        {properties.map((p) => (
+                            <SelectItem key={p.name} value={p.name}>{p.property_name}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
             </div>
 
             <div className="flex flex-col gap-1 w-full md:w-auto">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-[#6b7280]">Date Range</label>
-                <select
-                    value={selectedDateRange}
-                    onChange={(e) => onDateRangeChange?.(e.target.value)}
-                    className="h-9 w-full md:w-[160px] appearance-none rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-[#0f0f14] focus:outline-none focus:ring-2 focus:ring-[#ff3924]/20 focus:border-[#ff3924] transition-all cursor-pointer"
-                >
-                    <option value="Today">Today</option>
-                    <option value="This Week">This Week</option>
-                    <option value="This Month">This Month</option>
-                </select>
+                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Date Range</Label>
+                <Select value={selectedDateRange} onValueChange={onDateRangeChange}>
+                    <SelectTrigger className="h-9 w-full md:w-[160px] rounded-lg bg-background border-input focus:ring-brand-primary">
+                        <SelectValue placeholder="Select Range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="Today">Today</SelectItem>
+                        <SelectItem value="This Week">This Week</SelectItem>
+                        <SelectItem value="This Month">This Month</SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
 
             <div className="flex flex-col gap-1 w-full md:w-auto">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-[#6b7280]">Status</label>
-                <select
-                    value={selectedStatus}
-                    onChange={(e) => onStatusChange?.(e.target.value)}
-                    className="h-9 w-full md:w-[160px] appearance-none rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-[#0f0f14] focus:outline-none focus:ring-2 focus:ring-[#ff3924]/20 focus:border-[#ff3924] transition-all cursor-pointer"
-                >
-                    <option value="All Status">All Status</option>
-                    <option value="Confirmed">Confirmed</option>
-                    <option value="Checked-In">Checked-In</option>
-                    <option value="Checked-Out">Checked-Out</option>
-                    <option value="Cancelled">Cancelled</option>
-                </select>
+                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Status</Label>
+                <Select value={selectedStatus} onValueChange={onStatusChange}>
+                    <SelectTrigger className="h-9 w-full md:w-[160px] rounded-lg bg-background border-input focus:ring-brand-primary">
+                        <SelectValue placeholder="Select Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="All Status">All Status</SelectItem>
+                        <SelectItem value="Confirmed">Confirmed</SelectItem>
+                        <SelectItem value="Checked-In">Checked-In</SelectItem>
+                        <SelectItem value="Checked-Out">Checked-Out</SelectItem>
+                        <SelectItem value="Cancelled">Cancelled</SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
 
         </div>

@@ -74,9 +74,9 @@ export function AppLayout() {
                     <Separator orientation="vertical" className="mr-2 h-4" />
 
                     {/* Sync Status Badge */}
-                    <div className="flex items-center gap-2 px-2 py-1 rounded-full bg-slate-50 border border-slate-100">
+                    <div className="flex items-center gap-2 px-2 py-1 rounded-full bg-secondary border border-border">
                         <div className={`h-2 w-2 rounded-full ${navigator.onLine ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]'} animate-pulse`} />
-                        <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
                             {navigator.onLine ? 'Synced' : 'Offline'}
                         </span>
                     </div>
@@ -84,10 +84,10 @@ export function AppLayout() {
                     <Separator orientation="vertical" className="mx-2 h-4" />
 
                     {/* Clock/Date - visible on desktop */}
-                    <div className="hidden md:flex items-center ml-2 border border-muted bg-muted/20 px-3 py-1.5 rounded-xl">
+                    <div className="hidden md:flex items-center ml-2 border border-border bg-muted/20 px-3 py-1.5 rounded-xl">
                         <Clock className="h-3.5 w-3.5 text-primary mr-2" />
                         <div className="flex items-center gap-2 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-                            <span className="bg-slate-100 px-1.5 rounded text-slate-600">📅 {formattedDate}</span>
+                            <span className="bg-muted px-1.5 rounded text-foreground">📅 {formattedDate}</span>
                             <span className="opacity-30">•</span>
                             <span className="text-foreground">{formattedTime}</span>
                         </div>
@@ -98,38 +98,38 @@ export function AppLayout() {
                         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             placeholder="Search bookings, guests, properties..."
-                            className="pl-9 h-10 border-none bg-muted/50 rounded-xl focus-visible:ring-primary"
+                            className="pl-9 h-10 border-none bg-secondary rounded-xl focus-visible:ring-primary"
                         />
                     </div>
 
                     {/* Quick Actions */}
                     <div className="hidden xl:flex items-center gap-2 mr-4">
                         <Button
-                            className="h-8 px-3 bg-[#ff3924] hover:bg-[#d6301e] text-white font-bold rounded-lg text-[10px] tracking-wide uppercase shadow-md transition-all hover:translate-y-[-1px]"
+                            className="h-8 px-3 bg-brand-primary hover:bg-brand-primary/90 text-primary-foreground font-bold rounded-lg text-[10px] tracking-wide uppercase shadow-md transition-all hover:translate-y-[-1px]"
                             onClick={() => setBookingOpen(true)}
                         >
                             <Plus className="h-3.5 w-3.5 mr-1" /> Booking
                         </Button>
                         <Button
                             variant="secondary"
-                            className="h-8 px-3 bg-[#f8f9fa] hover:bg-slate-100 text-slate-700 font-bold rounded-lg text-[10px] tracking-wide uppercase border border-slate-200 shadow-sm transition-all"
+                            className="h-8 px-3 bg-secondary hover:bg-secondary/80 text-secondary-foreground font-bold rounded-lg text-[10px] tracking-wide uppercase border border-border shadow-sm transition-all"
                             onClick={() => setGuestOpen(true)}
                         >
-                            <UserPlus className="h-3.5 w-3.5 mr-1 text-slate-400" /> Guest
+                            <UserPlus className="h-3.5 w-3.5 mr-1 text-muted-foreground" /> Guest
                         </Button>
                         <Button
                             variant="secondary"
-                            className="h-8 px-3 bg-[#f8f9fa] hover:bg-slate-100 text-slate-700 font-bold rounded-lg text-[10px] tracking-wide uppercase border border-slate-200 shadow-sm transition-all"
+                            className="h-8 px-3 bg-secondary hover:bg-secondary/80 text-secondary-foreground font-bold rounded-lg text-[10px] tracking-wide uppercase border border-border shadow-sm transition-all"
                             onClick={() => setTaskOpen(true)}
                         >
-                            <Brush className="h-3.5 w-3.5 mr-1 text-slate-400" /> Task
+                            <Brush className="h-3.5 w-3.5 mr-1 text-muted-foreground" /> Task
                         </Button>
                         <Button
                             variant="secondary"
-                            className="h-8 px-3 bg-[#f8f9fa] hover:bg-slate-100 text-slate-700 font-bold rounded-lg text-[10px] tracking-wide uppercase border border-slate-200 shadow-sm transition-all"
+                            className="h-8 px-3 bg-secondary hover:bg-secondary/80 text-secondary-foreground font-bold rounded-lg text-[10px] tracking-wide uppercase border border-border shadow-sm transition-all"
                             onClick={() => navigate("/billing")}
                         >
-                            <FileText className="h-3.5 w-3.5 mr-1 text-slate-400" /> Folio
+                            <FileText className="h-3.5 w-3.5 mr-1 text-muted-foreground" /> Folio
                         </Button>
                     </div>
 
@@ -174,7 +174,7 @@ export function AppLayout() {
                 </header>
 
                 {/* Main Content Area */}
-                <div className={`flex-1 overflow-auto h-full flex flex-col ${isSchedulerPage ? 'p-3' : 'p-4'}`}>
+                <div className={`flex-1 overflow-auto h-full flex flex-col ${isSchedulerPage ? 'p-3' : 'p-4 md:p-6'}`}>
                     <div className="flex-1 h-full min-h-0">
                         <Outlet />
                     </div>

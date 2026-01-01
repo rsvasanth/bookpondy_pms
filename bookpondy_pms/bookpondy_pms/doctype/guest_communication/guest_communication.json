@@ -57,7 +57,8 @@
             "in_list_view": 1,
             "label": "Status",
             "options": "Draft\nPending\nSent\nFailed",
-            "default": "Draft"
+            "default": "Draft",
+            "allow_on_submit": 1
         },
         {
             "fieldname": "section_break_content",

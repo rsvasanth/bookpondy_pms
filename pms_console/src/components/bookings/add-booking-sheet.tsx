@@ -47,6 +47,9 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
   const [guestEmail, setGuestEmail] = useState("")
   const [guestPhone, setGuestPhone] = useState("")
   const [specialRequests, setSpecialRequests] = useState("")
+  const [bookingSource, setBookingSource] = useState("Direct")
+  const [selectedChannel, setSelectedChannel] = useState("")
+  const [otaBookingId, setOtaBookingId] = useState("")
 
   // Fetch real properties
   const { data: propertiesList } = useFrappeGetDocList("Property", {
@@ -58,6 +61,13 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
   const { data: unitCategoriesList } = useFrappeGetDocList("Unit Category", {
     fields: ["name", "category_name", "base_rate_per_night"],
     filters: selectedProperty ? [["property", "=", selectedProperty]] : undefined,
+    limit: 100
+  })
+
+  // Fetch OTA Channels
+  const { data: channelsList } = useFrappeGetDocList("Channel Config", {
+    fields: ["name", "channel_name"],
+    filters: [["channel_type", "=", "OTA"], ["is_active", "=", 1]],
     limit: 100
   })
 
@@ -111,7 +121,10 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
         special_requests: specialRequests,
         room_rate_per_night: baseRate,
         reservation_status: "Confirmed",
-        reservation_source: "Direct"
+        reservation_status: "Confirmed",
+        reservation_source: bookingSource,
+        source_channel: bookingSource === "OTA" ? selectedChannel : undefined,
+        marketplace_booking_id: bookingSource === "OTA" ? otaBookingId : undefined
       })
 
       toast.success("Booking created successfully!")

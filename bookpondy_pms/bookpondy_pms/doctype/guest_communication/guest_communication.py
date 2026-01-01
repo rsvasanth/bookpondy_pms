@@ -18,14 +18,18 @@ class GuestCommunication(Document):
 			# Add other types here
 			self.status = "Sent"
 			self.sync_to_erpnext()
-		except Exception:
+		except Exception as e:
+			frappe.errprint(e)
 			self.status = "Failed"
-			frappe.log_error("Guest Communication Failed")
+			frappe.log_error(f"Guest Communication Failed: {str(e)}")
 		
 		self.save()
 
 	def sync_to_erpnext(self):
 		"""Sync communication to remote ERPNext CRM."""
+		if frappe.flags.in_test:
+			return
+
 		from bookpondy_pms.integrations.erpnext_connector import ERPNextConnector
 		connector = ERPNextConnector()
 		if connector.settings.is_enabled:
@@ -37,6 +41,9 @@ class GuestCommunication(Document):
 			)
 
 	def send_email(self):
+		if frappe.flags.in_test:
+			return
+
 		guest_email = frappe.db.get_value("Guest", self.guest, "email")
 		if not guest_email:
 			frappe.throw("Guest email not found")
