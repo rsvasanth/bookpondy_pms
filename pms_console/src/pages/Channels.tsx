@@ -108,7 +108,7 @@ export default function ChannelsPage() {
 
     return (
         <>
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="space-y-1">
                         <h1 className="text-2xl font-bold tracking-tight text-foreground uppercase">Distribution & Inquiries</h1>
@@ -210,7 +210,7 @@ export default function ChannelsPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {channels?.map((channel) => (
                                 <Card key={channel.name} className="border border-border shadow-sm rounded-lg overflow-hidden hover:shadow-md transition-all duration-300 group bg-card relative">
-                                    <CardHeader className="flex flex-row items-center justify-between pb-4 bg-muted/30 px-6 pt-6">
+                                    <CardHeader className="flex flex-row items-center justify-between pb-4 bg-muted/30 px-4 pt-4">
                                         <div className="flex items-center gap-4">
                                             <div className="bg-card p-3 rounded-lg shadow-sm border border-border group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                                                 {getChannelIcon(channel.channel_type)}
@@ -232,7 +232,7 @@ export default function ChannelsPage() {
                                             <Power className="h-4 w-4" />
                                         </Button>
                                     </CardHeader>
-                                    <CardContent className="p-6">
+                                    <CardContent className="p-4">
                                         <div className="space-y-6">
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div className="space-y-1">
@@ -272,16 +272,16 @@ export default function ChannelsPage() {
                                 <Table>
                                     <TableHeader className="bg-muted/50">
                                         <TableRow className="hover:bg-transparent border-border">
-                                            <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground p-6 border-b border-border">Guest / Channel</TableHead>
-                                            <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground p-6 border-b border-border">Interest</TableHead>
-                                            <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground p-6 border-b border-border">Status</TableHead>
-                                            <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground p-6 border-b border-border text-right">Action</TableHead>
+                                            <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground px-4 py-3 border-b border-border">Guest / Channel</TableHead>
+                                            <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground px-4 py-3 border-b border-border">Interest</TableHead>
+                                            <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground px-4 py-3 border-b border-border">Status</TableHead>
+                                            <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground px-4 py-3 border-b border-border text-right">Action</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody className="divide-y divide-border">
                                         {inquiries?.map((iq) => (
                                             <TableRow key={iq.name} className="hover:bg-muted/30 transition-all border-none group">
-                                                <TableCell className="p-6">
+                                                <TableCell className="px-4 py-3">
                                                     <div className="flex items-center gap-4">
                                                         <div className="h-12 w-12 bg-muted rounded-lg flex items-center justify-center font-bold text-muted-foreground transition-all group-hover:bg-primary group-hover:text-primary-foreground">
                                                             {iq.guest_name.charAt(0)}
@@ -297,7 +297,7 @@ export default function ChannelsPage() {
                                                         </div>
                                                     </div>
                                                 </TableCell>
-                                                <TableCell className="p-6">
+                                                <TableCell className="px-4 py-3">
                                                     <div className="flex flex-col gap-1.5">
                                                         <div className="flex items-center gap-2 text-foreground font-bold">
                                                             <Calendar className="h-3.5 w-3.5 text-primary" />
@@ -312,7 +312,7 @@ export default function ChannelsPage() {
                                                         </span>
                                                     </div>
                                                 </TableCell>
-                                                <TableCell className="p-6">
+                                                <TableCell className="px-4 py-3">
                                                     <Badge className={cn(
                                                         "rounded-sm text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 border-none shadow-none",
                                                         iq.inquiry_status === "New" ? "bg-blue-500/10 text-blue-500" :
@@ -322,7 +322,7 @@ export default function ChannelsPage() {
                                                         {iq.inquiry_status}
                                                     </Badge>
                                                 </TableCell>
-                                                <TableCell className="p-6 text-right">
+                                                <TableCell className="px-4 py-3 text-right">
                                                     <div className="flex justify-end gap-2 transition-all">
                                                         <Button variant="outline" size="sm" className="h-9 px-4 rounded-lg text-[10px] font-bold uppercase tracking-widest border-border text-foreground hover:bg-muted">
                                                             Process <ArrowUpRight className="ml-2 h-3.5 w-3.5" />

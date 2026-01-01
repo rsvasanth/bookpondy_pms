@@ -82,7 +82,7 @@ export default function SettingsPage() {
 
     return (
         <>
-            <div className="flex flex-col gap-8 pb-12">
+            <div className="flex flex-col gap-4 pb-12">
                 <div className="space-y-1.5 px-2">
                     <h1 className="text-2xl font-black tracking-tight text-foreground uppercase flex items-center gap-3">
                         <Settings2 className="h-6 w-6 text-primary" />
@@ -132,7 +132,7 @@ export default function SettingsPage() {
                                         </CardTitle>
                                         <CardDescription className="text-xs">Establish a secure link between BookPondy and ERPNext.</CardDescription>
                                     </CardHeader>
-                                    <CardContent className="grid gap-6 pt-6">
+                                    <CardContent className="grid gap-4 pt-4">
                                         <div className="grid gap-4 sm:grid-cols-2">
                                             <div className="grid gap-2">
                                                 <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">ERPNext URL</Label>
@@ -204,7 +204,7 @@ export default function SettingsPage() {
                                         </CardTitle>
                                         <CardDescription className="text-xs">Map internal tax categories to ERPNext Ledger Accounts.</CardDescription>
                                     </CardHeader>
-                                    <CardContent className="grid gap-4 pt-6">
+                                    <CardContent className="grid gap-4 pt-4">
                                         <div className="grid gap-2">
                                             <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Default Company</Label>
                                             <Input

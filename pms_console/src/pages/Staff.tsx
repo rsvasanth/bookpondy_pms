@@ -26,7 +26,7 @@ export default function StaffPage() {
 
     return (
         <>
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-4">
                 {/* Header */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="space-y-1">
@@ -58,13 +58,13 @@ export default function StaffPage() {
                         <Table>
                             <TableHeader className="bg-muted/50">
                                 <TableRow className="hover:bg-transparent border-b border-border">
-                                    <TableHead className="py-4 px-6 w-16"></TableHead>
-                                    <TableHead className="py-4 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Staff Member</TableHead>
-                                    <TableHead className="py-4 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Designation</TableHead>
-                                    <TableHead className="py-4 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Property</TableHead>
-                                    <TableHead className="py-4 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Contact Details</TableHead>
-                                    <TableHead className="py-4 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Status</TableHead>
-                                    <TableHead className="text-right py-4 pr-8 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Actions</TableHead>
+                                    <TableHead className="py-3 px-4 w-16"></TableHead>
+                                    <TableHead className="py-3 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Staff Member</TableHead>
+                                    <TableHead className="py-3 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Designation</TableHead>
+                                    <TableHead className="py-3 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Property</TableHead>
+                                    <TableHead className="py-3 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Contact Details</TableHead>
+                                    <TableHead className="py-3 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Status</TableHead>
+                                    <TableHead className="text-right py-3 pr-4 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -83,25 +83,25 @@ export default function StaffPage() {
                                 ) : (
                                     filteredStaff.map((staff) => (
                                         <TableRow key={staff.name} className="hover:bg-muted/30 transition-colors border-b border-border group last:border-0">
-                                            <TableCell className="py-6 px-6">
-                                                <Avatar className="h-10 w-10 border border-border rounded-lg">
+                                            <TableCell className="py-3 px-4">
+                                                <Avatar className="h-9 w-9 border border-border rounded-lg">
                                                     <AvatarFallback className="bg-muted text-primary text-[10px] font-bold rounded-lg uppercase">
                                                         <User className="h-4 w-4" />
                                                     </AvatarFallback>
                                                 </Avatar>
                                             </TableCell>
-                                            <TableCell className="py-6">
+                                            <TableCell className="py-3">
                                                 <span className="text-xs font-black text-foreground uppercase tracking-tight">{staff.staff_name}</span>
                                             </TableCell>
-                                            <TableCell className="py-6">
+                                            <TableCell className="py-3">
                                                 <Badge variant="outline" className="text-[9px] font-black uppercase bg-muted/50 border-border text-muted-foreground rounded-md px-2 py-0.5 tracking-widest">
                                                     {staff.designation}
                                                 </Badge>
                                             </TableCell>
-                                            <TableCell className="py-6">
+                                            <TableCell className="py-3">
                                                 <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.1em]">{staff.property || "ALL PROPERTIES"}</span>
                                             </TableCell>
-                                            <TableCell className="py-6">
+                                            <TableCell className="py-3">
                                                 <div className="flex flex-col gap-1.5">
                                                     <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-tight">
                                                         <Mail className="h-3 w-3 opacity-50" />
@@ -113,7 +113,7 @@ export default function StaffPage() {
                                                     </div>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="py-6">
+                                            <TableCell className="py-3">
                                                 <Badge className={cn(
                                                     "text-[8px] font-black uppercase rounded-md px-2 py-0.5 border-none shadow-none tracking-widest",
                                                     staff.status === "Active" ? "bg-emerald-500/10 text-emerald-500" : "bg-muted text-muted-foreground"
@@ -121,7 +121,7 @@ export default function StaffPage() {
                                                     {staff.status}
                                                 </Badge>
                                             </TableCell>
-                                            <TableCell className="text-right pr-8 py-6">
+                                            <TableCell className="text-right pr-4 py-3">
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
                                                         <Button variant="outline" size="icon" className="h-8 w-8 rounded-md bg-card border-border hover:bg-muted text-muted-foreground shadow-sm">

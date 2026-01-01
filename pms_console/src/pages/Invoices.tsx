@@ -67,10 +67,10 @@ export default function InvoicesPage() {
 
     return (
         <>
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="space-y-1">
-                        <h1 className="text-2xl font-bold tracking-tight text-foreground uppercase">Invoices & Billing</h1>
+                        <h1 className="text-xl font-bold tracking-tight text-foreground uppercase">Invoices & Billing</h1>
                         <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Manage your property's financial transactions and guest folios.</p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -90,12 +90,12 @@ export default function InvoicesPage() {
                     <Table>
                         <TableHeader className="bg-muted/50">
                             <TableRow className="border-b border-border hover:bg-transparent transition-none">
-                                <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] pl-6 h-12 text-muted-foreground">Invoice #</TableHead>
-                                <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] h-12 text-muted-foreground">Folio / Reservation</TableHead>
-                                <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] h-12 text-muted-foreground">Amount</TableHead>
-                                <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] h-12 text-muted-foreground">Status</TableHead>
-                                <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] h-12 text-muted-foreground">Date</TableHead>
-                                <TableHead className="text-right font-bold text-[10px] uppercase tracking-[0.2em] pr-6 h-12 text-muted-foreground">Action</TableHead>
+                                <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] pl-4 h-10 text-muted-foreground">Invoice #</TableHead>
+                                <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] h-10 text-muted-foreground">Folio / Reservation</TableHead>
+                                <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] h-10 text-muted-foreground">Amount</TableHead>
+                                <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] h-10 text-muted-foreground">Status</TableHead>
+                                <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] h-10 text-muted-foreground">Date</TableHead>
+                                <TableHead className="text-right font-bold text-[10px] uppercase tracking-[0.2em] pr-4 h-10 text-muted-foreground">Action</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody className="divide-y divide-border">
@@ -119,25 +119,25 @@ export default function InvoicesPage() {
                             ) : (
                                 filteredInvoices?.map((folio) => (
                                     <TableRow key={folio.name} className="hover:bg-muted/30 group transition-all border-none">
-                                        <TableCell className="pl-6 py-5 font-black text-sm text-foreground uppercase tracking-tight">
+                                        <TableCell className="pl-4 py-3 font-black text-sm text-foreground uppercase tracking-tight">
                                             {folio.invoice_number || <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-50 tracking-widest italic">Draft</span>}
                                         </TableCell>
-                                        <TableCell className="py-5">
+                                        <TableCell className="py-3">
                                             <div className="flex flex-col gap-0.5">
                                                 <span className="text-sm font-bold text-foreground uppercase tracking-tight">{folio.name}</span>
                                                 <span className="text-[9px] text-muted-foreground uppercase font-bold tracking-[0.1em]">{folio.reservation}</span>
                                             </div>
                                         </TableCell>
-                                        <TableCell className="py-5 font-black text-sm text-foreground">₹{folio.grand_total?.toLocaleString('en-IN')}</TableCell>
-                                        <TableCell className="py-5">
-                                            <Badge className={cn("rounded-sm px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest border shadow-none", getStatusColor(folio.invoice_status))}>
+                                        <TableCell className="py-3 font-black text-sm text-foreground">₹{folio.grand_total?.toLocaleString('en-IN')}</TableCell>
+                                        <TableCell className="py-3">
+                                            <Badge className={cn("rounded-sm px-2 py-0 text-[9px] font-bold uppercase tracking-widest border shadow-none", getStatusColor(folio.invoice_status))}>
                                                 {folio.invoice_status || folio.status}
                                             </Badge>
                                         </TableCell>
-                                        <TableCell className="py-5 text-[10px] text-muted-foreground font-bold uppercase tracking-tight">
+                                        <TableCell className="py-3 text-[10px] text-muted-foreground font-bold uppercase tracking-tight">
                                             {new Date(folio.creation).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                                         </TableCell>
-                                        <TableCell className="text-right pr-6 py-5">
+                                        <TableCell className="text-right pr-4 py-3">
                                             <Button
                                                 variant="ghost"
                                                 size="sm"

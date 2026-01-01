@@ -174,7 +174,7 @@ export function AppLayout() {
                 </header>
 
                 {/* Main Content Area */}
-                <div className={`flex-1 overflow-auto h-full flex flex-col ${isSchedulerPage ? 'p-3' : 'p-4 md:p-6'}`}>
+                <div className="flex-1 overflow-auto h-full flex flex-col p-4 md:p-6">
                     <div className="flex-1 h-full min-h-0">
                         <Outlet />
                     </div>

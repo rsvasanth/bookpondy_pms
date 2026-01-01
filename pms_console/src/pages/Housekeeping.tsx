@@ -54,11 +54,11 @@ export default function HousekeepingPage() {
 
     return (
         <>
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-4">
                 {/* Header */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="space-y-1">
-                        <h1 className="text-2xl font-bold tracking-tight text-foreground uppercase">Housekeeping</h1>
+                        <h1 className="text-xl font-bold tracking-tight text-foreground uppercase">Housekeeping</h1>
                         <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
                             Monitor and manage unit cleanliness and maintenance tasks.
                         </p>
@@ -83,7 +83,7 @@ export default function HousekeepingPage() {
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                     {stats.map((stat) => (
                         <Card key={stat.label} className="border border-border shadow-sm rounded-lg bg-card overflow-hidden hover:scale-[1.01] transition-all">
-                            <CardContent className="p-5">
+                            <CardContent className="p-4">
                                 <div className="flex items-center justify-between mb-2">
                                     <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">{stat.label}</span>
                                     <div className={cn("h-8 w-8 rounded-md flex items-center justify-center border border-border", stat.bg, stat.color)}>
@@ -128,7 +128,7 @@ export default function HousekeepingPage() {
                                     <div className="flex flex-col gap-4 min-h-[500px] bg-muted/10 p-3 rounded-lg border border-dashed border-border/60 transition-colors hover:border-border">
                                         {filteredTasks?.filter(t => t.status === column).map((task) => (
                                             <Card key={task.name} className="border border-border shadow-sm rounded-lg hover:shadow-md transition-all group bg-card overflow-hidden">
-                                                <CardContent className="p-4 space-y-4">
+                                                <CardContent className="p-3 space-y-4">
                                                     <div className="flex justify-between items-start">
                                                         <div className="flex items-center gap-3">
                                                             <div className="h-10 w-10 rounded-md bg-muted flex items-center justify-center border border-border group-hover:bg-primary/10 group-hover:text-primary transition-colors">
@@ -190,23 +190,23 @@ export default function HousekeepingPage() {
                                 <table className="w-full">
                                     <thead className="bg-muted/50">
                                         <tr className="border-b border-border">
-                                            <th className="text-left py-4 px-6 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Unit / Task</th>
-                                            <th className="text-left py-4 px-6 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Assigned To</th>
-                                            <th className="text-left py-4 px-6 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Priority</th>
-                                            <th className="text-left py-4 px-6 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Status</th>
-                                            <th className="text-right py-4 px-6 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Action</th>
+                                            <th className="text-left py-3 px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Unit / Task</th>
+                                            <th className="text-left py-3 px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Assigned To</th>
+                                            <th className="text-left py-3 px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Priority</th>
+                                            <th className="text-left py-3 px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Status</th>
+                                            <th className="text-right py-3 px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-border">
                                         {filteredTasks?.map((task) => (
                                             <tr key={task.name} className="hover:bg-muted/30 transition-colors group">
-                                                <td className="py-5 px-6">
+                                                <td className="py-3 px-4">
                                                     <div className="flex flex-col gap-1">
                                                         <span className="font-black text-sm text-foreground uppercase tracking-tight">{task.unit}</span>
                                                         <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{task.task_type}</span>
                                                     </div>
                                                 </td>
-                                                <td className="py-5 px-6">
+                                                <td className="py-3 px-4">
                                                     <div className="flex items-center gap-3">
                                                         <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center text-muted-foreground border border-border shadow-sm">
                                                             <User className="h-4 w-4" />
@@ -214,7 +214,7 @@ export default function HousekeepingPage() {
                                                         <span className="text-xs font-bold text-foreground uppercase tracking-tight">{task.assigned_to || "Unassigned"}</span>
                                                     </div>
                                                 </td>
-                                                <td className="py-5 px-6">
+                                                <td className="py-3 px-4">
                                                     <Badge className={cn(
                                                         "text-[9px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-widest border-none shadow-none",
                                                         task.priority === "Urgent" || task.priority === "High" ? "bg-rose-500 text-white" : "bg-muted text-muted-foreground"
@@ -222,7 +222,7 @@ export default function HousekeepingPage() {
                                                         {task.priority || "Normal"}
                                                     </Badge>
                                                 </td>
-                                                <td className="py-5 px-6">
+                                                <td className="py-3 px-4">
                                                     <Badge className={cn(
                                                         "text-[10px] font-bold px-3 py-1 rounded-sm uppercase tracking-[0.15em] border-none shadow-none",
                                                         task.status === "Completed" ? "bg-emerald-500 text-white" :
@@ -231,7 +231,7 @@ export default function HousekeepingPage() {
                                                         {task.status}
                                                     </Badge>
                                                 </td>
-                                                <td className="py-5 px-6 text-right">
+                                                <td className="py-3 px-4 text-right">
                                                     <div className="flex justify-end gap-2">
                                                         <Button variant="ghost" size="sm" className="h-9 px-4 rounded-md text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:bg-muted">
                                                             Details

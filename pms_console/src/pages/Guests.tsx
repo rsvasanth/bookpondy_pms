@@ -172,14 +172,14 @@ export default function GuestsPage() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50 hover:bg-muted/50 border-b border-border">
-                  <TableHead className="py-3 px-4 w-12 pl-6"></TableHead>
-                  <TableHead className="py-3 font-bold text-[10px] uppercase tracking-widest text-muted-foreground">Guest Name</TableHead>
-                  <TableHead className="py-3 font-bold text-[10px] uppercase tracking-widest text-muted-foreground">Contact</TableHead>
-                  <TableHead className="py-3 font-bold text-[10px] uppercase tracking-widest text-muted-foreground text-center">Bookings</TableHead>
-                  <TableHead className="py-3 font-bold text-[10px] uppercase tracking-widest text-muted-foreground text-right">Spent</TableHead>
-                  <TableHead className="py-3 font-bold text-[10px] uppercase tracking-widest text-muted-foreground text-right">Last Visit</TableHead>
-                  <TableHead className="py-3 font-bold text-[10px] uppercase tracking-widest text-muted-foreground">Status</TableHead>
-                  <TableHead className="py-3 font-bold text-[10px] uppercase tracking-widest text-muted-foreground text-right pr-6">Actions</TableHead>
+                  <TableHead className="py-2.5 px-3 w-12 pl-4"></TableHead>
+                  <TableHead className="py-2.5 font-bold text-[10px] uppercase tracking-widest text-muted-foreground">Guest Name</TableHead>
+                  <TableHead className="py-2.5 font-bold text-[10px] uppercase tracking-widest text-muted-foreground">Contact</TableHead>
+                  <TableHead className="py-2.5 font-bold text-[10px] uppercase tracking-widest text-muted-foreground text-center">Bookings</TableHead>
+                  <TableHead className="py-2.5 font-bold text-[10px] uppercase tracking-widest text-muted-foreground text-right">Spent</TableHead>
+                  <TableHead className="py-2.5 font-bold text-[10px] uppercase tracking-widest text-muted-foreground text-right">Last Visit</TableHead>
+                  <TableHead className="py-2.5 font-bold text-[10px] uppercase tracking-widest text-muted-foreground">Status</TableHead>
+                  <TableHead className="py-2.5 font-bold text-[10px] uppercase tracking-widest text-muted-foreground text-right pr-4">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -198,21 +198,21 @@ export default function GuestsPage() {
                 ) : (
                   filteredGuests.map((guest) => (
                     <TableRow key={guest.id} className="hover:bg-muted/30 transition-colors border-b border-border group">
-                      <TableCell className="py-3 px-4 pl-6 w-12">
-                        <Avatar className="h-9 w-9 border border-border">
+                      <TableCell className="py-2.5 px-3 pl-4 w-12">
+                        <Avatar className="h-8 w-8 border border-border">
                           <AvatarImage src={guest.avatar} />
                           <AvatarFallback className="bg-muted text-muted-foreground text-[10px] font-bold">
                             {guest.name.substring(0, 2).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                       </TableCell>
-                      <TableCell className="py-3 px-4">
+                      <TableCell className="py-2.5 px-3">
                         <div className="flex flex-col">
                           <span className="text-xs font-bold text-foreground">{guest.name}</span>
                           <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest">ID: {guest.id}</span>
                         </div>
                       </TableCell>
-                      <TableCell className="py-3 px-4">
+                      <TableCell className="py-2.5 px-3">
                         <div className="flex flex-col gap-0.5">
                           <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-tight">
                             <Mail className="h-3 w-3" />
@@ -224,21 +224,21 @@ export default function GuestsPage() {
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="py-3 px-4 text-center">
+                      <TableCell className="py-2.5 px-3 text-center">
                         <span className="text-xs font-bold text-foreground">{guest.totalBookings}</span>
                       </TableCell>
-                      <TableCell className="py-3 px-4 text-right">
+                      <TableCell className="py-2.5 px-3 text-right">
                         <span className="text-xs font-black text-foreground">₹{guest.totalSpent.toLocaleString()}</span>
                       </TableCell>
-                      <TableCell className="py-3 px-4 text-right">
+                      <TableCell className="py-2.5 px-3 text-right">
                         <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{formatDate(guest.lastVisit)}</span>
                       </TableCell>
-                      <TableCell className="py-3 px-4">
+                      <TableCell className="py-2.5 px-3">
                         <Badge className={cn("text-[8px] font-bold uppercase rounded-sm px-1.5 py-0 border-none shadow-none tracking-widest", getStatusConfig(guest.status).className)}>
                           {getStatusConfig(guest.status).label}
                         </Badge>
                       </TableCell>
-                      <TableCell className="py-3 px-4 text-right pr-6">
+                      <TableCell className="py-2.5 px-3 text-right pr-4">
                         <Button
                           variant="ghost"
                           size="icon"

@@ -295,8 +295,8 @@ export default function BookingsPage() {
 
   return (
     <>
-      <div className="flex flex-col gap-8 pb-12">
-        <div className="w-full space-y-8 px-2">
+      <div className="flex flex-col gap-4 pb-6">
+        <div className="w-full space-y-4 px-0">
 
           {/* Header Row with Add Booking */}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -380,7 +380,7 @@ export default function BookingsPage() {
                       {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id} className="hover:bg-transparent border-b border-border">
                           {headerGroup.headers.map((header) => (
-                            <TableHead key={header.id} className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground px-6 py-5 h-auto">
+                            <TableHead key={header.id} className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground px-4 py-3 h-auto">
                               {header.isPlaceholder
                                 ? null
                                 : flexRender(
@@ -407,7 +407,7 @@ export default function BookingsPage() {
                             onClick={() => navigate(`/bookings/${row.original.name}`)}
                           >
                             {row.getVisibleCells().map((cell) => (
-                              <TableCell key={cell.id} className="px-6 py-3 border-none">
+                              <TableCell key={cell.id} className="px-4 py-2 border-none">
                                 {flexRender(
                                   cell.column.columnDef.cell,
                                   cell.getContext()

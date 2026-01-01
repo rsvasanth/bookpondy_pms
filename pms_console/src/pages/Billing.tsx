@@ -25,28 +25,28 @@ const invoices = [
 export default function BillingPage() {
     return (
         <>
-            <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="space-y-1">
-                    <h1 className="text-2xl font-bold tracking-tight text-foreground uppercase">Financial Overview</h1>
+                    <h1 className="text-xl font-bold tracking-tight text-foreground uppercase">Financial Overview</h1>
                     <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Monitor revenue, process payouts, and manage all property invoices.</p>
                 </div>
-                <div className="flex gap-3">
-                    <Button variant="outline" className="rounded-lg font-bold text-[10px] uppercase tracking-widest gap-2 border-border h-10 text-foreground hover:bg-muted">
+                <div className="flex gap-2">
+                    <Button variant="outline" className="rounded-lg font-bold text-[10px] uppercase tracking-widest gap-2 border-border h-9 text-foreground hover:bg-muted">
                         <Receipt className="h-3.5 w-3.5" /> Payout History
                     </Button>
-                    <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-10 px-6 font-bold text-[10px] uppercase tracking-widest gap-2 shadow-sm">
+                    <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-9 px-4 font-bold text-[10px] uppercase tracking-widest gap-2 shadow-sm">
                         <CreditCard className="h-3.5 w-3.5" /> Bulk Invoicing
                     </Button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                 <div className="lg:col-span-2">
                     <RevenueTrend />
                 </div>
-                <div className="space-y-6">
+                <div className="space-y-4">
                     <Card className="border border-border shadow-sm rounded-lg bg-primary text-primary-foreground overflow-hidden relative">
-                        <CardContent className="p-8 relative z-10">
+                        <CardContent className="p-6 relative z-10">
                             <div className="space-y-4">
                                 <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">Total Outstanding</span>
                                 <p className="text-4xl font-black tracking-tight">₹2.45L</p>
@@ -92,31 +92,31 @@ export default function BillingPage() {
                     <table className="w-full">
                         <thead>
                             <tr className="bg-muted/50">
-                                <th className="text-left py-3 px-6 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground border-b border-border">Invoice ID</th>
-                                <th className="text-left py-3 px-6 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground border-b border-border">Guest</th>
-                                <th className="text-left py-3 px-6 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground border-b border-border">Property</th>
-                                <th className="text-left py-3 px-6 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground border-b border-border">Amount</th>
-                                <th className="text-left py-3 px-6 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground border-b border-border">Date</th>
-                                <th className="text-left py-3 px-6 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground border-b border-border">Status</th>
-                                <th className="text-right py-3 px-6 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground border-b border-border">Action</th>
+                                <th className="text-left py-2.5 px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground border-b border-border">Invoice ID</th>
+                                <th className="text-left py-2.5 px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground border-b border-border">Guest</th>
+                                <th className="text-left py-2.5 px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground border-b border-border">Property</th>
+                                <th className="text-left py-2.5 px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground border-b border-border">Amount</th>
+                                <th className="text-left py-2.5 px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground border-b border-border">Date</th>
+                                <th className="text-left py-2.5 px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground border-b border-border">Status</th>
+                                <th className="text-right py-2.5 px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground border-b border-border">Action</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border">
                             {invoices.map((inv) => (
                                 <tr key={inv.id} className="hover:bg-muted/30 transition-colors group">
-                                    <td className="py-4 px-6 font-bold text-xs text-foreground">{inv.id}</td>
-                                    <td className="py-4 px-6">
+                                    <td className="py-2.5 px-4 font-bold text-xs text-foreground">{inv.id}</td>
+                                    <td className="py-2.5 px-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary text-[10px] font-bold border border-primary/20 transition-all group-hover:bg-primary group-hover:text-primary-foreground">
+                                            <div className="h-7 w-7 rounded-sm bg-primary/10 flex items-center justify-center text-primary text-[9px] font-bold border border-primary/20 transition-all group-hover:bg-primary group-hover:text-primary-foreground">
                                                 {inv.guest[0]}
                                             </div>
                                             <span className="text-xs font-bold text-foreground">{inv.guest}</span>
                                         </div>
                                     </td>
-                                    <td className="py-4 px-6 text-xs font-bold text-muted-foreground uppercase tracking-widest">{inv.property}</td>
-                                    <td className="py-4 px-6 font-bold text-sm text-foreground">{inv.amount}</td>
-                                    <td className="py-4 px-6 text-xs font-bold text-muted-foreground">{inv.date}</td>
-                                    <td className="py-4 px-6">
+                                    <td className="py-2.5 px-4 text-xs font-bold text-muted-foreground uppercase tracking-widest">{inv.property}</td>
+                                    <td className="py-2.5 px-4 font-bold text-sm text-foreground">{inv.amount}</td>
+                                    <td className="py-2.5 px-4 text-xs font-bold text-muted-foreground">{inv.date}</td>
+                                    <td className="py-2.5 px-4">
                                         <Badge className={cn(
                                             "text-[9px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-widest border-none shadow-none",
                                             inv.status === "Paid" ? "bg-emerald-500/10 text-emerald-500" :
@@ -125,9 +125,9 @@ export default function BillingPage() {
                                             {inv.status}
                                         </Badge>
                                     </td>
-                                    <td className="py-4 px-6 text-right">
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-muted">
-                                            <Download className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
+                                    <td className="py-2.5 px-4 text-right">
+                                        <Button variant="ghost" size="icon" className="h-7 w-7 rounded-md hover:bg-muted">
+                                            <Download className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground" />
                                         </Button>
                                     </td>
                                 </tr>

@@ -187,7 +187,7 @@ export default function PropertiesPage() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {stats.map((stat) => (
               <Card key={stat.label} className="border border-border shadow-sm rounded-lg bg-card overflow-hidden">
-                <CardContent className="p-3">
+                <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{stat.label}</span>
                     <div className={cn("p-1.5 rounded-md border border-border", stat.bg)}>
@@ -332,7 +332,7 @@ export default function PropertiesPage() {
                 ) : (
                   filteredProperties.map((property) => (
                     <Card key={property.id} className="overflow-hidden border border-border shadow-sm hover:shadow-md transition-all rounded-lg group bg-card cursor-pointer" onClick={() => handleViewDetails(property)}>
-                      <div className="relative h-44 overflow-hidden">
+                      <div className="relative h-40 overflow-hidden">
                         <img
                           src={property.image}
                           alt={property.name}
@@ -348,7 +348,7 @@ export default function PropertiesPage() {
                           </Badge>
                         </div>
                       </div>
-                      <CardContent className="p-4 space-y-3">
+                      <CardContent className="p-3 space-y-3">
                         <div>
                           <h3 className="font-bold text-base leading-tight text-foreground">{property.name}</h3>
                           <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1 mt-1">

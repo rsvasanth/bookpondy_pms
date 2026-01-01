@@ -70,11 +70,11 @@ export default function ReportsPage() {
 
     return (
         <>
-            <div className="flex flex-col gap-8 pb-12">
+            <div className="flex flex-col gap-4 pb-12">
                 {/* Header */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-2">
                     <div className="space-y-1">
-                        <h1 className="text-2xl font-bold tracking-tight text-foreground uppercase tracking-tight">Revenue Analytics</h1>
+                        <h1 className="text-xl font-bold tracking-tight text-foreground uppercase tracking-tight">Revenue Analytics</h1>
                         <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
                             Financial performance and distribution multi-channel insights.
                         </p>
@@ -128,7 +128,7 @@ export default function ReportsPage() {
                 {/* Main Charts */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <Card className="lg:col-span-2 border border-border shadow-sm rounded-lg bg-card overflow-hidden">
-                        <CardHeader className="flex flex-row items-center justify-between bg-muted/30 px-6 py-4">
+                        <CardHeader className="flex flex-row items-center justify-between bg-muted/30 px-4 py-3">
                             <div className="space-y-1">
                                 <CardTitle className="text-sm font-bold uppercase tracking-tight">Revenue Trendline</CardTitle>
                                 <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Monthly performance across all units</CardDescription>
@@ -147,7 +147,7 @@ export default function ReportsPage() {
                                 ))}
                             </div>
                         </CardHeader>
-                        <CardContent className="p-6">
+                        <CardContent className="p-4">
                             <div className="h-[300px] w-full">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <AreaChart data={revenueData}>
@@ -187,11 +187,11 @@ export default function ReportsPage() {
                     </Card>
 
                     <Card className="lg:col-span-1 border border-border shadow-sm rounded-lg bg-card overflow-hidden">
-                        <CardHeader className="bg-muted/30 px-6 py-4">
+                        <CardHeader className="bg-muted/30 px-4 py-3">
                             <CardTitle className="text-sm font-bold uppercase tracking-tight">Channel Share</CardTitle>
                             <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Booking volume by source</CardDescription>
                         </CardHeader>
-                        <CardContent className="p-6">
+                        <CardContent className="p-4">
                             <div className="h-[250px] w-full">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={channelData} layout="vertical">
@@ -233,7 +233,7 @@ export default function ReportsPage() {
 
                 {/* Channel Commission Table */}
                 <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden">
-                    <CardHeader className="bg-muted/30 px-6 py-4 flex flex-row items-center justify-between">
+                    <CardHeader className="bg-muted/30 px-4 py-3 flex flex-row items-center justify-between">
                         <div className="space-y-1">
                             <CardTitle className="text-sm font-bold uppercase tracking-tight">Channel Payouts & Commissions</CardTitle>
                             <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Detailed breakdown of marketplace liabilities</CardDescription>
@@ -247,25 +247,25 @@ export default function ReportsPage() {
                             <table className="w-full text-left">
                                 <thead className="bg-muted/50 border-b border-border">
                                     <tr>
-                                        <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Booking / ID</th>
-                                        <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Channel</th>
-                                        <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Revenue</th>
-                                        <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Commission</th>
-                                        <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Status</th>
+                                        <th className="px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Booking / ID</th>
+                                        <th className="px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Channel</th>
+                                        <th className="px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Revenue</th>
+                                        <th className="px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Commission</th>
+                                        <th className="px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border">
                                     {(commissions || []).slice(0, 5).map((c: any) => (
                                         <tr key={c.name} className="hover:bg-muted/30 transition-colors">
-                                            <td className="px-6 py-4 font-bold text-xs uppercase tracking-tight">{c.booking}</td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-4 py-3 font-bold text-xs uppercase tracking-tight">{c.booking}</td>
+                                            <td className="px-4 py-3">
                                                 <Badge variant="outline" className="text-[9px] font-bold uppercase px-2 py-0 border-border text-muted-foreground tracking-widest">
                                                     {c.channel}
                                                 </Badge>
                                             </td>
-                                            <td className="px-6 py-4 text-xs font-bold text-foreground">₹{(c.commission_amount / (c.commission_percentage / 100)).toLocaleString()}</td>
-                                            <td className="px-6 py-4 text-xs font-black text-rose-500">₹{c.commission_amount.toLocaleString()}</td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-4 py-3 text-xs font-bold text-foreground">₹{(c.commission_amount / (c.commission_percentage / 100)).toLocaleString()}</td>
+                                            <td className="px-4 py-3 text-xs font-black text-rose-500">₹{c.commission_amount.toLocaleString()}</td>
+                                            <td className="px-4 py-3">
                                                 <div className="flex items-center gap-1.5">
                                                     <div className={cn("h-1.5 w-1.5 rounded-full", c.status === "Paid" ? "bg-emerald-500" : "bg-amber-400")} />
                                                     <span className="text-[10px] font-bold uppercase tracking-widest text-foreground">{c.status}</span>

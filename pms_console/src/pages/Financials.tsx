@@ -65,11 +65,11 @@ export default function FinancialsPage() {
 
     return (
         <>
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-4">
                 {/* Header */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="space-y-1">
-                        <h1 className="text-2xl font-bold tracking-tight text-foreground uppercase">Financial Analytics</h1>
+                        <h1 className="text-xl font-bold tracking-tight text-foreground uppercase">Financial Analytics</h1>
                         <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Monitor your property performance and revenue trends.</p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -258,34 +258,34 @@ export default function FinancialsPage() {
                         <Table>
                             <TableHeader className="bg-muted/50">
                                 <TableRow className="hover:bg-transparent border-border">
-                                    <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground p-6 border-b border-border">Metric</TableHead>
-                                    <TableHead className="text-right font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground p-6 border-b border-border">Value</TableHead>
-                                    <TableHead className="text-right font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground p-6 border-b border-border">Target</TableHead>
-                                    <TableHead className="text-right font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground p-6 border-b border-border">Status</TableHead>
+                                    <TableHead className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground px-4 py-3 border-b border-border">Metric</TableHead>
+                                    <TableHead className="text-right font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground px-4 py-3 border-b border-border">Value</TableHead>
+                                    <TableHead className="text-right font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground px-4 py-3 border-b border-border">Target</TableHead>
+                                    <TableHead className="text-right font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground px-4 py-3 border-b border-border">Status</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 <TableRow className="hover:bg-muted/30 transition-all border-none">
-                                    <TableCell className="p-6 font-bold text-sm text-foreground uppercase tracking-tight">Cancellations</TableCell>
-                                    <TableCell className="p-6 text-right font-black text-sm text-rose-500">{summary?.cancellation_count || 0}</TableCell>
-                                    <TableCell className="p-6 text-right text-[10px] font-bold text-muted-foreground uppercase">{`< 5%`}</TableCell>
-                                    <TableCell className="p-6 text-right">
+                                    <TableCell className="px-4 py-3 font-bold text-sm text-foreground uppercase tracking-tight">Cancellations</TableCell>
+                                    <TableCell className="px-4 py-3 text-right font-black text-sm text-rose-500">{summary?.cancellation_count || 0}</TableCell>
+                                    <TableCell className="px-4 py-3 text-right text-[10px] font-bold text-muted-foreground uppercase">{`< 5%`}</TableCell>
+                                    <TableCell className="px-4 py-3 text-right">
                                         <span className="bg-amber-500/10 text-amber-500 px-3 py-1 rounded-sm text-[9px] font-bold uppercase tracking-widest">Watch</span>
                                     </TableCell>
                                 </TableRow>
                                 <TableRow className="hover:bg-muted/30 transition-all border-none">
-                                    <TableCell className="p-6 font-bold text-sm text-foreground uppercase tracking-tight">Available Nights</TableCell>
-                                    <TableCell className="p-6 text-right font-black text-sm text-foreground">{summary?.available_nights || 0}</TableCell>
-                                    <TableCell className="p-6 text-right text-[10px] font-bold text-muted-foreground uppercase">--</TableCell>
-                                    <TableCell className="p-6 text-right">
+                                    <TableCell className="px-4 py-3 font-bold text-sm text-foreground uppercase tracking-tight">Available Nights</TableCell>
+                                    <TableCell className="px-4 py-3 text-right font-black text-sm text-foreground">{summary?.available_nights || 0}</TableCell>
+                                    <TableCell className="px-4 py-3 text-right text-[10px] font-bold text-muted-foreground uppercase">--</TableCell>
+                                    <TableCell className="px-4 py-3 text-right">
                                         <span className="bg-muted text-muted-foreground px-3 py-1 rounded-sm text-[9px] font-bold uppercase tracking-widest">System</span>
                                     </TableCell>
                                 </TableRow>
                                 <TableRow className="hover:bg-muted/30 transition-all border-none">
-                                    <TableCell className="p-6 font-bold text-sm text-foreground uppercase tracking-tight">Occupied Nights</TableCell>
-                                    <TableCell className="p-6 text-right font-black text-sm text-foreground">{summary?.total_nights_occupied || 0}</TableCell>
-                                    <TableCell className="p-6 text-right text-[10px] font-bold text-muted-foreground uppercase">--</TableCell>
-                                    <TableCell className="p-6 text-right">
+                                    <TableCell className="px-4 py-3 font-bold text-sm text-foreground uppercase tracking-tight">Occupied Nights</TableCell>
+                                    <TableCell className="px-4 py-3 text-right font-black text-sm text-foreground">{summary?.total_nights_occupied || 0}</TableCell>
+                                    <TableCell className="px-4 py-3 text-right text-[10px] font-bold text-muted-foreground uppercase">--</TableCell>
+                                    <TableCell className="px-4 py-3 text-right">
                                         <span className="bg-primary/10 text-primary px-3 py-1 rounded-sm text-[9px] font-bold uppercase tracking-widest">Active</span>
                                     </TableCell>
                                 </TableRow>
