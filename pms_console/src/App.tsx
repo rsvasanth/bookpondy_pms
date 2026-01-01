@@ -25,6 +25,7 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { SyncProvider } from "@/providers/SyncProvider"
 import { useAuthStore } from "@/stores/authStore"
 import { RoleGuard } from "@/components/role-guard"
+import { useRealtime } from "@/hooks/use-realtime"
 import './globals.css'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -54,6 +55,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 function App() {
+	useRealtime();
 	return (
 		<FrappeProvider
 			socketPort={import.meta.env.VITE_SOCKET_PORT}

@@ -148,23 +148,14 @@ app_license = "mit"
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"bookpondy_pms.tasks.all"
-# 	],
-# 	"daily": [
-# 		"bookpondy_pms.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"bookpondy_pms.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"bookpondy_pms.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"bookpondy_pms.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	"daily": [
+		"bookpondy_pms.integrations.marketplace_sync.sync_availability_to_marketplace"
+	],
+	"hourly": [
+		"bookpondy_pms.integrations.marketplace_sync.sync_property_to_marketplace"
+	],
+}
 
 # Testing
 # -------

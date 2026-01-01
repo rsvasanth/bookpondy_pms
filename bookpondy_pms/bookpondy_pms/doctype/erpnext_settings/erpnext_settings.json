@@ -1,0 +1,119 @@
+{
+    "actions": [],
+    "allow_rename": 1,
+    "creation": "2026-01-01 13:00:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "section_break_connection",
+        "erpnext_url",
+        "api_key",
+        "api_secret",
+        "column_break_1",
+        "is_enabled",
+        "default_company",
+        "section_break_tax",
+        "cgst_account",
+        "sgst_account",
+        "igst_account",
+        "section_break_test",
+        "test_connection_btn"
+    ],
+    "fields": [
+        {
+            "fieldname": "section_break_connection",
+            "fieldtype": "Section Break",
+            "label": "Connection Settings"
+        },
+        {
+            "fieldname": "erpnext_url",
+            "fieldtype": "Data",
+            "label": "ERPNext URL",
+            "options": "URL",
+            "reqd": 1
+        },
+        {
+            "fieldname": "api_key",
+            "fieldtype": "Data",
+            "label": "API Key",
+            "reqd": 1
+        },
+        {
+            "fieldname": "api_secret",
+            "fieldtype": "Password",
+            "label": "API Secret",
+            "reqd": 1
+        },
+        {
+            "fieldname": "column_break_1",
+            "fieldtype": "Column Break"
+        },
+        {
+            "default": "0",
+            "fieldname": "is_enabled",
+            "fieldtype": "Check",
+            "label": "Is Enabled"
+        },
+        {
+            "fieldname": "default_company",
+            "fieldtype": "Data",
+            "label": "Default ERPNext Company",
+            "description": "Name of the Company in ERPNext to sync data to."
+        },
+        {
+            "fieldname": "section_break_tax",
+            "fieldtype": "Section Break",
+            "label": "Tax Mapping"
+        },
+        {
+            "fieldname": "cgst_account",
+            "fieldtype": "Data",
+            "label": "CGST Account (Remote)",
+            "description": "e.g., Output GST - CGST - BP"
+        },
+        {
+            "fieldname": "sgst_account",
+            "fieldtype": "Data",
+            "label": "SGST Account (Remote)",
+            "description": "e.g., Output GST - SGST - BP"
+        },
+        {
+            "fieldname": "igst_account",
+            "fieldtype": "Data",
+            "label": "IGST Account (Remote)",
+            "description": "e.g., Output GST - IGST - BP"
+        },
+        {
+            "fieldname": "section_break_test",
+            "fieldtype": "Section Break"
+        },
+        {
+            "fieldname": "test_connection_btn",
+            "fieldtype": "Button",
+            "label": "Test Connection"
+        }
+    ],
+    "issingle": 1,
+    "modified": "2026-01-01 13:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "Bookpondy Pms",
+    "name": "ERPNext Settings",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "System Manager",
+            "share": 1,
+            "write": 1
+        }
+    ],
+    "sort_field": "modified",
+    "sort_order": "DESC",
+    "states": []
+}

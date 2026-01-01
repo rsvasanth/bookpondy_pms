@@ -9,6 +9,14 @@ class Property(Document):
 	def validate(self):
 		self.update_room_counts()
 
+	def on_update(self):
+		if self.marketplace_sync:
+			frappe.enqueue(
+				"bookpondy_pms.integrations.marketplace_sync.sync_property_to_marketplace",
+				property_name=self.name,
+				queue="long"
+			)
+
 	def after_insert(self):
 		self.create_default_units()
 

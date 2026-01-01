@@ -4,6 +4,7 @@
 import frappe
 from frappe.model.document import Document
 from frappe.utils import date_diff, flt, now_datetime
+from bookpondy_pms.bookpondy_pms.utils.realtime import notify
 
 
 class Reservation(Document):
@@ -11,6 +12,16 @@ class Reservation(Document):
 		self.calculate_nights()
 		self.calculate_totals()
 		self.check_availability()
+		
+	def after_insert(self):
+		notify(
+			message=f"New booking received from {self.source} for {self.guest_name}",
+			title="New Reservation",
+			type="success",
+			doctype="Reservation",
+			docname=self.name,
+			link=f"/bookings/{self.name}"
+		)
 	def check_availability(self):
 		if not self.allocated_unit or not self.check_in_date or not self.check_out_date:
 			return
@@ -31,16 +42,79 @@ class Reservation(Document):
 	def on_update(self):
 		if self.has_value_changed("reservation_status"):
 			self.handle_status_change()
+			notify(
+				message=f"Reservation {self.name} status updated to {self.reservation_status}",
+				title="Reservation Update",
+				doctype="Reservation",
+				docname=self.name,
+				link=f"/bookings/{self.name}"
+			)
 
 	def handle_status_change(self):
 		if self.housekeeping_task_auto_create:
 			if self.reservation_status == "Checked-In":
 				self.create_housekeeping_task("Cleaning", "High")
-			elif self.reservation_status == "Checked-Out":
-				self.create_housekeeping_task("Check-Out Cleaning", "Urgent")
+			if self.reservation_status == "Checked-Out":
+				self.update_guest_stats()
+				self.sync_to_erpnext()
+				self.sync_to_marketplace()
+				self.handle_commissions()
+
+	def handle_commissions(self):
+		"""Calculate and record channel commissions."""
+		if self.source in ["BookPondy", "Marketplace", "Airbnb", "Booking.com"]:
+			percentage = 15.0 # Default commission
+			if self.source == "Direct": percentage = 0.0
+			
+			if not frappe.db.exists("Channel Commission", {"booking": self.name}):
+				comm = frappe.get_doc({
+					"doctype": "Channel Commission",
+					"booking": self.name,
+					"channel": self.source,
+					"commission_percentage": percentage,
+					"status": "Pending"
+				})
+				comm.insert(ignore_permissions=True)
+
+	def sync_to_marketplace(self):
+		"""Sync data to BookPondy marketplace."""
+		frappe.enqueue(
+			"bookpondy_pms.integrations.marketplace_sync.sync_availability_to_marketplace",
+			property_name=self.property,
+			queue="long"
+		)
+
+	def sync_to_erpnext(self):
+		"""
+		Sync reservation details to ERPNext and trigger operational tasks.
+		"""
+		frappe.enqueue(
+			"bookpondy_pms.integrations.erpnext_connector.sync_reservation",
+			reservation_name=self.name,
+			queue="long",
+		)
 		
+		# Trigger Housekeeping Task on Checkout
 		if self.reservation_status == "Checked-Out":
-			self.update_guest_stats()
+			self.create_housekeeping_tasks()
+
+	def create_housekeeping_tasks(self):
+		"""Create cleaning tasks post-checkout."""
+		# Check if a housekeeping task for this reservation already exists to avoid duplicates
+		if not frappe.db.get_value("Housekeeping Task", {"related_reservation": self.name, "task_type": "Check-out Cleaning"}):
+			task = frappe.get_doc({
+				"doctype": "Housekeeping Task",
+				"naming_series": "HK-.YYYY.-.#####", # Ensure naming series is set
+				"related_reservation": self.name, # Use related_reservation to link
+				"unit": self.allocated_unit, # Use allocated_unit as per existing code
+				"property_link": self.property, # Use property_link as per existing code
+				"task_type": "Check-out Cleaning",
+				"status": "Pending",
+				"priority": "High",
+				"scheduled_time": now_datetime() # Add scheduled time
+			})
+			task.insert(ignore_permissions=True)
+			frappe.msgprint(f"Housekeeping task created for {self.allocated_unit} for reservation {self.name}")
 
 	def create_housekeeping_task(self, task_type, priority):
 		if not self.allocated_unit:

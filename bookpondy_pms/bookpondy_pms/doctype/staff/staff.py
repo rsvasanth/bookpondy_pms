@@ -10,6 +10,17 @@ class Staff(Document):
 		if self.user:
 			self.update_user_permissions()
 
-	def update_user_permissions(self):
-		# logic to sync roles or permissions based on designation
-		pass
+	def on_update(self):
+		self.sync_to_erpnext()
+
+	def sync_to_erpnext(self):
+		"""Sync staff as an Employee to remote ERPNext."""
+		from bookpondy_pms.integrations.erpnext_connector import ERPNextConnector
+		connector = ERPNextConnector()
+		if connector.settings.is_enabled:
+			frappe.enqueue(
+				"bookpondy_pms.integrations.erpnext_connector.sync_staff",
+				staff_name=self.name,
+				queue="long",
+				timeout=600
+			)

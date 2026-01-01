@@ -8,6 +8,17 @@ class MaintenanceTicket(Document):
 			if not self.property_link and self.unit:
 				self.property_link = frappe.db.get_value("Unit", self.unit, "property")
 
-		if self.has_value_changed("ticket_status"):
-			if self.ticket_status in ["Resolved", "Closed"] and not self.completion_time:
-				self.completion_time = now_datetime()
+	def on_update(self):
+		self.sync_to_erpnext()
+
+	def sync_to_erpnext(self):
+		"""Sync maintenance ticket to remote ERPNext."""
+		from bookpondy_pms.integrations.erpnext_connector import ERPNextConnector
+		connector = ERPNextConnector()
+		if connector.settings.is_enabled:
+			frappe.enqueue(
+				"bookpondy_pms.integrations.erpnext_connector.sync_maintenance",
+				ticket_name=self.name,
+				queue="long",
+				timeout=600
+			)

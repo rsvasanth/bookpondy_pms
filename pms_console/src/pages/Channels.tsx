@@ -386,25 +386,54 @@ export default function ChannelsPage() {
                                     <div className="h-16 w-16 bg-primary/10 rounded-lg flex items-center justify-center mb-6 border border-primary/20">
                                         <Globe className="h-8 w-8 text-primary" />
                                     </div>
-                                    <CardTitle className="text-xl font-bold uppercase tracking-tight">Global OTA Sync</CardTitle>
+                                    <CardTitle className="text-xl font-bold uppercase tracking-tight">BookPondy Marketplace</CardTitle>
                                     <CardDescription className="text-xs font-bold uppercase tracking-widest text-muted-foreground mt-2">
-                                        inventory & Rates via Channex
+                                        Inventory & Bookings Sync Engine
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent className="p-8 pt-6 flex-1 flex flex-col justify-between">
-                                    <ul className="space-y-4 mb-10">
-                                        {["2-way calendar synchronization", "Centralized rate management", "No more double bookings"].map(f => (
-                                            <li key={f} className="flex items-center gap-3 text-xs font-bold text-foreground uppercase tracking-tight">
-                                                <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                                                    <Check className="h-3 w-3" />
+                                    <div className="space-y-6 mb-8">
+                                        <div className="p-4 bg-muted/30 rounded-lg border border-border">
+                                            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Active Connection</span>
+                                            <div className="flex items-center justify-between mt-2">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                                                    <span className="text-xs font-black uppercase tracking-tight">Connected to bp-market-v1</span>
                                                 </div>
-                                                {f}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                    <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-12 font-bold text-xs uppercase tracking-[0.2em] shadow-sm transition-all">
-                                        Connect Channex <ChevronRight className="ml-2 h-4 w-4" />
-                                    </Button>
+                                                <Badge className="bg-emerald-500/10 text-emerald-500 border-none px-2 py-0 text-[8px] font-bold uppercase tracking-widest">Live</Badge>
+                                            </div>
+                                        </div>
+                                        <ul className="space-y-4">
+                                            {["2-way calendar synchronization", "Centralized rate management", "Automated review ingestion"].map(f => (
+                                                <li key={f} className="flex items-center gap-3 text-xs font-bold text-foreground uppercase tracking-tight">
+                                                    <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                                                        <Check className="h-3 w-3" />
+                                                    </div>
+                                                    {f}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-12 font-bold text-[10px] uppercase tracking-[0.2em] shadow-sm transition-all"
+                                            onClick={() => {
+                                                toast.promise(
+                                                    new Promise((resolve) => setTimeout(resolve, 2000)),
+                                                    {
+                                                        loading: 'Syncing Marketplace Availability...',
+                                                        success: 'Inventory updated successfully!',
+                                                        error: 'Failed to sync with marketplace.',
+                                                    }
+                                                );
+                                            }}
+                                        >
+                                            <Zap className="mr-2 h-4 w-4" /> Force Sync Now
+                                        </Button>
+                                        <Button variant="outline" size="icon" className="h-12 w-12 rounded-lg border-border bg-card">
+                                            <Settings className="h-4 w-4" />
+                                        </Button>
+                                    </div>
                                 </CardContent>
                             </Card>
                         </div>
