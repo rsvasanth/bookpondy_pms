@@ -26,7 +26,7 @@ class Reservation(Document):
 		if not self.allocated_unit or not self.check_in_date or not self.check_out_date:
 			return
 			
-		# Check for overlapping reservations for the same unit
+		# 1. Check for overlapping reservations
 		filters = {
 			"allocated_unit": self.allocated_unit,
 			"reservation_status": ["in", ["Confirmed", "Checked-In", "Tentative"]],
@@ -38,6 +38,19 @@ class Reservation(Document):
 		overlap = frappe.db.exists("Reservation", filters)
 		if overlap:
 			frappe.throw(f"Unit {self.allocated_unit} is already booked for these dates (Reservation: {overlap})")
+
+		# 2. Check for Unit Status blocks (Maintenance, blocked, etc)
+		# Assuming 'Unit Status' doctype tracks non-reservation blocks
+		if frappe.db.exists("DocType", "Unit Status"):
+			status_filters = {
+				"unit": self.allocated_unit,
+				"status": ["in", ["Maintenance", "Blocked"]],
+				"start_date": ["<", self.check_out_date],
+				"end_date": [">", self.check_in_date]
+			}
+			block = frappe.db.exists("Unit Status", status_filters)
+			if block:
+				frappe.throw(f"Unit {self.allocated_unit} is blocked/under maintenance for these dates")
 
 	def on_update(self):
 		if self.has_value_changed("reservation_status"):
@@ -166,3 +179,56 @@ class Reservation(Document):
 			+ flt(self.extras_and_services)
 			- flt(self.discount_amount)
 		)
+
+	@staticmethod
+	def get_availability(property_name, start_date, end_date):
+		"""
+		Returns a list of availability data for all units in a property 
+		across a date range. Used by Marketplace Sync.
+		"""
+		from frappe.utils import add_days, getdate
+		
+		units = frappe.get_all("Unit", filters={"property": property_name}, fields=["name", "base_rate_per_night", "status"])
+		start = getdate(start_date)
+		days = date_diff(end_date, start_date)
+		
+		availability_data = []
+
+		# Pre-fetch all bookings for this property in this range to avoid N+1 queries
+		bookings = frappe.get_all("Reservation", 
+			filters={
+				"property": property_name,
+				"reservation_status": ["in", ["Confirmed", "Checked-In", "Tentative"]],
+				"check_in_date": ["<", end_date],
+				"check_out_date": [">", start_date]
+			},
+			fields=["allocated_unit", "check_in_date", "check_out_date"]
+		)
+		
+		for unit in units:
+			# Filter bookings for this specific unit
+			unit_bookings = [b for b in bookings if b.allocated_unit == unit.name]
+			
+			for i in range(days + 1):
+				current_date = add_days(start, i)
+				current_date_str = str(current_date)
+				
+				# Check if date is booked
+				is_booked = False
+				for b in unit_bookings:
+					if getdate(b.check_in_date) <= current_date < getdate(b.check_out_date):
+						is_booked = True
+						break
+				
+				status = "Booked" if is_booked else "Available"
+				if unit.status in ["Maintenance", "Blocked"] and not is_booked:
+					status = unit.status
+
+				availability_data.append({
+					"unit_id": unit.name,
+					"date": current_date_str,
+					"status": status,
+					"rate": unit.base_rate_per_night # In future, fetch from Rate Plan
+				})
+				
+		return availability_data

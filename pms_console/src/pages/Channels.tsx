@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
@@ -108,7 +107,7 @@ export default function ChannelsPage() {
     }
 
     return (
-        <DashboardLayout>
+        <>
             <div className="flex flex-col gap-8">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="space-y-1">
@@ -440,6 +439,6 @@ export default function ChannelsPage() {
                     </TabsContent>
                 </Tabs>
             </div>
-        </DashboardLayout>
+        </>
     )
 }

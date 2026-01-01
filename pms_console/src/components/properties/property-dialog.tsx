@@ -15,7 +15,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Building2, MapPin, Settings, Loader2, Sparkles } from "lucide-react"
+import { Building2, MapPin, Settings, Loader2, Sparkles, ArrowRight } from "lucide-react"
 import { useFrappeCreateDoc, useFrappeUpdateDoc, useFrappeGetDocList } from "frappe-react-sdk"
 import { toast } from "sonner"
 import { ImageUploader } from "@/components/ui/image-uploader"

@@ -6,5 +6,10 @@ export default {
 			'Host': 'pms.local'
 		},
 		ws: true
+	},
+	'^/socket.io': {
+		target: `http://pms.local:9000`,
+		changeOrigin: true,
+		ws: true
 	}
 };

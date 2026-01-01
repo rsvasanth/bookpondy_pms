@@ -41,7 +41,8 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
   const [dateRange, setDateRange] = useState<DateRange | undefined>()
   const [selectedProperty, setSelectedProperty] = useState<string>("")
   const [selectedCategory, setSelectedCategory] = useState<string>("")
-  const [guests, setGuests] = useState("2")
+  const [adults, setAdults] = useState("2")
+  const [children, setChildren] = useState("0")
   const [guestName, setGuestName] = useState("")
   const [guestEmail, setGuestEmail] = useState("")
   const [guestPhone, setGuestPhone] = useState("")
@@ -60,6 +61,13 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
     limit: 100
   })
 
+  // Hook to find existing guest
+  const { data: guestMatch } = useFrappeGetDocList("Guest", {
+    fields: ["name"],
+    filters: guestPhone ? [["phone", "=", guestPhone]] : guestEmail ? [["email", "=", guestEmail]] : undefined,
+    limit: 1
+  }, guestPhone || guestEmail ? undefined : "manual")
+
   const nights = dateRange?.from && dateRange?.to ? differenceInDays(dateRange.to, dateRange.from) : 0
   const selectedCategoryData = unitCategoriesList?.find(uc => uc.name === selectedCategory)
   const baseRate = selectedCategoryData?.base_rate_per_night || 0
@@ -73,20 +81,35 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
     }
 
     try {
+      let guestId = guestMatch?.[0]?.name
+
+      // 1. Create Guest if not found
+      if (!guestId) {
+        const newGuest = await createDoc("Guest", {
+          guest_name: guestName,
+          email: guestEmail,
+          phone: guestPhone,
+          naming_series: "GST-.YYYY.-.#####"
+        })
+        guestId = newGuest.name
+      }
+
+      // 2. Create Reservation
       await createDoc("Reservation", {
         naming_series: "RES-.YYYY.-.#####",
         property: selectedProperty,
-        guest_name: guestName,
+        guest: guestId,
+        guest_name: guestName, // Redundant for backend, but useful for instant local UI
         guest_email: guestEmail,
         guest_phone: guestPhone,
         unit_category: selectedCategory,
         check_in_date: format(dateRange.from, "yyyy-MM-dd"),
         check_out_date: format(dateRange.to, "yyyy-MM-dd"),
-        nights: nights,
-        number_of_guests: parseInt(guests) || 1,
+        adults: parseInt(adults) || 1,
+        children: parseInt(children) || 0,
+        number_of_guests: (parseInt(adults) || 0) + (parseInt(children) || 0),
         special_requests: specialRequests,
         room_rate_per_night: baseRate,
-        total_amount: totalWithGST,
         reservation_status: "Confirmed",
         reservation_source: "Direct"
       })
@@ -111,17 +134,19 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-5xl h-[90vh] p-0 gap-0 overflow-hidden rounded-lg border border-border shadow-2xl bg-muted/30">
-        <div className="flex flex-col h-full w-full">
+      <DialogContent className="sm:!max-w-[1000px] w-[95vw] h-[85vh] p-0 gap-0 overflow-hidden rounded-3xl border-none shadow-[0_32px_64px_-12px_rgba(0,0,0,0.2)] bg-card">
+        <div className="flex flex-col h-full w-full overflow-hidden">
           {/* Header */}
-          <div className="bg-card px-8 py-5 border-b border-border flex items-center justify-between z-10">
-            <div>
-              <DialogTitle className="text-2xl font-bold text-foreground">New Reservation</DialogTitle>
-              <DialogDescription className="text-sm font-medium text-muted-foreground">Create a comprehensive booking record</DialogDescription>
+          <div className="bg-card px-10 py-7 border-b border-border/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 z-20">
+            <div className="space-y-1.5">
+              <DialogTitle className="text-xl font-black text-foreground uppercase tracking-tight">New Reservation</DialogTitle>
+              <DialogDescription className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground opacity-50">
+                Create a comprehensive booking record
+              </DialogDescription>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4 w-full sm:w-auto">
               <Button
-                className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-lg px-8 w-full sm:w-auto h-11 shadow-sm"
+                className="bg-[#ff3924] hover:bg-[#d6301e] text-white font-black rounded-xl px-10 w-full sm:w-auto h-12 text-[11px] uppercase tracking-widest shadow-2xl shadow-red-500/20 transition-all active:scale-95"
                 onClick={handleSubmit}
                 disabled={!guestName || !selectedProperty || !dateRange?.from || !dateRange?.to || creating}
               >
@@ -141,29 +166,29 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
           </div>
 
           {/* Main Content Areas */}
-          <div className="flex-1 flex overflow-hidden">
+          <div className="flex-1 flex min-h-0 overflow-hidden bg-muted/20">
             {/* Left: Form Area */}
-            <div className="flex-1 overflow-y-auto w-2/3">
-              <div className="p-8 space-y-8 max-w-3xl mx-auto">
+            <div className="flex-[1.8] overflow-y-auto border-r border-border/50 custom-scrollbar">
+              <div className="p-10 space-y-10">
 
                 {/* Section 1: Guest Details */}
-                <div className="bg-card rounded-lg p-6 border border-border shadow-sm space-y-6">
+                <div className="bg-card rounded-xl p-6 border border-border shadow-sm space-y-6">
                   <div className="flex items-center gap-3 border-b border-border pb-4">
                     <div className="h-10 w-10 rounded-lg bg-muted text-foreground flex items-center justify-center border border-border">
                       <User className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="text-base font-bold text-foreground">Guest Information</h3>
-                      <p className="text-xs text-muted-foreground font-medium">Primary contact details</p>
+                      <h3 className="text-sm font-black text-foreground uppercase tracking-tight">Guest Information</h3>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold opacity-60">Primary contact details</p>
                     </div>
                   </div>
 
                   <div className="grid gap-6">
                     <div className="space-y-2">
-                      <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Full Name *</Label>
+                      <Label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">Full Name *</Label>
                       <Input
                         placeholder="e.g. Vikram Malhotra"
-                        className="rounded-lg h-12 bg-muted/20 border-border focus-visible:ring-primary/20 font-bold text-base"
+                        className="rounded-lg h-12 bg-muted/10 border-border focus-visible:ring-primary/20 font-bold text-base shadow-none"
                         value={guestName}
                         onChange={(e) => setGuestName(e.target.value)}
                         autoFocus
@@ -171,25 +196,25 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
                     </div>
                     <div className="grid gap-5 sm:grid-cols-2">
                       <div className="space-y-2">
-                        <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Email Address</Label>
+                        <Label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">Email Address</Label>
                         <div className="relative">
-                          <Mail className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                          <Mail className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/40" />
                           <Input
                             type="email"
                             placeholder="vikram@example.com"
-                            className="pl-11 rounded-lg h-12 bg-muted/20 border-border focus-visible:ring-primary/20 font-bold"
+                            className="pl-11 rounded-lg h-12 bg-muted/10 border-border focus-visible:ring-primary/20 font-bold shadow-none"
                             value={guestEmail}
                             onChange={(e) => setGuestEmail(e.target.value)}
                           />
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Phone Number</Label>
+                        <Label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">Phone Number</Label>
                         <div className="relative">
-                          <Phone className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                          <Phone className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/40" />
                           <Input
                             placeholder="+91 98765 43210"
-                            className="pl-11 rounded-lg h-12 bg-muted/20 border-border focus-visible:ring-primary/20 font-bold"
+                            className="pl-11 rounded-lg h-12 bg-muted/10 border-border focus-visible:ring-primary/20 font-bold shadow-none"
                             value={guestPhone}
                             onChange={(e) => setGuestPhone(e.target.value)}
                           />
@@ -200,28 +225,44 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
                 </div>
 
                 {/* Section 2: Stay Details */}
-                <div className="bg-card rounded-lg p-6 border border-border shadow-sm space-y-6">
+                <div className="bg-card rounded-xl p-6 border border-border shadow-sm space-y-6">
                   <div className="flex items-center gap-3 border-b border-border pb-4">
                     <div className="h-10 w-10 rounded-lg bg-muted text-foreground flex items-center justify-center border border-border">
                       <Building2 className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="text-base font-bold text-foreground">Stay Details</h3>
-                      <p className="text-xs text-muted-foreground font-medium">Property and dates</p>
+                      <h3 className="text-sm font-black text-foreground uppercase tracking-tight">Stay Details</h3>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold opacity-60">Property and dates</p>
                     </div>
                   </div>
 
                   <div className="grid gap-6">
                     <div className="space-y-2">
-                      <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Select Property *</Label>
+                      <Label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">Select Property *</Label>
                       <Select value={selectedProperty} onValueChange={setSelectedProperty}>
-                        <SelectTrigger className="rounded-lg h-12 bg-muted/20 border-border focus:ring-primary/20 font-bold">
+                        <SelectTrigger className="rounded-lg h-12 bg-muted/10 border-border focus:ring-primary/20 font-bold shadow-none">
                           <SelectValue placeholder="Choose a property" />
                         </SelectTrigger>
-                        <SelectContent className="rounded-lg border-border shadow-xl p-2">
+                        <SelectContent className="rounded-xl border-border shadow-2xl p-2">
                           {propertiesList?.map((property) => (
-                            <SelectItem key={property.name} value={property.name} className="rounded-md py-3 cursor-pointer font-bold">
+                            <SelectItem key={property.name} value={property.name} className="rounded-lg py-3 cursor-pointer font-bold">
                               {property.property_name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">Unit Category</Label>
+                      <Select value={selectedCategory} onValueChange={setSelectedCategory} disabled={!selectedProperty}>
+                        <SelectTrigger className="rounded-lg h-12 bg-muted/10 border-border focus:ring-primary/20 font-bold shadow-none">
+                          <SelectValue placeholder="Unit Type" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl border-border shadow-2xl p-2">
+                          {unitCategoriesList?.map((category) => (
+                            <SelectItem key={category.name} value={category.name} className="rounded-lg py-3 cursor-pointer font-bold">
+                              {category.category_name}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -230,30 +271,30 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
 
                     <div className="grid gap-5 sm:grid-cols-2">
                       <div className="space-y-2">
-                        <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Unit Category</Label>
-                        <Select value={selectedCategory} onValueChange={setSelectedCategory} disabled={!selectedProperty}>
-                          <SelectTrigger className="rounded-lg h-12 bg-muted/20 border-border focus:ring-primary/20 font-bold">
-                            <SelectValue placeholder="Unit Type" />
+                        <Label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">Adults</Label>
+                        <Select value={adults} onValueChange={setAdults}>
+                          <SelectTrigger className="rounded-lg h-12 bg-muted/10 border-border focus:ring-primary/20 font-bold shadow-none">
+                            <SelectValue />
                           </SelectTrigger>
                           <SelectContent className="rounded-lg border-border shadow-xl p-2">
-                            {unitCategoriesList?.map((category) => (
-                              <SelectItem key={category.name} value={category.name} className="rounded-md py-3 cursor-pointer font-bold">
-                                {category.category_name}
+                            {[1, 2, 3, 4, 5, 6].map((num) => (
+                              <SelectItem key={num} value={num.toString()} className="rounded-md py-3 cursor-pointer font-bold">
+                                {num} {num === 1 ? "Adult" : "Adults"}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Guests</Label>
-                        <Select value={guests} onValueChange={setGuests}>
-                          <SelectTrigger className="rounded-lg h-12 bg-muted/20 border-border focus:ring-primary/20 font-bold">
+                        <Label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">Children</Label>
+                        <Select value={children} onValueChange={setChildren}>
+                          <SelectTrigger className="rounded-lg h-12 bg-muted/10 border-border focus:ring-primary/20 font-bold shadow-none">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent className="rounded-lg border-border shadow-xl p-2">
-                            {[1, 2, 3, 4, 5, 6].map((num) => (
+                            {[0, 1, 2, 3, 4].map((num) => (
                               <SelectItem key={num} value={num.toString()} className="rounded-md py-3 cursor-pointer font-bold">
-                                {num} {num === 1 ? "Guest" : "Guests"}
+                                {num} {num === 1 ? "Child" : "Children"}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -262,14 +303,14 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Dates *</Label>
+                      <Label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">Dates *</Label>
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button
                             variant="outline"
                             className={cn(
-                              "w-full justify-start text-left font-bold rounded-lg h-12 bg-muted/20 border-border focus:ring-primary/20 px-4",
-                              !dateRange && "text-muted-foreground"
+                              "w-full justify-start text-left font-bold rounded-lg h-12 bg-muted/10 border-border focus:ring-primary/20 px-4 shadow-none",
+                              !dateRange && "text-muted-foreground font-normal"
                             )}
                           >
                             <CalendarIcon className="mr-3 h-4 w-4 text-primary" />
@@ -286,7 +327,7 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
                             )}
                           </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto p-4 rounded-lg border-border shadow-2xl bg-card" align="start">
+                        <PopoverContent className="w-auto p-4 rounded-xl border-border shadow-2xl bg-card" align="start">
                           <Calendar
                             mode="range"
                             selected={dateRange}
@@ -302,19 +343,19 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
                 </div>
 
                 {/* Section 3: Extras */}
-                <div className="bg-card rounded-lg p-6 border border-border shadow-sm space-y-4">
+                <div className="bg-card rounded-xl p-6 border border-border shadow-sm space-y-4">
                   <div className="flex items-center gap-3 border-b border-border pb-4">
                     <div className="h-10 w-10 rounded-lg bg-muted text-foreground flex items-center justify-center border border-border">
                       <Sparkles className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="text-base font-bold text-foreground">Special Requests</h3>
-                      <p className="text-xs text-muted-foreground font-medium">Notes for the front desk</p>
+                      <h3 className="text-sm font-black text-foreground uppercase tracking-tight">Special Requests</h3>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold opacity-60">Notes for the front desk</p>
                     </div>
                   </div>
                   <Textarea
                     placeholder="E.g. Early check-in requested, allergy information..."
-                    className="rounded-lg bg-muted/20 border-border focus-visible:ring-primary/20 min-h-[100px] font-bold"
+                    className="rounded-lg bg-muted/10 border-border focus-visible:ring-primary/20 min-h-[100px] font-bold shadow-none"
                     value={specialRequests}
                     onChange={(e) => setSpecialRequests(e.target.value)}
                   />
@@ -323,11 +364,14 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
             </div>
 
             {/* Right: Summary Area */}
-            <div className="w-1/3 bg-card border-l border-border p-8 overflow-y-auto">
-              <div className="sticky top-0 space-y-6">
-                <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
-                  Booking Summary
-                </h3>
+            <div className="flex-1 bg-card p-10 overflow-y-auto custom-scrollbar">
+              <div className="space-y-8">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-black text-foreground uppercase tracking-[0.2em]">
+                    Booking Summary
+                  </h3>
+                  <div className="h-px flex-1 mx-4 bg-muted" />
+                </div>
 
                 {/* Ticket Card */}
                 <div className="border border-border rounded-lg overflow-hidden relative shadow-sm bg-background">
@@ -381,7 +425,7 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
                       </div>
                       <div className="flex-1">
                         <p className="text-xs font-bold text-foreground">{guestName || "Guest Name"}</p>
-                        <p className="text-[10px] text-muted-foreground font-medium">{guests} Guests</p>
+                        <p className="text-[10px] text-muted-foreground font-medium">{adults} Adults, {children} Children</p>
                       </div>
                     </div>
                   </div>

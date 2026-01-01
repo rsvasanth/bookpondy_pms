@@ -10,7 +10,7 @@ class Property(Document):
 		self.update_room_counts()
 
 	def on_update(self):
-		if self.marketplace_sync:
+		if self.get("marketplace_sync"):
 			frappe.enqueue(
 				"bookpondy_pms.integrations.marketplace_sync.sync_property_to_marketplace",
 				property_name=self.name,

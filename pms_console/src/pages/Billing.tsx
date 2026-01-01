@@ -13,7 +13,6 @@ import {
     Download
 } from "lucide-react"
 import { RevenueTrend } from "@/components/dashboard/revenue-trend"
-import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { cn } from "@/lib/utils"
 
 const invoices = [
@@ -25,7 +24,7 @@ const invoices = [
 
 export default function BillingPage() {
     return (
-        <DashboardLayout>
+        <>
             <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                 <div className="space-y-1">
                     <h1 className="text-2xl font-bold tracking-tight text-foreground uppercase">Financial Overview</h1>
@@ -137,6 +136,6 @@ export default function BillingPage() {
                     </table>
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     )
 }

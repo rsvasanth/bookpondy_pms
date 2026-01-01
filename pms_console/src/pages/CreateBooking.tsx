@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -40,7 +39,8 @@ export default function CreateBookingPage() {
     const [selectedProperty, setSelectedProperty] = useState<string>("")
     const [selectedCategory, setSelectedCategory] = useState<string>("")
     const [selectedUnit, setSelectedUnit] = useState<string>("")
-    const [guests] = useState("2")
+    const [adults, setAdults] = useState("2")
+    const [children, setChildren] = useState("0")
     const [guestName, setGuestName] = useState("")
     const [guestEmail, setGuestEmail] = useState("")
     const [guestPhone, setGuestPhone] = useState("")
@@ -55,6 +55,9 @@ export default function CreateBookingPage() {
     })
     const { data: unitsList } = useLocalDocList("Unit", {
         selector: selectedCategory ? { unit_category: selectedCategory } : {}
+    })
+    const { data: guestsList } = useLocalDocList("Guest", {
+        selector: guestPhone ? { phone: guestPhone } : (guestEmail ? { email: guestEmail } : { _id: 'none' })
     })
 
     // Calculations
@@ -93,23 +96,38 @@ export default function CreateBookingPage() {
         }
 
         try {
+            let guestId = guestsList?.[0]?.name
+
+            // 1. Upsert Guest locally
+            if (!guestId) {
+                const newGuest = await createLocalDoc("Guest", {
+                    guest_name: guestName,
+                    email: guestEmail,
+                    phone: guestPhone,
+                    naming_series: "GST-.YYYY.-.#####"
+                })
+                guestId = newGuest.name
+            }
+
+            // 2. Create Reservation locally
             await createLocalDoc("Reservation", {
                 naming_series: "RES-.YYYY.-.#####",
                 property: selectedProperty,
-                guest_name: guestName,
+                guest: guestId,
+                guest_name: guestName, // For instant local UI
                 guest_email: guestEmail,
                 guest_phone: guestPhone,
-                guest_id_number: guestIdNumber,
-                guest_id_image: guestIdUrl,
                 unit_category: selectedCategory,
                 allocated_unit: selectedUnit,
                 check_in_date: format(dateRange.from, "yyyy-MM-dd"),
                 check_out_date: format(dateRange.to, "yyyy-MM-dd"),
-                nights: nights,
-                number_of_guests: parseInt(guests) || 1,
+                adults: parseInt(adults) || 1,
+                children: parseInt(children) || 0,
+                number_of_guests: (parseInt(adults) || 0) + (parseInt(children) || 0),
+                guest_id_number: guestIdNumber,
+                guest_id_image: guestIdUrl,
                 special_requests: specialRequests,
                 room_rate_per_night: baseRate,
-                total_amount: totalWithGST,
                 reservation_status: "Confirmed",
                 reservation_source: "Direct"
             })
@@ -123,7 +141,7 @@ export default function CreateBookingPage() {
     }
 
     return (
-        <DashboardLayout>
+        <>
             <div className="flex flex-col h-full space-y-6 p-6 w-full">
 
                 {/* Header */}
@@ -259,7 +277,7 @@ export default function CreateBookingPage() {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <Label>Unit Category</Label>
+                                        <Label>Unit Category <span className="text-destructive">*</span></Label>
                                         <Select value={selectedCategory} onValueChange={setSelectedCategory} disabled={!selectedProperty}>
                                             <SelectTrigger>
                                                 <SelectValue placeholder="Select Category" />
@@ -274,16 +292,51 @@ export default function CreateBookingPage() {
                                         </Select>
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>Specific Unit</Label>
+                                        <Label>Specific Unit (Optional)</Label>
                                         <Select value={selectedUnit} onValueChange={setSelectedUnit} disabled={!selectedProperty}>
                                             <SelectTrigger>
-                                                <SelectValue placeholder="Assign Unit (Optional)" />
+                                                <SelectValue placeholder="Assign Unit" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value=" ">Any Unit</SelectItem>
                                                 {unitsList?.map((unit) => (
                                                     <SelectItem key={unit.name} value={unit.name}>
                                                         {unit.unit_number} {unit.unit_status !== "Clean" && `(${unit.unit_status})`}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+
+                                <Separator className="my-2" />
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label>Adults</Label>
+                                        <Select value={adults} onValueChange={setAdults}>
+                                            <SelectTrigger>
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {[1, 2, 3, 4, 5, 6].map((num) => (
+                                                    <SelectItem key={num} value={num.toString()}>
+                                                        {num} {num === 1 ? "Adult" : "Adults"}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Children</Label>
+                                        <Select value={children} onValueChange={setChildren}>
+                                            <SelectTrigger>
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {[0, 1, 2, 3, 4, 5].map((num) => (
+                                                    <SelectItem key={num} value={num.toString()}>
+                                                        {num} {num === 1 ? "Child" : "Children"}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -350,9 +403,9 @@ export default function CreateBookingPage() {
                     <div className="lg:col-span-1">
                         <Card className="sticky top-6 border-2 border-primary/20 shadow-lg">
                             <CardHeader className="bg-muted/40 pb-4">
-                                <CardTitle className="text-lg">Booking Summary</CardTitle>
+                                <CardTitle className="text-lg">Stay Summary</CardTitle>
                                 <CardDescription>
-                                    {nights > 0 ? `${nights} Night(s) Stay` : "Select dates to calculate"}
+                                    {nights > 0 ? `${nights} Night(s) Stay • ${adults}A, ${children}C` : "Select dates to calculate"}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="pt-6 space-y-4">
@@ -400,6 +453,6 @@ export default function CreateBookingPage() {
                     </div>
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     )
 }

@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -26,7 +25,7 @@ export default function StaffPage() {
     ) || []
 
     return (
-        <DashboardLayout>
+        <>
             <div className="flex flex-col gap-8">
                 {/* Header */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -147,6 +146,6 @@ export default function StaffPage() {
                     </div>
                 </Card>
             </div>
-        </DashboardLayout>
+        </>
     )
 }

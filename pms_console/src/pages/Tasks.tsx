@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -90,7 +89,7 @@ export default function TasksPage() {
     }
 
     return (
-        <DashboardLayout>
+        <>
             <div className="flex flex-col gap-6 h-full">
                 {/* Header Section */}
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -172,7 +171,7 @@ export default function TasksPage() {
                     ))}
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     )
 }
 

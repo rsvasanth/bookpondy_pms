@@ -10,6 +10,7 @@
         "unit_no",
         "property",
         "unit_category",
+        "base_rate_per_night",
         "status",
         "column_break_1",
         "floor",
@@ -54,6 +55,12 @@
             "label": "Unit Category",
             "options": "Unit Category",
             "reqd": 1
+        },
+        {
+            "fieldname": "base_rate_per_night",
+            "fieldtype": "Currency",
+            "label": "Base Rate Per Night",
+            "default": 0
         },
         {
             "fieldname": "status",

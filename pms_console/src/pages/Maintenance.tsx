@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -117,7 +116,7 @@ export default function MaintenancePage() {
     }
 
     return (
-        <DashboardLayout>
+        <>
             <div className="flex flex-col gap-8">
                 {/* Header */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -407,6 +406,6 @@ export default function MaintenancePage() {
                     ))}
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     )
 }

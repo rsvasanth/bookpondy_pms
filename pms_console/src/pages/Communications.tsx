@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -39,7 +38,7 @@ export default function CommunicationsPage() {
     })) || []
 
     return (
-        <DashboardLayout>
+        <>
             <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="space-y-0.5">
                     <h1 className="text-2xl font-bold tracking-tight text-foreground uppercase">Guest Communications</h1>
@@ -167,6 +166,6 @@ export default function CommunicationsPage() {
                     )}
                 </Card>
             </div>
-        </DashboardLayout>
+        </>
     )
 }

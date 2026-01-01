@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -49,7 +48,7 @@ export default function InvoicesPage() {
 
     if (selectedInvoice) {
         return (
-            <DashboardLayout>
+            <>
                 <div className="flex flex-col gap-8">
                     <div className="flex items-center gap-4">
                         <Button variant="ghost" size="icon" onClick={() => setSelectedInvoice(null)} className="rounded-lg h-10 w-10 hover:bg-muted text-muted-foreground transition-colors">
@@ -62,12 +61,12 @@ export default function InvoicesPage() {
                     </div>
                     <InvoiceDetailView folioName={selectedInvoice} onBack={() => setSelectedInvoice(null)} />
                 </div>
-            </DashboardLayout>
+            </>
         )
     }
 
     return (
-        <DashboardLayout>
+        <>
             <div className="flex flex-col gap-8">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="space-y-1">
@@ -155,7 +154,7 @@ export default function InvoicesPage() {
                     </Table>
                 </Card>
             </div>
-        </DashboardLayout>
+        </>
     )
 }
 

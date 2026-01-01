@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
+
 import { KPICard } from "@/components/dashboard/kpi-card"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -64,7 +64,7 @@ export default function FinancialsPage() {
     }
 
     return (
-        <DashboardLayout>
+        <>
             <div className="flex flex-col gap-8">
                 {/* Header */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -294,6 +294,6 @@ export default function FinancialsPage() {
                     </CardContent>
                 </Card>
             </div>
-        </DashboardLayout>
+        </>
     )
 }

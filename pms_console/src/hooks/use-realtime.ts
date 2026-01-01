@@ -12,9 +12,9 @@ export const useRealtime = () => {
         const socketPort = import.meta.env.VITE_SOCKET_PORT || '9000';
         const siteName = import.meta.env.VITE_SITE_NAME;
 
-        // In production/bench environment, the socket is served on the same host but different port
-        // or via a proxy. For development, we connect to the port directly.
-        const socket = io(`:${socketPort}`, {
+        // In development, we use the proxy configured in vite.config.ts
+        // By omitting the host/port, socket.io-client will use the current host/port.
+        const socket = io({
             withCredentials: true,
             transports: ['websocket', 'polling']
         });

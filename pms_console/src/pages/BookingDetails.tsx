@@ -1,6 +1,4 @@
-import React from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { Button } from "@/components/ui/button"
 import { useLocalDoc, useLocalMutation, useLocalDocList, useLocalCreate } from "@/hooks/use-local-data"
 import {
@@ -67,22 +65,18 @@ export default function BookingDetailsPage() {
 
     if (isLoading) {
         return (
-            <DashboardLayout>
-                <div className="flex h-full items-center justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                </div>
-            </DashboardLayout>
+            <div className="flex h-full items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
         )
     }
 
     if (!booking) {
         return (
-            <DashboardLayout>
-                <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
-                    <h2 className="text-xl font-bold">Booking Not Found</h2>
-                    <Button onClick={() => navigate("/bookings")}>Back to Bookings</Button>
-                </div>
-            </DashboardLayout>
+            <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
+                <h2 className="text-xl font-bold">Booking Not Found</h2>
+                <Button onClick={() => navigate("/bookings")}>Back to Bookings</Button>
+            </div>
         )
     }
 
@@ -101,7 +95,7 @@ export default function BookingDetailsPage() {
     }
 
     return (
-        <DashboardLayout>
+        <>
             <div className="flex flex-col space-y-6 p-6 max-w-7xl mx-auto w-full min-h-screen">
 
                 {/* Header */}
@@ -440,6 +434,6 @@ export default function BookingDetailsPage() {
                 </div>
             </div>
             <GuestChatPanel queries={queries} guestName={booking.guest_name} onSend={createQuery} />
-        </DashboardLayout>
+        </>
     )
 }

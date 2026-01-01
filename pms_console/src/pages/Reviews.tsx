@@ -1,5 +1,4 @@
 import { useMemo } from "react"
-import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { useLocalDocList } from "@/hooks/use-local-data"
 import {
@@ -43,7 +42,7 @@ export default function ReviewsPage() {
     }
 
     return (
-        <DashboardLayout>
+        <>
             <div className="flex flex-col gap-8 pb-12">
                 {/* Header */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-2">
@@ -169,6 +168,6 @@ export default function ReviewsPage() {
                     )}
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     )
 }

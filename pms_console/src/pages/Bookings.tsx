@@ -1,7 +1,6 @@
 "use client"
 
 
-import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { DashboardListWidget, type DashboardListItem } from "@/components/dashboard/dashboard-list-widget"
 import { DashboardStatsCard } from "@/components/dashboard/dashboard-stats-card"
 import { DashboardFilters } from "@/components/dashboard/dashboard-filters"
@@ -295,7 +294,7 @@ export default function BookingsPage() {
   })) || []
 
   return (
-    <DashboardLayout>
+    <>
       <div className="flex flex-col gap-8 pb-12">
         <div className="w-full space-y-8 px-2">
 
@@ -485,7 +484,7 @@ export default function BookingsPage() {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+    </>
   )
 }
 

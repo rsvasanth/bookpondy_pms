@@ -16,7 +16,9 @@ import {
   ChevronUp,
   ClipboardList,
   Receipt,
-  FileText
+  FileText,
+  Banknote,
+  Package
 } from "lucide-react"
 
 import {
@@ -60,20 +62,24 @@ const mainNavItems = [
   { href: "/housekeeping", label: "Housekeeping", icon: ClipboardList, roles: ["Administrator", "Manager", "Front Desk", "Housekeeping"] },
   { href: "/maintenance", label: "Maintenance", icon: Wrench, roles: ["Administrator", "Manager", "Front Desk", "Housekeeping"] },
   { href: "/billing", label: "Billing & Payments", icon: Receipt, roles: ["Administrator", "Manager", "Front Desk"] },
-  { href: "/channels", label: "Channels & WhatsApp", icon: MessageSquare, roles: ["Administrator", "Manager"] },
+  { href: "/channels", label: "Channels & WhatsApp", icon: MessageSquare, roles: ["Administrator", "Manager", "Front Desk"] },
+  { href: "/communications", label: "Guest Chat", icon: MessageSquare, roles: ["Administrator", "Manager", "Front Desk"] },
+  { href: "/tasks", label: "Operational Tasks", icon: ClipboardList, roles: ["Administrator", "Manager", "Housekeeping", "Front Desk"] },
 ]
 
 const managementNavItems = [
-  { href: "/properties", label: "Properties", icon: Building2, roles: ["Administrator", "Manager"] },
+  { href: "/properties", label: "Properties", icon: Building2, roles: ["Administrator", "Manager", "Front Desk"] },
   { href: "/guests", label: "Guests", icon: Users, roles: ["Administrator", "Manager", "Front Desk"] },
-  { href: "/staff", label: "Staff", icon: UsersRound, roles: ["Administrator", "Manager"] },
-  { href: "/financials", label: "Financials", icon: FileText, roles: ["Administrator", "Manager"] },
-  { href: "/invoices", label: "Invoices", icon: Receipt, roles: ["Administrator", "Manager"] },
+  { href: "/staff", label: "Staff", icon: UsersRound, roles: ["Administrator", "Manager", "Front Desk"] },
+  { href: "/financials", label: "Financials", icon: FileText, roles: ["Administrator", "Manager", "Front Desk"] },
+  { href: "/invoices", label: "Invoices", icon: Receipt, roles: ["Administrator", "Manager", "Front Desk"] },
+  { href: "/rates", label: "Rates & Pricing", icon: Banknote, roles: ["Administrator", "Manager", "Front Desk"] },
+  { href: "/inventory", label: "Inventory", icon: Package, roles: ["Administrator", "Manager", "Front Desk"] },
 ]
 
 const reportsNavItems = [
-  { href: "/reports", label: "Reports", icon: BarChart3, roles: ["Administrator", "Manager"] },
-  { href: "/reviews", label: "Reviews", icon: Star, roles: ["Administrator", "Manager"] },
+  { href: "/reports", label: "Reports", icon: BarChart3, roles: ["Administrator", "Manager", "Front Desk"] },
+  { href: "/reviews", label: "Reviews", icon: Star, roles: ["Administrator", "Manager", "Front Desk"] },
 ]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -212,7 +218,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroup>
         )}
 
-        {currentRole === "Administrator" && (
+        {["Administrator", "Manager", "Front Desk"].includes(currentRole) && (
           <>
             <SidebarSeparator />
             <SidebarGroup>

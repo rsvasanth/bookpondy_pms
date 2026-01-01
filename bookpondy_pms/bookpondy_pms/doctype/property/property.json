@@ -34,6 +34,9 @@
         "section_break_images",
         "banner_image",
         "images",
+        "section_break_marketplace",
+        "marketplace_sync",
+        "marketplace_id",
         "section_break_erp",
         "erp_cost_center",
         "erp_sales_account",
@@ -205,6 +208,24 @@
             "fieldtype": "Table",
             "label": "Gallery Images",
             "options": "Property Image"
+        },
+        {
+            "fieldname": "section_break_marketplace",
+            "fieldtype": "Section Break",
+            "label": "Marketplace Integration",
+            "collapsible": 1
+        },
+        {
+            "fieldname": "marketplace_sync",
+            "fieldtype": "Check",
+            "label": "Enable Marketplace Sync",
+            "default": 0
+        },
+        {
+            "fieldname": "marketplace_id",
+            "fieldtype": "Data",
+            "label": "Marketplace Property ID",
+            "read_only": 1
         },
         {
             "fieldname": "section_break_erp",

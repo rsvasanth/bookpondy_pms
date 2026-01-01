@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -147,7 +146,7 @@ export default function PropertiesPage() {
   ]
 
   return (
-    <DashboardLayout>
+    <>
       {propertyDetailsOpen && viewingProperty ? (
         <div className="flex-1 min-h-[calc(100vh-180px)]">
           <PropertyDetailsView
@@ -404,6 +403,6 @@ export default function PropertiesPage() {
           />
         </div>
       )}
-    </DashboardLayout>
+    </>
   )
 }

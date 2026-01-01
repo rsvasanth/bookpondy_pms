@@ -24,10 +24,11 @@ interface DashboardListWidgetProps {
     items: DashboardListItem[]
     isLoading?: boolean
     className?: string
+    onViewAll?: () => void
     renderItemActions?: (item: DashboardListItem) => React.ReactNode
 }
 
-export function DashboardListWidget({ title, icon, items, isLoading, className, renderItemActions }: DashboardListWidgetProps) {
+export function DashboardListWidget({ title, icon, items, isLoading, className, renderItemActions, onViewAll }: DashboardListWidgetProps) {
     return (
         <Card className={cn("border border-border shadow-sm rounded-lg bg-card transition-all hover:shadow-md", className)}>
             <CardHeader className="flex flex-row items-center justify-between pb-3 border-b border-border p-4 bg-muted/30">
@@ -103,6 +104,7 @@ export function DashboardListWidget({ title, icon, items, isLoading, className, 
                 <Button
                     variant="ghost"
                     className="w-full mt-2 text-xs font-bold text-foreground hover:bg-muted h-9 gap-1"
+                    onClick={onViewAll}
                 >
                     View All <ArrowRight className="h-3 w-3" />
                 </Button>

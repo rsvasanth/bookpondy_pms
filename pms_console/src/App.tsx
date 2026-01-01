@@ -18,6 +18,9 @@ import HousekeepingPage from "@/pages/Housekeeping"
 import BillingPage from "@/pages/Billing"
 import MaintenancePage from "@/pages/Maintenance"
 import SchedulerPage from "@/pages/Scheduler"
+import TasksPage from "@/pages/Tasks"
+import RatesPage from "@/pages/Rates"
+import InventoryPage from "@/pages/Inventory"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { FrappeProvider, useFrappeAuth } from "frappe-react-sdk"
 import { Toaster } from "@/components/ui/sonner"
@@ -26,9 +29,9 @@ import { SyncProvider } from "@/providers/SyncProvider"
 import { useAuthStore } from "@/stores/authStore"
 import { RoleGuard } from "@/components/role-guard"
 import { useRealtime } from "@/hooks/use-realtime"
-import './globals.css'
+import { AppLayout } from "@/components/layout/AppLayout"
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
+function ProtectedRoute({ children }: { children?: React.ReactNode }) {
 	const { currentUser, isLoading, error } = useFrappeAuth()
 	const { user: persistedUser, isAuthenticated } = useAuthStore()
 
@@ -51,7 +54,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 		return <Navigate to="/login" replace />
 	}
 
-	return children
+	return children ? children : <Outlet />
 }
 
 function App() {
@@ -67,162 +70,85 @@ function App() {
 						<BrowserRouter>
 							<Routes>
 								<Route path="/login" element={<LoginPage />} />
-								<Route
-									path="/"
-									element={
-										<ProtectedRoute>
-											<DashboardPage />
-										</ProtectedRoute>
-									}
-								/>
-								<Route
-									path="/properties"
-									element={
-										<ProtectedRoute>
-											<PropertiesPage />
-										</ProtectedRoute>
-									}
-								/>
-								<Route
-									path="/bookings"
-									element={
-										<ProtectedRoute>
-											<BookingsPage />
-										</ProtectedRoute>
-									}
-								/>
-								<Route
-									path="/bookings/new"
-									element={
-										<ProtectedRoute>
-											<CreateBookingPage />
-										</ProtectedRoute>
-									}
-								/>
-								<Route
-									path="/bookings/:id"
-									element={
-										<ProtectedRoute>
-											<BookingDetailsPage />
-										</ProtectedRoute>
-									}
-								/>
-								<Route
-									path="/scheduler"
-									element={
-										<ProtectedRoute>
-											<SchedulerPage />
-										</ProtectedRoute>
-									}
-								/>
-								<Route
-									path="/guests"
-									element={
-										<ProtectedRoute>
-											<GuestsPage />
-										</ProtectedRoute>
-									}
-								/>
-								<Route
-									path="/staff"
-									element={
-										<ProtectedRoute>
-											<RoleGuard allowedRoles={['Administrator', 'Manager']}>
+								<Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+									<Route path="/" element={<DashboardPage />} />
+									<Route path="/properties" element={<PropertiesPage />} />
+									<Route path="/bookings" element={<BookingsPage />} />
+									<Route path="/bookings/new" element={<CreateBookingPage />} />
+									<Route path="/bookings/:id" element={<BookingDetailsPage />} />
+									<Route path="/scheduler" element={<SchedulerPage />} />
+									<Route path="/guests" element={<GuestsPage />} />
+									<Route
+										path="/staff"
+										element={
+											<RoleGuard allowedRoles={['Administrator', 'Manager', 'Front Desk']}>
 												<StaffPage />
 											</RoleGuard>
-										</ProtectedRoute>
-									}
-								/>
-								<Route
-									path="/communications"
-									element={
-										<ProtectedRoute>
-											<CommunicationsPage />
-										</ProtectedRoute>
-									}
-								/>
-								<Route
-									path="/financials"
-									element={
-										<ProtectedRoute>
-											<RoleGuard allowedRoles={['Administrator', 'Manager']}>
+										}
+									/>
+									<Route path="/communications" element={<CommunicationsPage />} />
+									<Route
+										path="/financials"
+										element={
+											<RoleGuard allowedRoles={['Administrator', 'Manager', 'Front Desk']}>
 												<FinancialsPage />
 											</RoleGuard>
-										</ProtectedRoute>
-									}
-								/>
-								<Route
-									path="/invoices"
-									element={
-										<ProtectedRoute>
-											<RoleGuard allowedRoles={['Administrator', 'Manager']}>
+										}
+									/>
+									<Route
+										path="/invoices"
+										element={
+											<RoleGuard allowedRoles={['Administrator', 'Manager', 'Front Desk']}>
 												<InvoicesPage />
 											</RoleGuard>
-										</ProtectedRoute>
-									}
-								/>
-								<Route
-									path="/channels"
-									element={
-										<ProtectedRoute>
-											<RoleGuard allowedRoles={['Administrator', 'Manager']}>
+										}
+									/>
+									<Route
+										path="/channels"
+										element={
+											<RoleGuard allowedRoles={['Administrator', 'Manager', 'Front Desk']}>
 												<ChannelsPage />
 											</RoleGuard>
-										</ProtectedRoute>
-									}
-								/>
-								<Route
-									path="/reviews"
-									element={
-										<ProtectedRoute>
-											<ReviewsPage />
-										</ProtectedRoute>
-									}
-								/>
-								<Route
-									path="/maintenance"
-									element={
-										<ProtectedRoute>
-											<MaintenancePage />
-										</ProtectedRoute>
-									}
-								/>
-								<Route
-									path="/housekeeping"
-									element={
-										<ProtectedRoute>
-											<HousekeepingPage />
-										</ProtectedRoute>
-									}
-								/>
-								<Route
-									path="/billing"
-									element={
-										<ProtectedRoute>
-											<BillingPage />
-										</ProtectedRoute>
-									}
-								/>
-								<Route
-									path="/reports"
-									element={
-										<ProtectedRoute>
-											<RoleGuard allowedRoles={['Administrator', 'Manager']}>
+										}
+									/>
+									<Route path="/reviews" element={<ReviewsPage />} />
+									<Route path="/maintenance" element={<MaintenancePage />} />
+									<Route path="/housekeeping" element={<HousekeepingPage />} />
+									<Route path="/billing" element={<BillingPage />} />
+									<Route
+										path="/reports"
+										element={
+											<RoleGuard allowedRoles={['Administrator', 'Manager', 'Front Desk']}>
 												<ReportsPage />
 											</RoleGuard>
-										</ProtectedRoute>
-									}
-								/>
-								<Route
-									path="/settings"
-									element={
-										<ProtectedRoute>
-											<RoleGuard allowedRoles={['Administrator']}>
+										}
+									/>
+									<Route path="/tasks" element={<TasksPage />} />
+									<Route
+										path="/rates"
+										element={
+											<RoleGuard allowedRoles={['Administrator', 'Manager', 'Front Desk']}>
+												<RatesPage />
+											</RoleGuard>
+										}
+									/>
+									<Route
+										path="/inventory"
+										element={
+											<RoleGuard allowedRoles={['Administrator', 'Manager', 'Front Desk']}>
+												<InventoryPage />
+											</RoleGuard>
+										}
+									/>
+									<Route
+										path="/settings"
+										element={
+											<RoleGuard allowedRoles={['Administrator', 'Manager', 'Front Desk']}>
 												<SettingsPage />
 											</RoleGuard>
-										</ProtectedRoute>
-									}
-								/>
+										}
+									/>
+								</Route>
 							</Routes>
 						</BrowserRouter>
 					</SyncProvider>

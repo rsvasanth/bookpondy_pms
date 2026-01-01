@@ -75,29 +75,17 @@ class MarketplaceSync:
         """Push availability calendar to marketplace."""
         if not self.is_enabled: return
         
-        # Get all units for this property
-        units = frappe.get_all('Unit', filters={'property': property_name}, fields=['name'])
-        
-        availability_data = []
         start_date = getdate(today())
         end_date = add_days(start_date, days)
 
-        for unit in units:
-            # This is a simplified logic. In a real PMS, you'd check Reservation records
-            # and Unit Status records for these dates.
-            # Here we just fetch the current state.
-            unit_doc = frappe.get_doc('Unit', unit.name)
-            
-            # Mocking availability logic for the next 'days'
-            # In production, this would query a dedicated Availability or Reservation table
-            for i in range(days):
-                curr_date = add_days(start_date, i)
-                availability_data.append({
-                    'unit_id': unit.name,
-                    'date': str(curr_date),
-                    'status': unit_doc.status, # Simplified
-                    'rate': unit_doc.base_rate # Simplified
-                })
+        # Get real availability data from Reservation logic
+        from bookpondy_pms.bookpondy_pms.doctype.reservation.reservation import Reservation
+        
+        try:
+            availability_data = Reservation.get_availability(property_name, start_date, end_date)
+        except Exception as e:
+            frappe.log_error(f"Failed to fetch availability for sync: {str(e)}", "Marketplace Integration")
+            return
 
         payload = {
             'property_id': property_name,
