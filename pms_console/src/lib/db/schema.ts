@@ -207,24 +207,25 @@ export default appSchema({
                 { name: 'notes', type: 'string' },
                 { name: 'modified', type: 'string', isIndexed: true },
             ]
+        }),
         tableSchema({
-                name: 'outbox',
-                columns: [
-                    { name: 'doctype', type: 'string', isIndexed: true },
-                    { name: 'record_id', type: 'string', isIndexed: true },
-                    { name: 'operation', type: 'string' },
-                    { name: 'payload', type: 'string' },
-                    { name: 'created_at', type: 'number', isIndexed: true },
-                ]
-            }),
-            tableSchema({
-                name: 'channel_configs',
-                columns: [
-                    { name: 'channel_name', type: 'string' },
-                    { name: 'channel_type', type: 'string', isIndexed: true },
-                    { name: 'is_active', type: 'number', isIndexed: true },
-                    { name: 'modified', type: 'string', isIndexed: true },
-                ]
-            }),
+            name: 'outbox',
+            columns: [
+                { name: 'doctype', type: 'string', isIndexed: true },
+                { name: 'record_id', type: 'string', isIndexed: true },
+                { name: 'operation', type: 'string' },
+                { name: 'payload', type: 'string' },
+                { name: 'created_at', type: 'number', isIndexed: true },
+            ]
+        }),
+        tableSchema({
+            name: 'channel_configs',
+            columns: [
+                { name: 'channel_name', type: 'string' },
+                { name: 'channel_type', type: 'string', isIndexed: true },
+                { name: 'is_active', type: 'number', isIndexed: true },
+                { name: 'modified', type: 'string', isIndexed: true },
+            ]
+        }),
     ]
 })
