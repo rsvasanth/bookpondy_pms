@@ -30,26 +30,29 @@ interface DashboardListWidgetProps {
 
 export function DashboardListWidget({ title, icon, items, isLoading, className, renderItemActions, onViewAll }: DashboardListWidgetProps) {
     return (
-        <Card className={cn("border border-border shadow-sm rounded-lg bg-card transition-all hover:shadow-md", className)}>
-            <CardHeader className="flex flex-row items-center justify-between pb-3 border-b border-border p-4 bg-muted/30">
+        <Card className={cn("border border-border/50 shadow-sm bg-card/50 backdrop-blur-sm overflow-hidden group hover:border-primary/30 transition-all duration-300", className)}>
+            <CardHeader className="flex flex-row items-center justify-between pb-3 border-b border-border/50 p-4 bg-muted/20">
                 <CardTitle className="text-[10px] font-black text-muted-foreground flex items-center gap-2 uppercase tracking-[0.2em]">
-                    <span className="w-5 h-5 rounded flex items-center justify-center bg-card border border-border text-foreground shadow-sm">
+                    <div className="w-6 h-6 rounded-md flex items-center justify-center bg-background border border-border/50 text-foreground shadow-sm group-hover:text-primary group-hover:border-primary/20 transition-all">
                         {icon}
-                    </span>
-                    {title} <span className="text-muted-foreground/50">({items.length})</span>
+                    </div>
+                    <span>{title}</span>
+                    <Badge variant="outline" className="ml-1 rounded-sm px-1 py-0 text-[9px] font-black bg-background/50 text-muted-foreground/70 border-border/50 shadow-none">
+                        {items.length}
+                    </Badge>
                 </CardTitle>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:bg-muted rounded-md">
+                <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:bg-muted rounded-md transition-colors">
                     <MoreHorizontal className="h-4 w-4" />
                 </Button>
             </CardHeader>
-            <CardContent className="p-4 pt-2">
+            <CardContent className="p-4 pt-1">
                 {isLoading ? (
-                    <div className="flex items-center justify-center py-12">
-                        <Loader2 className="h-6 w-6 animate-spin text-primary/20" />
+                    <div className="flex items-center justify-center py-10">
+                        <Loader2 className="h-5 w-5 animate-spin text-primary/30" />
                     </div>
                 ) : items.length === 0 ? (
-                    <div className="text-center py-12 text-muted-foreground/40 text-[10px] font-bold uppercase tracking-[0.3em]">
-                        NO RECORDS FOUND
+                    <div className="text-center py-10 text-muted-foreground/30 text-[9px] font-black uppercase tracking-[0.4em] italic">
+                        No records
                     </div>
                 ) : (
                     <div className="flex flex-col">
@@ -57,28 +60,27 @@ export function DashboardListWidget({ title, icon, items, isLoading, className, 
                             <div
                                 key={item.id}
                                 className={cn(
-                                    "flex items-center justify-between py-4 group",
-                                    index !== items.length - 1 && "border-b border-border/50"
+                                    "flex items-center justify-between py-2.5 group/item cursor-pointer",
+                                    index !== items.length - 1 && "border-b border-border/30"
                                 )}
                             >
                                 <div className="flex-1 min-w-0 pr-4">
-                                    <h4 className="text-xs font-black text-foreground truncate uppercase tracking-tight group-hover:text-primary transition-colors">{item.title}</h4>
-                                    <p className="text-[10px] text-muted-foreground truncate font-bold uppercase tracking-widest mt-0.5 opacity-70">{item.subtitle}</p>
+                                    <h4 className="text-[11px] font-black text-foreground truncate uppercase tracking-tight group-hover/item:text-primary transition-colors leading-tight">{item.title}</h4>
+                                    <p className="text-[9px] text-muted-foreground truncate font-bold uppercase tracking-widest mt-0.5 opacity-60 leading-none">{item.subtitle}</p>
                                 </div>
 
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-2.5">
                                     {item.status && (
                                         <Badge
-                                            variant="outline"
                                             className={cn(
-                                                "rounded-md px-2 py-0.5 text-[8px] font-black uppercase tracking-tight shadow-none border-none",
-                                                item.status === "Urgent" && "bg-rose-500/10 text-rose-500",
-                                                item.status === "High" && "bg-orange-500/10 text-orange-500",
-                                                item.status === "Open" && "bg-amber-500/10 text-amber-500",
-                                                item.status === "In Progress" && "bg-blue-500/10 text-blue-500",
-                                                item.status === "Resolved" && "bg-emerald-500/10 text-emerald-500",
-                                                item.status === "New" && "bg-indigo-500/10 text-indigo-500",
-                                                !["Urgent", "High", "Open", "In Progress", "Resolved", "New"].includes(item.status) && "bg-muted text-muted-foreground"
+                                                "rounded-sm px-1.5 py-0 text-[8px] font-black uppercase tracking-tight shadow-none border border-transparent transition-all",
+                                                item.status === "Urgent" && "bg-rose-500 text-white border-rose-600",
+                                                item.status === "High" && "bg-orange-500 text-white border-orange-600",
+                                                item.status === "Open" && "bg-amber-400 text-white border-amber-500",
+                                                item.status === "In Progress" && "bg-primary text-white border-primary/20",
+                                                item.status === "Resolved" && "bg-emerald-500 text-white border-emerald-600",
+                                                item.status === "New" && "bg-indigo-500 text-white border-indigo-600",
+                                                !["Urgent", "High", "Open", "In Progress", "Resolved", "New"].includes(item.status) && "bg-muted text-muted-foreground border-border/50"
                                             )}
                                         >
                                             {item.status}
@@ -86,13 +88,13 @@ export function DashboardListWidget({ title, icon, items, isLoading, className, 
                                     )}
 
                                     {item.value && (
-                                        <span className="text-sm font-bold text-foreground tabular-nums tracking-tight">
+                                        <span className="text-xs font-black text-foreground tabular-nums tracking-tighter leading-none">
                                             {item.value}
                                         </span>
                                     )}
 
                                     {renderItemActions && (
-                                        <div className="hidden sm:flex ml-2">
+                                        <div className="ml-1 opacity-0 group-hover/item:opacity-100 transition-opacity">
                                             {renderItemActions(item)}
                                         </div>
                                     )}
@@ -103,12 +105,13 @@ export function DashboardListWidget({ title, icon, items, isLoading, className, 
                 )}
                 <Button
                     variant="ghost"
-                    className="w-full mt-2 text-xs font-bold text-foreground hover:bg-muted h-9 gap-1"
+                    className="w-full mt-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary hover:bg-primary/5 h-8 gap-1.5 transition-all"
                     onClick={onViewAll}
                 >
-                    View All <ArrowRight className="h-3 w-3" />
+                    View All Activity <ArrowRight className="h-3 w-3" />
                 </Button>
             </CardContent>
+            <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary group-hover:w-full transition-all duration-500 opacity-30" />
         </Card>
     )
 }

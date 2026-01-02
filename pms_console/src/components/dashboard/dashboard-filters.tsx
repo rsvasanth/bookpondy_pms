@@ -37,62 +37,62 @@ export function DashboardFilters({
     onSearchChange
 }: DashboardFiltersProps) {
     return (
-        <div className={cn("flex flex-col md:flex-row items-end gap-3 bg-card p-3 rounded-xl border border-border shadow-sm mb-4", className)}>
+        <div className={cn("flex flex-col md:flex-row items-end gap-3 bg-card/40 backdrop-blur-md p-3 rounded-xl border border-border/50 shadow-sm mb-4", className)}>
 
-            <div className="flex flex-col gap-1 flex-1 w-full md:w-auto">
-                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Search</Label>
-                <div className="relative">
+            <div className="flex flex-col gap-1.5 flex-1 w-full md:w-auto">
+                <Label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Search Analytics</Label>
+                <div className="relative group">
                     <Input
                         type="text"
                         value={searchTerm}
                         onChange={(e) => onSearchChange?.(e.target.value)}
-                        placeholder="Search Guest, Reservation ID..."
-                        className="h-9 w-full rounded-lg bg-background border-input focus-visible:ring-brand-primary transition-all"
+                        placeholder="GUEST, REF ID, UNIT..."
+                        className="h-8 w-full rounded-md bg-background/50 border-border/50 focus-visible:ring-primary/20 text-[10px] font-bold uppercase tracking-widest placeholder:text-muted-foreground/40 transition-all pl-3"
                     />
                 </div>
             </div>
 
-            <div className="flex flex-col gap-1 w-full md:w-auto">
-                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Property</Label>
+            <div className="flex flex-col gap-1.5 w-full md:w-auto">
+                <Label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Property</Label>
                 <Select value={selectedProperty} onValueChange={onPropertyChange}>
-                    <SelectTrigger className="h-9 w-full md:w-[200px] rounded-lg bg-background border-input focus:ring-brand-primary">
-                        <SelectValue placeholder="All Properties" />
+                    <SelectTrigger className="h-8 w-full md:w-[180px] rounded-md bg-background/50 border-border/50 focus:ring-primary/20 text-[10px] font-bold uppercase tracking-wider">
+                        <SelectValue placeholder="ALL PROPERTIES" />
                     </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="ALL_PROPERTIES_SENTINEL">All Properties</SelectItem>
+                    <SelectContent className="bg-popover/90 backdrop-blur-lg border-border/50">
+                        <SelectItem value="ALL_PROPERTIES_SENTINEL" className="text-[10px] font-bold uppercase tracking-wider">ALL PROPERTIES</SelectItem>
                         {properties.map((p) => (
-                            <SelectItem key={p.name} value={p.name}>{p.property_name}</SelectItem>
+                            <SelectItem key={p.name} value={p.name} className="text-[10px] font-bold uppercase tracking-wider">{p.property_name}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
             </div>
 
-            <div className="flex flex-col gap-1 w-full md:w-auto">
-                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Date Range</Label>
+            <div className="flex flex-col gap-1.5 w-full md:w-auto">
+                <Label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Timeline</Label>
                 <Select value={selectedDateRange} onValueChange={onDateRangeChange}>
-                    <SelectTrigger className="h-9 w-full md:w-[160px] rounded-lg bg-background border-input focus:ring-brand-primary">
-                        <SelectValue placeholder="Select Range" />
+                    <SelectTrigger className="h-8 w-full md:w-[140px] rounded-md bg-background/50 border-border/50 focus:ring-primary/20 text-[10px] font-bold uppercase tracking-wider">
+                        <SelectValue placeholder="SELECT RANGE" />
                     </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="Today">Today</SelectItem>
-                        <SelectItem value="This Week">This Week</SelectItem>
-                        <SelectItem value="This Month">This Month</SelectItem>
+                    <SelectContent className="bg-popover/90 backdrop-blur-lg border-border/50">
+                        <SelectItem value="Today" className="text-[10px] font-bold uppercase tracking-wider">TODAY</SelectItem>
+                        <SelectItem value="This Week" className="text-[10px] font-bold uppercase tracking-wider">THIS WEEK</SelectItem>
+                        <SelectItem value="This Month" className="text-[10px] font-bold uppercase tracking-wider">THIS MONTH</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
 
-            <div className="flex flex-col gap-1 w-full md:w-auto">
-                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Status</Label>
+            <div className="flex flex-col gap-1.5 w-full md:w-auto">
+                <Label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Status</Label>
                 <Select value={selectedStatus} onValueChange={onStatusChange}>
-                    <SelectTrigger className="h-9 w-full md:w-[160px] rounded-lg bg-background border-input focus:ring-brand-primary">
-                        <SelectValue placeholder="Select Status" />
+                    <SelectTrigger className="h-8 w-full md:w-[140px] rounded-md bg-background/50 border-border/50 focus:ring-primary/20 text-[10px] font-bold uppercase tracking-wider">
+                        <SelectValue placeholder="STATUS" />
                     </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="All Status">All Status</SelectItem>
-                        <SelectItem value="Confirmed">Confirmed</SelectItem>
-                        <SelectItem value="Checked-In">Checked-In</SelectItem>
-                        <SelectItem value="Checked-Out">Checked-Out</SelectItem>
-                        <SelectItem value="Cancelled">Cancelled</SelectItem>
+                    <SelectContent className="bg-popover/90 backdrop-blur-lg border-border/50">
+                        <SelectItem value="All Status" className="text-[10px] font-bold uppercase tracking-wider">ALL STATUS</SelectItem>
+                        <SelectItem value="Confirmed" className="text-[10px] font-bold uppercase tracking-wider">CONFIRMED</SelectItem>
+                        <SelectItem value="Checked-In" className="text-[10px] font-bold uppercase tracking-wider">CHECKED-IN</SelectItem>
+                        <SelectItem value="Checked-Out" className="text-[10px] font-bold uppercase tracking-wider">CHECKED-OUT</SelectItem>
+                        <SelectItem value="Cancelled" className="text-[10px] font-bold uppercase tracking-wider">CANCELLED</SelectItem>
                     </SelectContent>
                 </Select>
             </div>

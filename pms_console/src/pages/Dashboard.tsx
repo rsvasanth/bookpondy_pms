@@ -17,7 +17,8 @@ import {
   FileText,
   Banknote,
   Users,
-  Activity
+  Activity,
+  Plus
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -170,14 +171,25 @@ export default function DashboardPage() {
   )
 
   return (
-    <div className="flex flex-col gap-8 pb-12">
-      {/* Header Section */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-2">
+    <div className="flex flex-col gap-6 pb-12">
+      {/* Header Area */}
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between px-2">
         <div className="space-y-1">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground uppercase">Property Dashboard</h1>
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
-            Live overview of your property performance and operations.
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
+              <Activity className="h-4 w-4 text-primary" />
+            </div>
+            <h1 className="text-xl font-black tracking-tight text-foreground uppercase">Property Insights</h1>
+          </div>
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] decoration-primary/30 underline-offset-4 decoration-2">
+            Live overview of property performance & operations
           </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button className="h-9 px-4 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-[10px] uppercase tracking-[0.2em] gap-2 rounded-md shadow-lg shadow-primary/10 transition-all active:scale-95">
+            <Plus className="h-3.5 w-3.5" /> NEW RESERVATION
+          </Button>
         </div>
       </div>
 
