@@ -22,7 +22,8 @@ export const getCollectionName = (doctype: string) => {
         'Booking Inquiry': 'inquiries',
         'PMS Item': 'pms_items',
         'PMS Stock Entry': 'pms_stock_entries',
-        'PMS Asset': 'pms_assets'
+        'PMS Asset': 'pms_assets',
+        'Channel Config': 'channel_configs'
     };
     return mapping[doctype] || doctype.toLowerCase().replace(/ /g, '_');
 };
@@ -33,7 +34,20 @@ export function useLocalDocList(doctype: string, mangoQuery: any = {}) {
 
     useEffect(() => {
         const tableName = getCollectionName(doctype);
-        const collection = database.get(tableName as any);
+        let collection: any = null;
+        try {
+            collection = database.get(tableName as any);
+        } catch (e) {
+            console.error(`WatermelonDB: Collection ${tableName} not found`, e);
+            setIsLoading(false);
+            return;
+        }
+
+        if (!collection) {
+            console.error(`WatermelonDB: Collection ${tableName} is null`);
+            setIsLoading(false);
+            return;
+        }
 
         // Basic Mango-to-Watermelon query mapping
         const clauses: any[] = [];

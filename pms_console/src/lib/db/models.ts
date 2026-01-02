@@ -212,8 +212,17 @@ export class Outbox extends Model {
     @text('doctype') doctype!: string
     @text('record_id') record_id!: string
     @text('operation') operation!: string
-    @text('payload') payload!: string // JSON string
+    @text('payload') payload!: string
     @field('created_at') created_at!: number
+}
+
+export class ChannelConfig extends Model {
+    static table = 'channel_configs'
+
+    @text('channel_name') channel_name!: string
+    @text('channel_type') channel_type!: string
+    @field('is_active') is_active!: number
+    @text('modified') modified!: string
 }
 
 export const models = [
@@ -233,5 +242,6 @@ export const models = [
     PMSItem,
     PMSStockEntry,
     PMSAsset,
-    Outbox
+    Outbox,
+    ChannelConfig
 ]

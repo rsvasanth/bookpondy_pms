@@ -37,7 +37,8 @@ export const DOCTYPES = [
     'Booking Inquiry',
     'PMS Item',
     'PMS Stock Entry',
-    'PMS Asset'
+    'PMS Asset',
+    'Channel Config'
 ];
 
 console.log('WatermelonDB: Initialized');
