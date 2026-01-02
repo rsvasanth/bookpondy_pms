@@ -121,7 +121,6 @@ export function AddBookingSheet({ open, onOpenChange, onSuccess }: AddBookingShe
         special_requests: specialRequests,
         room_rate_per_night: baseRate,
         reservation_status: "Confirmed",
-        reservation_status: "Confirmed",
         reservation_source: bookingSource,
         source_channel: bookingSource === "OTA" ? selectedChannel : undefined,
         marketplace_booking_id: bookingSource === "OTA" ? otaBookingId : undefined

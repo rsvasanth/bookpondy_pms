@@ -52,7 +52,7 @@ const columns: ColumnDef<any>[] = [
           </div>
           <div className="flex flex-col">
             <span className="font-black text-foreground text-xs uppercase tracking-tight">{b.guest_name}</span>
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">#{b.name.split("-").pop()}</span>
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">#{(b.name || b.id || "").split("-").pop()}</span>
           </div>
         </div>
       )

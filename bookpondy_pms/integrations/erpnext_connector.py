@@ -4,7 +4,7 @@ from frappe import _
 
 class ERPNextConnector:
     def __init__(self):
-        self.settings = frappe.get_single('ERPNext Settings')
+        self.settings = frappe.get_single('PMS ERPNext Settings')
         self.url = self.settings.erpnext_url.rstrip('/')
         self.api_key = self.settings.api_key
         self.api_secret = self.settings.get_password('api_secret')

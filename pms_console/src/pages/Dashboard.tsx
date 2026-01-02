@@ -120,7 +120,7 @@ export default function DashboardPage() {
     raw: e
   })) || []
   // 5. Invoices
-  const { data: invoices, isLoading: invoiceLoading } = useLocalDocList("Sales Invoice", {
+  const { data: invoices, isLoading: invoiceLoading } = useLocalDocList("Folio", {
     selector: {
       status: { $in: ["Draft", "Unpaid", "Overdue"] }
     },

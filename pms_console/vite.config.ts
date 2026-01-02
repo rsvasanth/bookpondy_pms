@@ -7,7 +7,18 @@ import proxyOptions from './proxyOptions';
 // https://vitejs.dev/config/
 export default defineConfig({
 	base: '/',
-	plugins: [react(), tailwindcss()],
+	plugins: [
+		react({
+			babel: {
+				plugins: [
+					['@babel/plugin-proposal-decorators', { legacy: true }],
+					['@babel/plugin-transform-class-properties', { loose: true }],
+					'babel-plugin-transform-typescript-metadata'
+				],
+			},
+		}),
+		tailwindcss()
+	],
 	server: {
 		port: 8080,
 		host: '0.0.0.0',

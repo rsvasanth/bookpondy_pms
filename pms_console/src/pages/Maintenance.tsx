@@ -116,296 +116,256 @@ export default function MaintenancePage() {
     }
 
     return (
-        <>
-            <div className="flex flex-col gap-8">
-                {/* Header */}
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="space-y-1">
-                        <h1 className="text-xl font-bold tracking-tight text-foreground uppercase">Maintenance & Engineering</h1>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                            Track facility issues, repairs, and vendor assignments.
-                        </p>
-                    </div>
+        <div className="flex flex-col gap-6">
+            {/* Header Area */}
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                        <Select value={propertyId} onValueChange={setPropertyId}>
-                            <SelectTrigger className="w-[180px] h-8 rounded-lg bg-card border-border shadow-sm text-[10px] font-bold uppercase tracking-wider">
-                                <SelectValue placeholder="All Properties" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All Properties</SelectItem>
-                                {properties?.map(p => (
-                                    <SelectItem key={p.name} value={p.name}>{p.property_name}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-
-                        <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-                            <SelectTrigger className="w-[150px] h-8 rounded-lg bg-card border-border shadow-sm text-[10px] font-bold uppercase tracking-wider">
-                                <SelectValue placeholder="All Priorities" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All Priorities</SelectItem>
-                                <SelectItem value="Critical">Critical</SelectItem>
-                                <SelectItem value="High">High</SelectItem>
-                                <SelectItem value="Medium">Medium</SelectItem>
-                                <SelectItem value="Low">Low</SelectItem>
-                            </SelectContent>
-                        </Select>
-
-                        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-                            <DialogTrigger asChild>
-                                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-8 px-4 font-bold text-[10px] uppercase tracking-widest gap-2 shadow-sm">
-                                    <Plus className="h-4 w-4" /> Log Issue
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent className="sm:max-w-[425px] rounded-lg border-border bg-card">
-                                <DialogHeader className="space-y-2">
-                                    <DialogTitle className="text-lg font-bold uppercase tracking-tight">Log Maintenance Issue</DialogTitle>
-                                    <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                                        Report a new maintenance issue for a property unit.
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <div className="grid gap-6 py-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="property" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Property</Label>
-                                        <Select
-                                            value={newTicket.property_link}
-                                            onValueChange={(v) => setNewTicket({ ...newTicket, property_link: v, unit: "" })}
-                                        >
-                                            <SelectTrigger className="rounded-lg border-border bg-card h-10 text-xs font-bold uppercase tracking-wider">
-                                                <SelectValue placeholder="Select Property" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {properties?.map(p => (
-                                                    <SelectItem key={p.name} value={p.name}>{p.property_name}</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="unit" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Unit</Label>
-                                        <Select
-                                            value={newTicket.unit}
-                                            onValueChange={(v) => setNewTicket({ ...newTicket, unit: v })}
-                                            disabled={!newTicket.property_link}
-                                        >
-                                            <SelectTrigger className="rounded-lg border-border bg-card h-10 text-xs font-bold uppercase tracking-wider">
-                                                <SelectValue placeholder={newTicket.property_link ? "Select Unit" : "First select a property"} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {units?.map(u => (
-                                                    <SelectItem key={u.name} value={u.name}>Unit {u.unit_no}</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="title" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Issue Title</Label>
-                                        <Input
-                                            id="title"
-                                            placeholder="E.G. AC NOT COOLING"
-                                            className="rounded-lg border-border bg-card h-10 text-xs font-bold uppercase tracking-wider placeholder:opacity-50"
-                                            value={newTicket.issue_title}
-                                            onChange={(e) => setNewTicket({ ...newTicket, issue_title: e.target.value })}
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="priority" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Priority</Label>
-                                        <Select
-                                            value={newTicket.priority}
-                                            onValueChange={(v) => setNewTicket({ ...newTicket, priority: v })}
-                                        >
-                                            <SelectTrigger className="rounded-lg border-border bg-card h-10 text-xs font-bold uppercase tracking-wider">
-                                                <SelectValue placeholder="Select Priority" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="Low">Low</SelectItem>
-                                                <SelectItem value="Medium">Medium</SelectItem>
-                                                <SelectItem value="High">High</SelectItem>
-                                                <SelectItem value="Critical">Critical</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="desc" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Description</Label>
-                                        <Textarea
-                                            id="desc"
-                                            placeholder="DETAILED DESCRIPTION OF THE ISSUE..."
-                                            className="rounded-lg border-border bg-card min-h-[100px] text-xs font-bold uppercase tracking-wider placeholder:opacity-50"
-                                            value={newTicket.description}
-                                            onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
-                                        />
-                                    </div>
-                                </div>
-                                <DialogFooter>
-                                    <Button
-                                        onClick={handleCreateTicket}
-                                        disabled={creating}
-                                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-10 font-bold text-[10px] uppercase tracking-widest shadow-sm"
-                                    >
-                                        {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Log Maintenance Issue"}
-                                    </Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
-                    </div>
-                </div>
-
-                {/* Stat Cards */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden hover:scale-[1.01] transition-all">
-                        <CardContent className="p-4">
-                            <div className="flex items-center justify-between mb-2">
-                                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Open Issues</span>
-                                <div className="h-6 w-6 rounded-md bg-primary/10 text-primary flex items-center justify-center border border-border">
-                                    <AlertCircle className="h-3.5 w-3.5" />
-                                </div>
-                            </div>
-                            <p className="text-2xl font-black text-foreground tracking-tight">{stats.open}</p>
-                        </CardContent>
-                    </Card>
-                    <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden hover:scale-[1.01] transition-all">
-                        <CardContent className="p-4">
-                            <div className="flex items-center justify-between mb-2">
-                                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">High Priority</span>
-                                <div className="h-6 w-6 rounded-md bg-rose-500/10 text-rose-500 flex items-center justify-center border border-border">
-                                    <div className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" />
-                                </div>
-                            </div>
-                            <p className="text-2xl font-black text-foreground tracking-tight">{stats.critical}</p>
-                        </CardContent>
-                    </Card>
-                    <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden hover:scale-[1.01] transition-all">
-                        <CardContent className="p-4">
-                            <div className="flex items-center justify-between mb-2">
-                                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">In Progress</span>
-                                <div className="h-6 w-6 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center border border-border">
-                                    <Clock className="h-3.5 w-3.5" />
-                                </div>
-                            </div>
-                            <p className="text-2xl font-black text-foreground tracking-tight">{stats.inProgress}</p>
-                        </CardContent>
-                    </Card>
-                    <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden hover:scale-[1.01] transition-all">
-                        <CardContent className="p-4">
-                            <div className="flex items-center justify-between mb-2">
-                                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Resolved Today</span>
-                                <div className="h-6 w-6 rounded-md bg-emerald-500/10 text-emerald-500 flex items-center justify-center border border-border">
-                                    <CheckCircle2 className="h-3.5 w-3.5" />
-                                </div>
-                            </div>
-                            <p className="text-2xl font-black text-foreground tracking-tight">{stats.resolved}</p>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                {/* Status Lanes */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 overflow-x-auto pb-6">
-                    {statuses.map((status) => (
-                        <div key={status} className="flex flex-col gap-4 min-w-[280px]">
-                            <div className="flex items-center justify-between px-3 py-2 bg-muted/50 rounded-lg border border-border">
-                                <div className="flex items-center gap-2">
-                                    <div className={cn(
-                                        "h-2 w-2 rounded-full",
-                                        status === "Open" ? "bg-primary" :
-                                            status === "In Progress" ? "bg-blue-500" :
-                                                status === "Resolved" ? "bg-emerald-500" : "bg-muted-foreground"
-                                    )} />
-                                    <h3 className="font-bold text-[10px] uppercase tracking-[0.2em] text-foreground">{status}</h3>
-                                </div>
-                                <Badge variant="outline" className="rounded-md px-1.5 py-0 text-[10px] font-black bg-card text-muted-foreground border-border shadow-sm">
-                                    {tickets?.filter(t => t.ticket_status === status).length || 0}
-                                </Badge>
-                            </div>
-
-                            <div className="flex flex-col gap-3 min-h-[500px] bg-muted/20 p-2 rounded-lg border border-dashed border-border">
-                                {tickets?.filter(t => t.ticket_status === status).map((ticket) => (
-                                    <Card key={ticket.name} className="border border-border shadow-sm rounded-lg hover:shadow-md transition-all group bg-card overflow-hidden">
-                                        <CardContent className="p-3 space-y-3">
-                                            <div className="flex justify-between items-start">
-                                                <Badge variant="outline" className={cn("text-[8px] font-black uppercase rounded-md tracking-tight px-2 py-0.5 border-none shadow-none", getPriorityColor(ticket.priority))}>
-                                                    {ticket.priority}
-                                                </Badge>
-                                                <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">#{ticket.name.split("-").pop()}</span>
-                                            </div>
-
-                                            <div className="space-y-1">
-                                                <h4 className="font-bold text-xs leading-snug text-foreground group-hover:text-primary transition-colors uppercase tracking-tight line-clamp-2">{ticket.issue_title}</h4>
-                                                <div className="flex items-center gap-1.5 text-muted-foreground">
-                                                    <MapPin className="h-3 w-3" />
-                                                    <span className="text-[9px] font-bold uppercase tracking-widest">{ticket.unit}</span>
-                                                </div>
-                                            </div>
-
-                                            <div className="flex items-center justify-between py-2 border-t border-border">
-                                                <div className="flex items-center gap-2 text-muted-foreground">
-                                                    <Wrench className="h-3 w-3" />
-                                                    <span className="text-[9px] font-bold uppercase tracking-widest truncate max-w-[120px]">
-                                                        {ticket.assigned_vendor || "UNASSIGNED"}
-                                                    </span>
-                                                </div>
-                                                {ticket.actual_cost > 0 && (
-                                                    <span className="text-[9px] font-black text-foreground bg-muted px-2 py-0.5 rounded-md border border-border">
-                                                        ₹{ticket.actual_cost}
-                                                    </span>
-                                                )}
-                                            </div>
-
-                                            <div className="grid grid-cols-2 gap-2">
-                                                {status === "Open" && (
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="h-7 text-[9px] font-black uppercase rounded-md gap-1.5 border-blue-500/20 text-blue-500 hover:bg-blue-500/10 hover:text-blue-500 transition-colors"
-                                                        onClick={() => updateStatus(ticket.name, "In Progress")}
-                                                    >
-                                                        Start <ArrowRight className="h-3 w-3" />
-                                                    </Button>
-                                                )}
-                                                {status === "In Progress" && (
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="h-7 text-[9px] font-black uppercase rounded-md gap-1.5 border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/10 hover:text-emerald-500 transition-colors"
-                                                        onClick={() => updateStatus(ticket.name, "Resolved")}
-                                                    >
-                                                        Resolve <CheckCircle2 className="h-3 w-3" />
-                                                    </Button>
-                                                )}
-                                                {(status === "Resolved" || status === "Open") && (
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="h-7 text-[9px] font-black uppercase rounded-md hover:bg-muted text-muted-foreground border-border"
-                                                    >
-                                                        Details
-                                                    </Button>
-                                                )}
-                                                {status === "Resolved" && (
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="h-7 text-[9px] font-black uppercase rounded-md gap-1.5 border-border text-foreground hover:bg-muted"
-                                                        onClick={() => updateStatus(ticket.name, "Closed")}
-                                                    >
-                                                        Archive
-                                                    </Button>
-                                                )}
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                ))}
-                                {tickets?.filter(t => t.ticket_status === status).length === 0 && (
-                                    <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground/30">
-                                        <Wrench className="h-10 w-10 mb-2 stroke-[1.5px]" />
-                                        <p className="text-[10px] uppercase font-bold tracking-[0.3em]">All Clear</p>
-                                    </div>
-                                )}
-                            </div>
+                        <div className="h-8 w-8 rounded-lg bg-orange-500/10 flex items-center justify-center border border-orange-500/20">
+                            <Wrench className="h-4 w-4 text-orange-500" />
                         </div>
-                    ))}
+                        <h1 className="text-xl font-black tracking-tight text-foreground uppercase">Maintenance</h1>
+                    </div>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                        Facilities, Engineering & ticket management
+                    </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                    <div className="flex items-center bg-card rounded-md border border-border shadow-sm p-0.5">
+                        <Select value={propertyId} onValueChange={setPropertyId}>
+                            <SelectTrigger className="w-[160px] h-8 border-none bg-transparent shadow-none text-[9px] font-bold uppercase tracking-wider focus:ring-0">
+                                <SelectValue placeholder="ALL PROPERTIES" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all" className="text-[9px] font-bold uppercase">ALL PROPERTIES</SelectItem>
+                                {properties?.map(p => (
+                                    <SelectItem key={p.name} value={p.name} className="text-[9px] font-bold uppercase">{p.property_name}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        <div className="w-[1px] h-4 bg-border/50" />
+                        <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+                            <SelectTrigger className="w-[140px] h-8 border-none bg-transparent shadow-none text-[9px] font-bold uppercase tracking-wider focus:ring-0">
+                                <SelectValue placeholder="ALL PRIORITIES" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all" className="text-[9px] font-bold uppercase">ALL PRIORITIES</SelectItem>
+                                <SelectItem value="Critical" className="text-[9px] font-bold uppercase">CRITICAL</SelectItem>
+                                <SelectItem value="High" className="text-[9px] font-bold uppercase">HIGH PRIORITY</SelectItem>
+                                <SelectItem value="Medium" className="text-[9px] font-bold uppercase">MEDIUM</SelectItem>
+                                <SelectItem value="Low" className="text-[9px] font-bold uppercase">LOW</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+                        <DialogTrigger asChild>
+                            <Button className="h-9 px-4 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-[10px] uppercase tracking-[0.2em] gap-2 rounded-md shadow-lg shadow-primary/10 transition-all active:scale-95">
+                                <Plus className="h-3.5 w-3.5" /> Log Ticket
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px] rounded-lg border-border bg-card">
+                            <DialogHeader className="space-y-2">
+                                <DialogTitle className="text-lg font-bold uppercase tracking-tight">Log Maintenance Issue</DialogTitle>
+                                <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                                    Report a new maintenance issue for a property unit.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="grid gap-6 py-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="property" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Property</Label>
+                                    <Select
+                                        value={newTicket.property_link}
+                                        onValueChange={(v) => setNewTicket({ ...newTicket, property_link: v, unit: "" })}
+                                    >
+                                        <SelectTrigger className="rounded-lg border-border bg-card h-10 text-xs font-bold uppercase tracking-wider">
+                                            <SelectValue placeholder="Select Property" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {properties?.map(p => (
+                                                <SelectItem key={p.name} value={p.name}>{p.property_name}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="unit" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Unit</Label>
+                                    <Select
+                                        value={newTicket.unit}
+                                        onValueChange={(v) => setNewTicket({ ...newTicket, unit: v })}
+                                        disabled={!newTicket.property_link}
+                                    >
+                                        <SelectTrigger className="rounded-lg border-border bg-card h-10 text-xs font-bold uppercase tracking-wider">
+                                            <SelectValue placeholder={newTicket.property_link ? "Select Unit" : "First select a property"} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {units?.map(u => (
+                                                <SelectItem key={u.name} value={u.name}>Unit {u.unit_no}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="title" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Issue Title</Label>
+                                    <Input
+                                        id="title"
+                                        placeholder="E.G. AC NOT COOLING"
+                                        className="rounded-lg border-border bg-card h-10 text-xs font-bold uppercase tracking-wider placeholder:opacity-50"
+                                        value={newTicket.issue_title}
+                                        onChange={(e) => setNewTicket({ ...newTicket, issue_title: e.target.value })}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="priority" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Priority</Label>
+                                    <Select
+                                        value={newTicket.priority}
+                                        onValueChange={(v) => setNewTicket({ ...newTicket, priority: v })}
+                                    >
+                                        <SelectTrigger className="rounded-lg border-border bg-card h-10 text-xs font-bold uppercase tracking-wider">
+                                            <SelectValue placeholder="Select Priority" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Low">Low</SelectItem>
+                                            <SelectItem value="Medium">Medium</SelectItem>
+                                            <SelectItem value="High">High</SelectItem>
+                                            <SelectItem value="Critical">Critical</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="desc" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Description</Label>
+                                    <Textarea
+                                        id="desc"
+                                        placeholder="DETAILED DESCRIPTION OF THE ISSUE..."
+                                        className="rounded-lg border-border bg-card min-h-[100px] text-xs font-bold uppercase tracking-wider placeholder:opacity-50"
+                                        value={newTicket.description}
+                                        onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+                            <DialogFooter>
+                                <Button
+                                    onClick={handleCreateTicket}
+                                    disabled={creating}
+                                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-10 font-bold text-[10px] uppercase tracking-widest shadow-sm"
+                                >
+                                    {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Log Maintenance Issue"}
+                                </Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                 </div>
             </div>
-        </>
+
+            {/* Premium Stats Grid */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                    { label: "Active Tickets", value: stats.open + stats.inProgress, icon: AlertCircle, color: "text-orange-500", bg: "bg-orange-500/10" },
+                    { label: "Critical Issues", value: stats.critical, icon: Wrench, color: "text-rose-500", bg: "bg-rose-500/10" },
+                    { label: "Resolved Today", value: stats.resolved, icon: CheckCircle2, color: "text-emerald-500", bg: "bg-emerald-500/10" },
+                    { label: "In Progress", value: stats.inProgress, icon: Clock, color: "text-blue-500", bg: "bg-blue-500/10" },
+                ].map((stat) => (
+                    <Card key={stat.label} className="border-border/50 shadow-sm bg-card/50 backdrop-blur-sm group hover:border-primary/30 transition-all">
+                        <CardContent className="p-4 relative overflow-hidden">
+                            <div className="flex items-center justify-between mb-3">
+                                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground group-hover:text-primary transition-colors">{stat.label}</span>
+                                <div className={cn("h-7 w-7 rounded-md flex items-center justify-center border border-border/50", stat.bg, stat.color)}>
+                                    <stat.icon className="h-3.5 w-3.5" />
+                                </div>
+                            </div>
+                            <p className="text-2xl font-black text-foreground tracking-tight">{stat.value}</p>
+                            <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary group-hover:w-full transition-all duration-500" />
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+
+            {/* Status Lanes */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 overflow-x-auto pb-6">
+                {statuses.map((status) => (
+                    <div key={status} className="flex flex-col gap-4 min-w-[280px]">
+                        <div className="flex items-center justify-between px-3 py-2 bg-muted/50 rounded-lg border border-border">
+                            <div className="flex items-center gap-2">
+                                <div className={cn(
+                                    "h-2 w-2 rounded-full",
+                                    status === "Open" ? "bg-primary" :
+                                        status === "In Progress" ? "bg-blue-500" :
+                                            status === "Resolved" ? "bg-emerald-500" : "bg-muted-foreground"
+                                )} />
+                                <h3 className="font-bold text-[10px] uppercase tracking-[0.2em] text-foreground">{status}</h3>
+                            </div>
+                            <Badge variant="outline" className="rounded-md px-1.5 py-0 text-[10px] font-black bg-card text-muted-foreground border-border shadow-sm">
+                                {tickets?.filter(t => t.ticket_status === status).length || 0}
+                            </Badge>
+                        </div>
+
+                        <div className="flex flex-col gap-3 min-h-[500px] bg-muted/5 p-2 rounded-lg border border-dashed border-border/80">
+                            {tickets?.filter(t => t.ticket_status === status).map((ticket) => (
+                                <Card key={ticket.name} className="border-border shadow-sm rounded-md hover:shadow-lg hover:border-primary/20 transition-all group bg-card overflow-hidden cursor-pointer active:scale-[0.98]">
+                                    <CardContent className="p-4 space-y-4">
+                                        <div className="flex justify-between items-start">
+                                            <Badge className={cn("text-[8px] font-black uppercase rounded-sm tracking-[0.15em] px-2 py-0.5 border-none shadow-none", getPriorityColor(ticket.priority))}>
+                                                {ticket.priority}
+                                            </Badge>
+                                            <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-40">#{(ticket.name || ticket.id || "").split("-").pop()}</span>
+                                        </div>
+
+                                        <div className="space-y-1.5">
+                                            <h4 className="font-black text-xs leading-snug text-foreground group-hover:text-primary transition-colors uppercase tracking-tight line-clamp-2">{ticket.issue_title}</h4>
+                                            <div className="flex items-center gap-1.5 text-muted-foreground bg-muted/30 px-2 py-1 rounded-sm w-fit border border-border/30">
+                                                <MapPin className="h-2.5 w-2.5" />
+                                                <span className="text-[8px] font-bold uppercase tracking-widest">{ticket.unit}</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center justify-between py-3 border-t border-border/50">
+                                            <div className="flex items-center gap-2 text-muted-foreground">
+                                                <div className="h-6 w-6 rounded-full bg-muted/50 flex items-center justify-center border border-border">
+                                                    <Wrench className="h-3 w-3" />
+                                                </div>
+                                                <span className="text-[9px] font-bold uppercase tracking-widest truncate max-w-[100px]">
+                                                    {ticket.assigned_vendor || "UNASSIGNED"}
+                                                </span>
+                                            </div>
+                                            {ticket.actual_cost > 0 && (
+                                                <span className="text-[9px] font-black text-foreground bg-primary/5 px-2 py-0.5 rounded-sm border border-primary/10">
+                                                    ₹{ticket.actual_cost}
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <div className="flex gap-2">
+                                            {status === "Open" && (
+                                                <Button
+                                                    onClick={() => updateStatus(ticket.name, "In Progress")}
+                                                    className="flex-1 h-8 bg-muted hover:bg-primary hover:text-white border border-border text-muted-foreground font-black text-[9px] uppercase tracking-[0.2em] transition-all gap-1.5"
+                                                >
+                                                    Start <ArrowRight className="h-3 w-3" />
+                                                </Button>
+                                            )}
+                                            {status === "In Progress" && (
+                                                <Button
+                                                    onClick={() => updateStatus(ticket.name, "Resolved")}
+                                                    className="flex-1 h-8 bg-muted hover:bg-emerald-500 hover:text-white border border-border text-muted-foreground font-black text-[9px] uppercase tracking-[0.2em] transition-all gap-1.5"
+                                                >
+                                                    Resolve <CheckCircle2 className="h-3 w-3" />
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                            {tickets?.filter(t => t.ticket_status === status).length === 0 && (
+                                <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground/20">
+                                    <Wrench className="h-10 w-10 mb-2 stroke-[1px]" />
+                                    <p className="text-[9px] uppercase font-black tracking-[0.4em]">Clear</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
     )
 }

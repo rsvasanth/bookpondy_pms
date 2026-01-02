@@ -1,62 +1,43 @@
-import { createRxDatabase, addRxPlugin } from 'rxdb';
-import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
-import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
-import { RxDBUpdatePlugin } from 'rxdb/plugins/update';
-import {
-    ReservationSchema,
-    PropertySchema,
-    InquirySchema,
-    HousekeepingSchema,
-    MaintenanceSchema,
-    InvoiceSchema,
-    UnitSchema,
-    FolioSchema,
-    GuestSchema,
-    StaffSchema,
-    CommunicationSchema,
-    PropertyPortfolioSchema,
-    OutboxSchema,
-    UnitCategorySchema,
-    GuestQuerySchema
-} from './schemas';
+import { Database } from '@nozbe/watermelondb';
+import LokiJSAdapter from '@nozbe/watermelondb/adapters/lokijs';
+import schema from './schema';
+import * as Models from './models';
 
-// Register plugins
-addRxPlugin(RxDBQueryBuilderPlugin);
-addRxPlugin(RxDBUpdatePlugin);
+const adapter = new LokiJSAdapter({
+    schema,
+    useWebWorker: false,
+    useIncrementalIndexedDB: true,
+    onQuotaExceeded: (error) => {
+        console.error('Database quota exceeded:', error);
+    },
+});
 
-let dbPromise: Promise<any> | null = null;
+export const database = new Database({
+    adapter,
+    modelClasses: Models.models,
+});
 
-const create = async () => {
-    const db = await createRxDatabase({
-        name: 'pms_console_db_v11',
-        storage: getRxStorageDexie(),
-    });
-
-    await db.addCollections({
-        reservations: { schema: ReservationSchema },
-        properties: { schema: PropertySchema },
-        inquiries: { schema: InquirySchema },
-        housekeeping: { schema: HousekeepingSchema },
-        maintenance: { schema: MaintenanceSchema },
-        invoices: { schema: InvoiceSchema },
-        units: { schema: UnitSchema },
-        folios: { schema: FolioSchema },
-        guests: { schema: GuestSchema },
-        staff: { schema: StaffSchema },
-        communications: { schema: CommunicationSchema },
-        portfolios: { schema: PropertyPortfolioSchema },
-        outbox: { schema: OutboxSchema },
-        unit_categories: { schema: UnitCategorySchema },
-        guest_queries: { schema: GuestQuerySchema },
-    });
-
-    console.log('RxDB: Database initialized');
-    return db;
+export const getDB = async () => {
+    return database;
 };
 
-export const getDB = () => {
-    if (!dbPromise) {
-        dbPromise = create();
-    }
-    return dbPromise;
-};
+export const DOCTYPES = [
+    'Reservation',
+    'Property',
+    'Housekeeping Task',
+    'Maintenance Ticket',
+    'Folio',
+    'Unit',
+    'Guest',
+    'Staff',
+    'Guest Communication',
+    'Property Portfolio',
+    'Unit Category',
+    'Guest Query',
+    'Booking Inquiry',
+    'PMS Item',
+    'PMS Stock Entry',
+    'PMS Asset'
+];
+
+console.log('WatermelonDB: Initialized');

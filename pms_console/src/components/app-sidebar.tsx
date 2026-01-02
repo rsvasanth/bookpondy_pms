@@ -51,7 +51,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useFrappeAuth } from "frappe-react-sdk"
+import { useFrappeAuth, useFrappeGetDocList } from "frappe-react-sdk"
 import { useLocalDocList } from "@/hooks/use-local-data"
 import { useAuthStore } from "@/stores/authStore"
 
@@ -88,7 +88,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuthStore()
 
   const { data: propertiesList } = useLocalDocList("Property")
-  const { data: portfoliosList } = useLocalDocList("Property Portfolio")
+  const { data: portfoliosList } = useFrappeGetDocList("Property Portfolio", {
+    fields: ["name", "portfolio_name"],
+    limit: 100
+  })
 
   // Set initial property when list loads
   const [selectedProperty, setSelectedProperty] = React.useState<{ name: string, property_name: string } | null>(null)

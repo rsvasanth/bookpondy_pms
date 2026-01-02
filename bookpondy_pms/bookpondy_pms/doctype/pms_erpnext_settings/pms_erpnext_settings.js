@@ -1,7 +1,7 @@
-frappe.ui.form.on('ERPNext Settings', {
+frappe.ui.form.on('PMS ERPNext Settings', {
     test_connection_btn: function (frm) {
         frappe.call({
-            method: "bookpondy_pms.bookpondy_pms.doctype.erpnext_settings.erpnext_settings.test_connection",
+            method: "bookpondy_pms.doctype.pms_erpnext_settings.pms_erpnext_settings.test_connection",
             callback: function (r) {
                 if (r.message.status === "success") {
                     frappe.msgprint({

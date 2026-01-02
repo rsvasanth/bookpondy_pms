@@ -1,7 +1,7 @@
 import frappe
 from frappe.model.document import Document
 
-class ERNextSettings(Document):
+class PMSERPNextSettings(Document):
     pass
 
 @frappe.whitelist()

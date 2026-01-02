@@ -1,9 +1,11 @@
+"use client"
+
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { useFrappeGetDocList, useFrappeCreateDoc } from "frappe-react-sdk"
+import { useLocalDocList, useLocalCreate, useLocalMutation } from "@/hooks/use-local-data"
 import {
     Package,
     Boxes,
@@ -15,16 +17,18 @@ import {
     Search,
     Filter,
     MoreHorizontal,
-    Monitor,
     Smartphone,
-    Tool,
     Wrench,
     Tag,
     Clock,
     FileText,
     TrendingDown,
     TrendingUp,
-    Table as TableIcon
+    Table as TableIcon,
+    ChevronRight,
+    Eye,
+    Pencil,
+    Activity
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -41,38 +45,37 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet"
 
 export default function InventoryPage() {
     const [activeTab, setActiveTab] = useState("items")
     const [searchQuery, setSearchQuery] = useState("")
 
-    // Dialog States
+    // Dialog & UI States
     const [isAddItemOpen, setIsAddItemOpen] = useState(false)
+    const [isEditItemOpen, setIsEditItemOpen] = useState(false)
     const [isStockEntryOpen, setIsStockEntryOpen] = useState(false)
-    const [selectedItemForStock, setSelectedItemForStock] = useState<string | null>(null)
+    const [viewingItem, setViewingItem] = useState<any | null>(null)
+    const [editingItem, setEditingItem] = useState<any | null>(null)
 
-    // Data Fetching
-    const { data: items, isLoading: itemsLoading, mutate: mutateItems } = useFrappeGetDocList("PMS Item", {
-        fields: ["name", "item_code", "item_name", "category", "unit", "current_stock", "reorder_level", "valuation_rate"],
-        orderBy: { field: "item_name", order: "asc" }
-    })
+    // Data Fetching (Use Local RxDB)
+    const { data: items, isLoading: itemsLoading } = useLocalDocList("PMS Item")
+    const { data: assets, isLoading: assetsLoading } = useLocalDocList("PMS Asset")
+    const { data: stockEntries, isLoading: historyLoading } = useLocalDocList("PMS Stock Entry")
 
-    const { data: assets, isLoading: assetsLoading } = useFrappeGetDocList("PMS Asset", {
-        fields: ["name", "asset_name", "item_link", "serial_number", "status", "location", "purchase_date"],
-        orderBy: { field: "creation", order: "desc" }
-    })
-
-    const { data: stockEntries, isLoading: historyLoading, mutate: mutateHistory } = useFrappeGetDocList("PMS Stock Entry", {
-        fields: ["name", "item", "item_code", "entry_type", "quantity", "date", "reference_name", "notes"],
-        orderBy: { field: "creation", order: "desc" },
-        limit: 50
-    })
-
-    const { createDoc: createStockEntry, loading: entryLoading } = useFrappeCreateDoc()
-    const { createDoc: createItem, loading: itemCreating } = useFrappeCreateDoc()
+    const { create: createLocalDoc, isCreating } = useLocalCreate()
+    const { mutate: mutateLocalDoc, isSaving } = useLocalMutation()
 
     // Form States
-    const [newItem, setNewItem] = useState({
+    const [itemForm, setItemForm] = useState({
         item_code: "",
         item_name: "",
         category: "Consumable",
@@ -89,18 +92,26 @@ export default function InventoryPage() {
     })
 
     // Handlers
-    const handleAddItem = async () => {
-        if (!newItem.item_code || !newItem.item_name) {
+    const handleSaveItem = async () => {
+        if (!itemForm.item_code || !itemForm.item_name) {
             toast.error("Please fill in required fields")
             return
         }
         try {
-            await createItem("PMS Item", newItem)
-            toast.success("Item created successfully")
-            setIsAddItemOpen(false)
-            mutateItems()
+            if (editingItem) {
+                await mutateLocalDoc("PMS Item", editingItem.name, itemForm)
+                toast.success("Item updated successfully")
+                setIsEditItemOpen(false)
+            } else {
+                await createLocalDoc("PMS Item", itemForm)
+                toast.success("Item created successfully")
+                setIsAddItemOpen(false)
+            }
+            // Reset form
+            setItemForm({ item_code: "", item_name: "", category: "Consumable", unit: "Pcs", reorder_level: 0, valuation_rate: 0 })
+            setEditingItem(null)
         } catch (e) {
-            toast.error("Failed to create item")
+            toast.error("Failed to save item")
         }
     }
 
@@ -110,14 +121,13 @@ export default function InventoryPage() {
             return
         }
         try {
-            await createStockEntry("PMS Stock Entry", {
+            await createLocalDoc("PMS Stock Entry", {
                 ...stockEntryForm,
                 date: new Date().toISOString().split('T')[0]
             })
-            toast.success("Stock updated successfully")
+            toast.success("Stock movement recorded")
             setIsStockEntryOpen(false)
-            mutateItems()
-            mutateHistory()
+            setStockEntryForm({ item: "", entry_type: "Inward", quantity: 0, notes: "" })
         } catch (e) {
             toast.error("Failed to update stock")
         }
@@ -133,6 +143,30 @@ export default function InventoryPage() {
         i.item_code.toLowerCase().includes(searchQuery.toLowerCase())
     )
 
+    // Dropdown Action Handlers
+    const openEditDialog = (item: any) => {
+        setEditingItem(item)
+        setItemForm({
+            item_code: item.item_code,
+            item_name: item.item_name,
+            category: item.category,
+            unit: item.unit,
+            reorder_level: item.reorder_level || 0,
+            valuation_rate: item.valuation_rate || 0
+        })
+        setIsEditItemOpen(true)
+    }
+
+    const openAdjustStock = (item: any) => {
+        setStockEntryForm({
+            item: item.name,
+            entry_type: "Inward",
+            quantity: 0,
+            notes: ""
+        })
+        setIsStockEntryOpen(true)
+    }
+
     return (
         <div className="flex flex-col gap-4">
             {/* Header */}
@@ -142,121 +176,24 @@ export default function InventoryPage() {
                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Track supplies, maintenance parts, and fixed assets.</p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Dialog open={isAddItemOpen} onOpenChange={setIsAddItemOpen}>
-                        <DialogTrigger asChild>
-                            <Button variant="outline" className="h-9 px-4 rounded-lg font-bold text-[10px] uppercase tracking-widest gap-2">
-                                <Plus className="h-3.5 w-3.5" /> Define Item
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
-                            <DialogHeader>
-                                <DialogTitle className="text-sm font-bold uppercase tracking-tight">New Inventory Item</DialogTitle>
-                                <DialogDescription className="text-[10px] uppercase tracking-widest">Add a new consumable or part to the registry.</DialogDescription>
-                            </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Item Code</Label>
-                                        <Input value={newItem.item_code} onChange={e => setNewItem({ ...newItem, item_code: e.target.value })} placeholder="e.g. LNN-SQ" className="h-9 rounded-md text-xs font-bold" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Category</Label>
-                                        <Select value={newItem.category} onValueChange={v => setNewItem({ ...newItem, category: v })}>
-                                            <SelectTrigger className="h-9 rounded-md text-xs font-bold">
-                                                <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="Consumable">Consumable</SelectItem>
-                                                <SelectItem value="Part">Maintenance Part</SelectItem>
-                                                <SelectItem value="Asset">Fixed Asset</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Item Name</Label>
-                                    <Input value={newItem.item_name} onChange={e => setNewItem({ ...newItem, item_name: e.target.value })} placeholder="e.g. Linen Bed Sheet - Queen" className="h-9 rounded-md text-xs font-bold" />
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Unit</Label>
-                                        <Select value={newItem.unit} onValueChange={v => setNewItem({ ...newItem, unit: v })}>
-                                            <SelectTrigger className="h-9 rounded-md text-xs font-bold">
-                                                <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="Pcs">Pieces</SelectItem>
-                                                <SelectItem value="Kg">Kilograms</SelectItem>
-                                                <SelectItem value="Litre">Litres</SelectItem>
-                                                <SelectItem value="Box">Boxes</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Reorder Level</Label>
-                                        <Input type="number" value={newItem.reorder_level} onChange={e => setNewItem({ ...newItem, reorder_level: parseFloat(e.target.value) })} className="h-9 rounded-md text-xs font-bold" />
-                                    </div>
-                                </div>
-                            </div>
-                            <DialogFooter>
-                                <Button onClick={handleAddItem} disabled={itemCreating} className="w-full h-10 font-bold text-[10px] uppercase tracking-widest">Save Item</Button>
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
+                    <Button
+                        variant="outline"
+                        onClick={() => {
+                            setEditingItem(null)
+                            setItemForm({ item_code: "", item_name: "", category: "Consumable", unit: "Pcs", reorder_level: 0, valuation_rate: 0 })
+                            setIsAddItemOpen(true)
+                        }}
+                        className="h-9 px-4 rounded-lg font-bold text-[10px] uppercase tracking-widest gap-2"
+                    >
+                        <Plus className="h-3.5 w-3.5" /> Define Item
+                    </Button>
 
-                    <Dialog open={isStockEntryOpen} onOpenChange={setIsStockEntryOpen}>
-                        <DialogTrigger asChild>
-                            <Button className="h-9 px-4 rounded-lg font-bold text-[10px] uppercase tracking-widest gap-2 bg-primary text-primary-foreground">
-                                <Boxes className="h-3.5 w-3.5" /> Adjust Stock
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
-                            <DialogHeader>
-                                <DialogTitle className="text-sm font-bold uppercase tracking-tight">Stock Movement</DialogTitle>
-                                <DialogDescription className="text-[10px] uppercase tracking-widest">Record an inward or outward stock movement.</DialogDescription>
-                            </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                                <div className="space-y-2">
-                                    <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Select Item</Label>
-                                    <Select value={stockEntryForm.item} onValueChange={v => setStockEntryForm({ ...stockEntryForm, item: v })}>
-                                        <SelectTrigger className="h-9 rounded-md text-xs font-bold">
-                                            <SelectValue placeholder="Search Item..." />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {items?.map(i => (
-                                                <SelectItem key={i.name} value={i.name}>{i.item_name} ({i.item_code})</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Type</Label>
-                                        <Select value={stockEntryForm.entry_type} onValueChange={v => setStockEntryForm({ ...stockEntryForm, entry_type: v })}>
-                                            <SelectTrigger className="h-9 rounded-md text-xs font-bold">
-                                                <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="Inward">Stock In (Purchase/Return)</SelectItem>
-                                                <SelectItem value="Outward">Stock Out (Usage/Waste)</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Quantity</Label>
-                                        <Input type="number" value={stockEntryForm.quantity} onChange={e => setStockEntryForm({ ...stockEntryForm, quantity: parseFloat(e.target.value) })} className="h-9 rounded-md text-xs font-bold" />
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Notes</Label>
-                                    <Input value={stockEntryForm.notes} onChange={e => setStockEntryForm({ ...stockEntryForm, notes: e.target.value })} placeholder="Reason for adjustment" className="h-9 rounded-md text-xs font-bold" />
-                                </div>
-                            </div>
-                            <DialogFooter>
-                                <Button onClick={handleStockEntry} disabled={entryLoading} className="w-full h-10 font-bold text-[10px] uppercase tracking-widest">Submit Entry</Button>
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
+                    <Button
+                        onClick={() => setIsStockEntryOpen(true)}
+                        className="h-9 px-4 rounded-lg font-bold text-[10px] uppercase tracking-widest gap-2 bg-primary text-primary-foreground"
+                    >
+                        <Boxes className="h-3.5 w-3.5" /> Adjust Stock
+                    </Button>
                 </div>
             </div>
 
@@ -338,20 +275,20 @@ export default function InventoryPage() {
                                     ) : filteredItems?.length === 0 ? (
                                         <TableRow><TableCell colSpan={5} className="py-20 text-center text-[10px] uppercase font-bold text-muted-foreground">No items found</TableCell></TableRow>
                                     ) : filteredItems?.map(item => (
-                                        <TableRow key={item.name} className="hover:bg-muted/20 border-border group">
-                                            <TableCell className="py-3 px-4">
+                                        <TableRow key={item.name} className="hover:bg-muted/20 border-border group whitespace-nowrap">
+                                            <TableCell className="py-2 px-4">
                                                 <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter bg-muted/50 border-border rounded-sm">{item.item_code}</Badge>
                                             </TableCell>
-                                            <TableCell className="py-3 px-4">
+                                            <TableCell className="py-2 px-4">
                                                 <div className="flex flex-col">
                                                     <span className="text-[11px] font-bold text-foreground uppercase tracking-tight">{item.item_name}</span>
-                                                    <span className="text-[9px] font-bold text-muted-foreground uppercase">{item.unit}</span>
+                                                    <span className="text-[9px] font-bold text-muted-foreground uppercase opacity-60">{item.unit}</span>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="py-3 px-4">
+                                            <TableCell className="py-2 px-4">
                                                 <span className="text-[10px] font-bold text-muted-foreground uppercase">{item.category}</span>
                                             </TableCell>
-                                            <TableCell className="py-3 px-4 text-right">
+                                            <TableCell className="py-2 px-4 text-right">
                                                 <div className="flex flex-col items-end">
                                                     <span className={cn(
                                                         "text-xs font-black",
@@ -364,10 +301,27 @@ export default function InventoryPage() {
                                                     )}
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="py-3 px-4 text-right">
-                                                <Button variant="ghost" size="icon" className="h-7 w-7 rounded-md group-hover:bg-muted text-muted-foreground transition-colors">
-                                                    <MoreHorizontal className="h-3.5 w-3.5" />
-                                                </Button>
+                                            <TableCell className="py-2 px-4 text-right">
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button variant="ghost" size="icon" className="h-7 w-7 rounded-md group-hover:bg-muted text-muted-foreground transition-colors">
+                                                            <MoreHorizontal className="h-3.5 w-3.5" />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end" className="w-40">
+                                                        <DropdownMenuLabel className="text-[9px] uppercase font-black tracking-widest opacity-50">Item Actions</DropdownMenuLabel>
+                                                        <DropdownMenuSeparator />
+                                                        <DropdownMenuItem onClick={() => setViewingItem(item)} className="text-[10px] font-bold uppercase tracking-tight gap-2">
+                                                            <Eye className="h-3.5 w-3.5" /> View Details
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => openEditDialog(item)} className="text-[10px] font-bold uppercase tracking-tight gap-2">
+                                                            <Pencil className="h-3.5 w-3.5" /> Edit Settings
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => openAdjustStock(item)} className="text-[10px] font-bold uppercase tracking-tight gap-2">
+                                                            <Activity className="h-3.5 w-3.5" /> Adjust Stock
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -383,7 +337,7 @@ export default function InventoryPage() {
                             Array(3).fill(0).map((_, i) => <div key={i} className="h-32 rounded-lg bg-muted animate-pulse" />)
                         ) : assets?.length === 0 ? (
                             <div className="col-span-full py-20 text-center card border-dashed border-2 flex flex-col items-center gap-3">
-                                <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center"><Monitor className="h-5 w-5 text-muted-foreground" /></div>
+                                <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center"><Package className="h-5 w-5 text-muted-foreground" /></div>
                                 <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">No assets registered yet</p>
                             </div>
                         ) : assets?.map(asset => (
@@ -440,7 +394,7 @@ export default function InventoryPage() {
                                         <TableRow><TableCell colSpan={5} className="py-20 text-center text-[10px] uppercase font-bold text-muted-foreground">No movements recorded</TableCell></TableRow>
                                     ) : stockEntries?.map(entry => (
                                         <TableRow key={entry.name} className="hover:bg-muted/20 border-border">
-                                            <TableCell className="py-3 px-4">
+                                            <TableCell className="py-2 px-4 whitespace-nowrap">
                                                 <div className="flex items-center gap-2">
                                                     {entry.entry_type === "Inward" ? (
                                                         <TrendingUp className="h-3 w-3 text-emerald-500" />
@@ -448,28 +402,28 @@ export default function InventoryPage() {
                                                         <TrendingDown className="h-3 w-3 text-amber-500" />
                                                     )}
                                                     <span className={cn(
-                                                        "text-[10px] font-bold uppercase tracking-widest",
+                                                        "text-[9px] font-black uppercase tracking-widest",
                                                         entry.entry_type === "Inward" ? "text-emerald-500" : "text-amber-500"
                                                     )}>
                                                         {entry.entry_type}
                                                     </span>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="py-3 px-4 font-bold text-[10px] uppercase tracking-tight">
+                                            <TableCell className="py-2 px-4 font-bold text-[10px] uppercase tracking-tight">
                                                 {entry.item}
                                             </TableCell>
-                                            <TableCell className="py-3 px-4 text-right font-black text-xs">
+                                            <TableCell className="py-2 px-4 text-right font-black text-[11px]">
                                                 {entry.entry_type === "Inward" ? "+" : "-"}{entry.quantity}
                                             </TableCell>
-                                            <TableCell className="py-3 px-4 text-[10px] font-bold text-muted-foreground">
+                                            <TableCell className="py-2 px-4 text-[9px] font-bold text-muted-foreground opacity-70">
                                                 {entry.date}
                                             </TableCell>
-                                            <TableCell className="py-3 px-4">
+                                            <TableCell className="py-2 px-4 max-w-[250px]">
                                                 <div className="flex flex-col">
-                                                    <span className="text-[10px] font-bold text-foreground">
-                                                        {entry.reference_name || "Direct Entry"}
+                                                    <span className="text-[10px] font-bold text-foreground truncate">
+                                                        {entry.reference_name || "Manual Check"}
                                                     </span>
-                                                    {entry.notes && <span className="text-[9px] text-muted-foreground uppercase truncate max-w-[200px]">{entry.notes}</span>}
+                                                    {entry.notes && <span className="text-[9px] font-bold text-muted-foreground uppercase truncate opacity-50">{entry.notes}</span>}
                                                 </div>
                                             </TableCell>
                                         </TableRow>
@@ -480,6 +434,208 @@ export default function InventoryPage() {
                     </Card>
                 </TabsContent>
             </Tabs>
-        </div>
+
+            {/* Dialogs & Sheets */}
+
+            {/* Add / Edit Item Dialog */}
+            <Dialog open={isAddItemOpen || isEditItemOpen} onOpenChange={(open) => {
+                if (!open) {
+                    setIsAddItemOpen(false)
+                    setIsEditItemOpen(false)
+                    setEditingItem(null)
+                }
+            }}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle className="text-sm font-bold uppercase tracking-tight">
+                            {editingItem ? "Edit Inventory Item" : "New Inventory Item"}
+                        </DialogTitle>
+                        <DialogDescription className="text-[10px] uppercase tracking-widest">
+                            {editingItem ? "Update item properties and reorder levels." : "Add a new consumable or part to the registry."}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Item Code</Label>
+                                <Input
+                                    value={itemForm.item_code}
+                                    onChange={e => setItemForm({ ...itemForm, item_code: e.target.value })}
+                                    disabled={!!editingItem}
+                                    placeholder="e.g. LNN-SQ"
+                                    className="h-9 rounded-md text-xs font-bold"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Category</Label>
+                                <Select value={itemForm.category} onValueChange={v => setItemForm({ ...itemForm, category: v })}>
+                                    <SelectTrigger className="h-9 rounded-md text-xs font-bold">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Consumable">Consumable</SelectItem>
+                                        <SelectItem value="Part">Maintenance Part</SelectItem>
+                                        <SelectItem value="Asset">Fixed Asset</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Item Name</Label>
+                            <Input value={itemForm.item_name} onChange={e => setItemForm({ ...itemForm, item_name: e.target.value })} placeholder="e.g. Linen Bed Sheet - Queen" className="h-9 rounded-md text-xs font-bold" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Unit</Label>
+                                <Select value={itemForm.unit} onValueChange={v => setItemForm({ ...itemForm, unit: v })}>
+                                    <SelectTrigger className="h-9 rounded-md text-xs font-bold">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Pcs">Pieces</SelectItem>
+                                        <SelectItem value="Kg">Kilograms</SelectItem>
+                                        <SelectItem value="Litre">Litres</SelectItem>
+                                        <SelectItem value="Box">Boxes</SelectItem>
+                                        <SelectItem value="Set">Sets</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Reorder Level</Label>
+                                <Input type="number" value={itemForm.reorder_level} onChange={e => setItemForm({ ...itemForm, reorder_level: parseFloat(e.target.value) })} className="h-9 rounded-md text-xs font-bold" />
+                            </div>
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button
+                            onClick={handleSaveItem}
+                            disabled={isCreating || isSaving}
+                            className="w-full h-10 font-bold text-[10px] uppercase tracking-widest"
+                        >
+                            {editingItem ? "Update Item" : "Save Item"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Stock Entry Dialog */}
+            <Dialog open={isStockEntryOpen} onOpenChange={setIsStockEntryOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle className="text-sm font-bold uppercase tracking-tight">Stock Movement</DialogTitle>
+                        <DialogDescription className="text-[10px] uppercase tracking-widest">Record an inward or outward stock movement.</DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Select Item</Label>
+                            <Select value={stockEntryForm.item} onValueChange={v => setStockEntryForm({ ...stockEntryForm, item: v })}>
+                                <SelectTrigger className="h-9 rounded-md text-xs font-bold">
+                                    <SelectValue placeholder="Search Item..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {items?.map(i => (
+                                        <SelectItem key={i.name} value={i.name}>{i.item_name} ({i.item_code})</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Type</Label>
+                                <Select value={stockEntryForm.entry_type} onValueChange={v => setStockEntryForm({ ...stockEntryForm, entry_type: v })}>
+                                    <SelectTrigger className="h-9 rounded-md text-xs font-bold">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Inward">Stock In (Purchase/Return)</SelectItem>
+                                        <SelectItem value="Outward">Stock Out (Usage/Waste)</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Quantity</Label>
+                                <Input type="number" value={stockEntryForm.quantity} onChange={e => setStockEntryForm({ ...stockEntryForm, quantity: parseFloat(e.target.value) })} className="h-9 rounded-md text-xs font-bold" />
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Notes</Label>
+                            <Input value={stockEntryForm.notes} onChange={e => setStockEntryForm({ ...stockEntryForm, notes: e.target.value })} placeholder="Reason for adjustment" className="h-9 rounded-md text-xs font-bold" />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button onClick={handleStockEntry} disabled={isCreating} className="w-full h-10 font-bold text-[10px] uppercase tracking-widest">Submit Entry</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* View Item Sheet */}
+            <Sheet open={!!viewingItem} onOpenChange={(open) => !open && setViewingItem(null)}>
+                <SheetContent className="sm:max-w-md overflow-y-auto">
+                    <SheetHeader className="space-y-1">
+                        <SheetTitle className="text-sm font-bold uppercase tracking-tight flex items-center gap-2">
+                            <Package className="h-4 w-4 text-primary" /> {viewingItem?.item_name}
+                        </SheetTitle>
+                        <SheetDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">
+                            {viewingItem?.item_code} • {viewingItem?.category}
+                        </SheetDescription>
+                    </SheetHeader>
+
+                    <div className="mt-8 space-y-8">
+                        {/* Summary Stats */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1 border-l-2 border-primary pl-4 py-1">
+                                <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Current Stock</p>
+                                <p className="text-xl font-black">{viewingItem?.current_stock || 0} {viewingItem?.unit}</p>
+                            </div>
+                            <div className="space-y-1 border-l-2 border-border pl-4 py-1">
+                                <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Valuation</p>
+                                <p className="text-xl font-black">₹{((viewingItem?.current_stock || 0) * (viewingItem?.valuation_rate || 0)).toLocaleString()}</p>
+                            </div>
+                        </div>
+
+                        {/* Recent History for this item */}
+                        <div className="space-y-4">
+                            <h3 className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                                <History className="h-3.5 w-3.5" /> Recent Movements
+                            </h3>
+                            <div className="space-y-3">
+                                {stockEntries?.filter(e => e.item === viewingItem?.name).slice(0, 10).map(entry => (
+                                    <div key={entry.name} className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/50">
+                                        <div className="flex flex-col gap-1">
+                                            <div className="flex items-center gap-2">
+                                                {entry.entry_type === "Inward" ? <TrendingUp className="h-3 w-3 text-emerald-500" /> : <TrendingDown className="h-3 w-3 text-amber-500" />}
+                                                <span className="text-[10px] font-black uppercase tracking-tighter">{entry.entry_type}</span>
+                                            </div>
+                                            <span className="text-[9px] font-bold text-muted-foreground">{entry.date}</span>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className={cn(
+                                                "text-xs font-black",
+                                                entry.entry_type === "Inward" ? "text-emerald-500" : "text-amber-500"
+                                            )}>
+                                                {entry.entry_type === "Inward" ? "+" : "-"}{entry.quantity}
+                                            </p>
+                                            <p className="text-[8px] font-bold uppercase text-muted-foreground truncate max-w-[120px]">{entry.notes || entry.reference_name || "Direct Entry"}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                                {stockEntries?.filter(e => e.item === viewingItem?.name).length === 0 && (
+                                    <p className="text-[10px] text-center py-10 uppercase font-black opacity-30 tracking-widest">No movement history</p>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="pt-4 border-t border-border space-y-3">
+                            <Button onClick={() => { setEditingItem(viewingItem); openEditDialog(viewingItem); setViewingItem(null); }} variant="outline" className="w-full text-[10px] font-bold uppercase tracking-widest h-10 gap-2">
+                                <Pencil className="h-3.5 w-3.5" /> Edit Configuration
+                            </Button>
+                            <Button onClick={() => { openAdjustStock(viewingItem); setViewingItem(null); }} className="w-full text-[10px] font-bold uppercase tracking-widest h-10 gap-2">
+                                <Activity className="h-3.5 w-3.5" /> New Stock Entry
+                            </Button>
+                        </div>
+                    </div>
+                </SheetContent>
+            </Sheet>
+        </div >
     )
 }

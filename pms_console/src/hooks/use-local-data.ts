@@ -1,100 +1,130 @@
 import { useState, useEffect } from 'react';
-import { getDB } from '@/lib/db';
+import { database } from '@/lib/db';
+import { Q } from '@nozbe/watermelondb';
 
-const DOCTYPE_TO_COLLECTION: Record<string, string> = {
-    'Reservation': 'reservations',
-    'Property': 'properties',
-    'Booking Inquiry': 'inquiries',
-    'Inquiry': 'inquiries',
-    'Staff': 'staff',
-    'Property Portfolio': 'portfolios',
-    'Unit Category': 'unit_categories',
-    'Unit': 'units',
-    'Folio': 'folios',
-    'Invoice': 'folios',
-    'Guest': 'guests',
-    'Housekeeping Task': 'housekeeping',
-    'Maintenance Ticket': 'maintenance',
-    'Guest Communication': 'communications',
-    'Sales Invoice': 'invoices',
-    'Guest Query': 'guest_queries'
+/**
+ * Maps DocType names to their WatermelonDB table names.
+ */
+export const getCollectionName = (doctype: string) => {
+    const mapping: Record<string, string> = {
+        'Reservation': 'reservations',
+        'Property': 'properties',
+        'Housekeeping Task': 'housekeeping_tasks',
+        'Maintenance Ticket': 'maintenance_tickets',
+        'Folio': 'folios',
+        'Unit': 'units',
+        'Guest': 'guests',
+        'Staff': 'staff',
+        'Guest Communication': 'communications',
+        'Property Portfolio': 'portfolios',
+        'Unit Category': 'unit_categories',
+        'Guest Query': 'guest_queries',
+        'Booking Inquiry': 'inquiries',
+        'PMS Item': 'pms_items',
+        'PMS Stock Entry': 'pms_stock_entries',
+        'PMS Asset': 'pms_assets'
+    };
+    return mapping[doctype] || doctype.toLowerCase().replace(/ /g, '_');
 };
 
-export function useLocalDocList(collectionName: string, mangoQuery: any = {}) {
+export function useLocalDocList(doctype: string, mangoQuery: any = {}) {
     const [data, setData] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        let subscription: any;
+        const tableName = getCollectionName(doctype);
+        const collection = database.get(tableName as any);
 
-        const init = async () => {
-            try {
-                const db = await getDB();
-                const internalName = DOCTYPE_TO_COLLECTION[collectionName] || (collectionName.toLowerCase().replace(' ', '_') + 's');
-                const collection = db[internalName];
+        // Basic Mango-to-Watermelon query mapping
+        const clauses: any[] = [];
+        const { selector, sort, limit, skip } = mangoQuery;
 
-                if (!collection) {
-                    console.error(`RxDB: Collection ${internalName} not found`);
-                    setIsLoading(false);
-                    return;
+        if (selector) {
+            Object.entries(selector).forEach(([field, value]: [string, any]) => {
+                if (field === '$or' && Array.isArray(value)) {
+                    // Very basic $or support for search
+                    const orClauses = value.map(v => {
+                        const [f, opt]: [string, any] = Object.entries(v)[0];
+                        if (opt && opt.$regex) {
+                            return Q.where(f, Q.like(`%${opt.$regex}%`));
+                        }
+                        return Q.where(f, opt);
+                    });
+                    clauses.push(Q.or(...orClauses));
+                } else if (value && typeof value === 'object') {
+                    if (value.$in) clauses.push(Q.where(field, Q.oneOf(value.$in)));
+                    if (value.$nin) clauses.push(Q.where(field, Q.notIn(value.$nin)));
+                    if (value.$gt) clauses.push(Q.where(field, Q.gt(value.$gt)));
+                    if (value.$gte) clauses.push(Q.where(field, Q.gte(value.$gte)));
+                    if (value.$lt) clauses.push(Q.where(field, Q.lt(value.$lt)));
+                    if (value.$lte) clauses.push(Q.where(field, Q.lte(value.$lte)));
+                    if (value.$ne) clauses.push(Q.where(field, Q.notEq(value.$ne)));
+                } else if (value !== undefined) {
+                    clauses.push(Q.where(field, value));
                 }
+            });
+        }
 
-                const query = collection.find(mangoQuery);
-                subscription = query.$.subscribe((docs: any[]) => {
-                    setData(docs.map(doc => doc.toJSON()));
-                    setIsLoading(false);
-                });
-            } catch (err) {
-                console.error(`RxDB: Failed to fetch ${collectionName}`, err);
-                setIsLoading(false);
-            }
-        };
+        if (sort && Array.isArray(sort)) {
+            sort.forEach(s => {
+                const [field, direction] = Object.entries(s)[0];
+                clauses.push(Q.sortBy(field, direction === 'desc' ? Q.desc : Q.asc));
+            });
+        }
 
-        init();
+        if (limit) {
+            clauses.push(Q.take(limit));
+        }
 
-        return () => {
-            if (subscription) subscription.unsubscribe();
-        };
-    }, [collectionName, JSON.stringify(mangoQuery)]);
+        if (skip) {
+            clauses.push(Q.skip(skip));
+        }
+
+        const query = collection.query(...clauses);
+        const subscription = query.observe().subscribe((docs) => {
+            setData(docs.map(doc => ({ ...doc._raw, id: doc.id, name: doc.id })));
+            setIsLoading(false);
+        });
+
+        return () => subscription.unsubscribe();
+    }, [doctype, JSON.stringify(mangoQuery)]);
 
     return { data, isLoading };
 }
 
-export function useLocalDoc(collectionName: string, name: string) {
+export function useLocalDoc(doctype: string, id: string) {
     const [data, setData] = useState<any | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        let subscription: any;
+        if (!id) {
+            setIsLoading(false);
+            setData(null);
+            return;
+        }
+
+        const tableName = getCollectionName(doctype);
+        const collection = database.get(tableName as any);
 
         const init = async () => {
             try {
-                const db = await getDB();
-                const internalName = DOCTYPE_TO_COLLECTION[collectionName] || (collectionName.toLowerCase().replace(' ', '_') + 's');
-                const collection = db[internalName];
-
-                if (!collection) {
-                    setIsLoading(false);
-                    return;
-                }
-
-                const query = collection.findOne(name);
-                subscription = query.$.subscribe((doc: any) => {
-                    setData(doc ? doc.toJSON() : null);
+                const doc = await collection.find(id);
+                const subscription = doc.observe().subscribe(updatedDoc => {
+                    setData({ ...updatedDoc._raw, id: updatedDoc.id, name: updatedDoc.id });
                     setIsLoading(false);
                 });
+                return () => subscription.unsubscribe();
             } catch (err) {
-                console.error(`RxDB: Failed to fetch doc ${name}`, err);
+                console.error(`WatermelonDB: Failed to fetch doc ${id} for ${doctype}`, err);
                 setIsLoading(false);
             }
         };
 
-        init();
-
+        const cleanupPromise = init();
         return () => {
-            if (subscription) subscription.unsubscribe();
+            cleanupPromise.then(cleanup => cleanup?.());
         };
-    }, [collectionName, name]);
+    }, [doctype, id]);
 
     return { data, isLoading };
 }
@@ -102,30 +132,35 @@ export function useLocalDoc(collectionName: string, name: string) {
 export function useLocalMutation() {
     const [isSaving, setIsSaving] = useState(false);
 
-    const mutate = async (collectionName: string, name: string, payload: any, operation: 'UPDATE' | 'DELETE' = 'UPDATE') => {
+    const mutate = async (doctype: string, id: string, payload: any, operation: 'UPDATE' | 'DELETE' = 'UPDATE') => {
         setIsSaving(true);
+        if (!id) {
+            console.error(`WatermelonDB Mutation Error: No ID provided for ${doctype}`);
+            setIsSaving(false);
+            return;
+        }
+        const tableName = getCollectionName(doctype);
         try {
-            const db = await getDB();
-            const internalName = DOCTYPE_TO_COLLECTION[collectionName] || (collectionName.toLowerCase().replace(' ', '_') + 's');
-            const collection = db[internalName];
+            const collection = database.get(tableName as any);
+            const doc = await collection.find(id);
 
             if (operation === 'UPDATE') {
-                const doc = await collection.findOne(name).exec();
-                if (doc) {
-                    await doc.patch(payload);
-                    const { addToOutbox } = await import('@/lib/db/sync-service');
-                    await addToOutbox(collectionName, 'UPDATE', payload, name);
-                }
+                await database.write(async () => {
+                    await doc.update(record => {
+                        Object.assign(record, payload);
+                    });
+                });
+                const { addToOutbox } = await import('@/lib/db/sync-service');
+                await addToOutbox(doctype, 'UPDATE', payload, id);
             } else if (operation === 'DELETE') {
-                const doc = await collection.findOne(name).exec();
-                if (doc) {
-                    await doc.remove();
-                    const { addToOutbox } = await import('@/lib/db/sync-service');
-                    await addToOutbox(collectionName, 'DELETE', {}, name);
-                }
+                await database.write(async () => {
+                    await doc.markAsDeleted();
+                });
+                const { addToOutbox } = await import('@/lib/db/sync-service');
+                await addToOutbox(doctype, 'DELETE', {}, id);
             }
         } catch (err) {
-            console.error(`RxDB Mutation Error:`, err);
+            console.error(`WatermelonDB Mutation Error (${doctype}):`, err);
             throw err;
         } finally {
             setIsSaving(false);
@@ -138,24 +173,28 @@ export function useLocalMutation() {
 export function useLocalCreate() {
     const [isCreating, setIsCreating] = useState(false);
 
-    const create = async (collectionName: string, payload: any) => {
+    const create = async (doctype: string, payload: any) => {
         setIsCreating(true);
+        const tableName = getCollectionName(doctype);
         try {
-            const db = await getDB();
-            const internalName = DOCTYPE_TO_COLLECTION[collectionName] || (collectionName.toLowerCase().replace(' ', '_') + 's');
-            const collection = db[internalName];
+            const collection = database.get(tableName as any);
 
-            const tempName = payload.name || `local_${crypto.randomUUID()}`;
-            const fullPayload = { ...payload, name: tempName, modified: new Date().toISOString() };
+            const tempId = payload.name || `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            const fullPayload = { ...payload, name: tempId, modified: new Date().toISOString() };
 
-            await collection.insert(fullPayload);
+            await database.write(async () => {
+                await collection.create(record => {
+                    record._raw.id = tempId; // Override Watermelon ID with Frappe name/temp id
+                    Object.assign(record, fullPayload);
+                });
+            });
 
             const { addToOutbox } = await import('@/lib/db/sync-service');
-            await addToOutbox(collectionName, 'INSERT', payload, tempName);
+            await addToOutbox(doctype, 'INSERT', payload, tempId);
 
             return fullPayload;
         } catch (err) {
-            console.error(`RxDB Creation Error:`, err);
+            console.error(`WatermelonDB Creation Error (${doctype}):`, err);
             throw err;
         } finally {
             setIsCreating(false);

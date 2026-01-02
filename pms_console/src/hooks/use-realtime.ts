@@ -28,6 +28,16 @@ export const useRealtime = () => {
             }
         });
 
+        // Listen for generic DocType updates from Frappe
+        socket.on('doc_update', async (data: any) => {
+            const { doctype } = data;
+            if (doctype) {
+                console.log(`Real-time update for ${doctype}, triggering sync...`);
+                const { pullDocType } = await import('@/lib/db/sync-service');
+                await pullDocType(doctype);
+            }
+        });
+
         // Listen for our custom notification event
         socket.on('bookpondy_pms.notification', (data: any) => {
             console.log('Real-time notification received:', data);

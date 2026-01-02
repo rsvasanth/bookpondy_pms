@@ -267,3 +267,22 @@ def get_dashboard_stats():
 		"alerts": alerts
 	}
 
+@frappe.whitelist()
+def get_schema_snapshot(doctypes):
+	"""
+	Returns a consolidated schema snapshot for multiple DocTypes.
+	Reduces round-trips for RxDB initialization.
+	"""
+	import json
+	if isinstance(doctypes, str):
+		doctypes = json.loads(doctypes)
+	
+	snapshot = {}
+	for dt in doctypes:
+		try:
+			meta = frappe.get_meta(dt)
+			snapshot[dt] = meta.as_dict()
+		except Exception as e:
+			frappe.log_error(f"Schema Snapshot Error for {dt}: {str(e)}")
+	
+	return snapshot
