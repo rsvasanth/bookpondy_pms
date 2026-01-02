@@ -1,0 +1,107 @@
+{
+    "actions": [],
+    "allow_rename": 1,
+    "autoname": "format:AST-{item_link}-{#####}",
+    "creation": "2026-01-02 12:40:00",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "asset_name",
+        "item_link",
+        "serial_number",
+        "status",
+        "column_break_location",
+        "location",
+        "purchase_date",
+        "warranty_expiry",
+        "section_break_notes",
+        "notes"
+    ],
+    "fields": [
+        {
+            "fieldname": "asset_name",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "Asset Name",
+            "reqd": 1
+        },
+        {
+            "fieldname": "item_link",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "label": "Base Item",
+            "options": "PMS Item",
+            "reqd": 1
+        },
+        {
+            "fieldname": "serial_number",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "Serial Number"
+        },
+        {
+            "default": "Operational",
+            "fieldname": "status",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "label": "Status",
+            "options": "Operational\nIn Maintenance\nUnder Repair\nRetired\nLost/Stolen",
+            "reqd": 1
+        },
+        {
+            "fieldname": "column_break_location",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "location",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "label": "Location (Unit)",
+            "options": "Unit"
+        },
+        {
+            "fieldname": "purchase_date",
+            "fieldtype": "Date",
+            "label": "Purchase Date"
+        },
+        {
+            "fieldname": "warranty_expiry",
+            "fieldtype": "Date",
+            "label": "Warranty Expiry"
+        },
+        {
+            "fieldname": "section_break_notes",
+            "fieldtype": "Section Break"
+        },
+        {
+            "fieldname": "notes",
+            "fieldtype": "Small Text",
+            "label": "Notes"
+        }
+    ],
+    "index_web_pages_for_search": 1,
+    "links": [],
+    "modified": "2026-01-02 12:40:00",
+    "modified_by": "Administrator",
+    "module": "Bookpondy Pms",
+    "name": "PMS Asset",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "System Manager",
+            "share": 1,
+            "write": 1
+        }
+    ],
+    "sort_field": "modified",
+    "sort_order": "DESC",
+    "states": [],
+    "track_changes": 1
+}

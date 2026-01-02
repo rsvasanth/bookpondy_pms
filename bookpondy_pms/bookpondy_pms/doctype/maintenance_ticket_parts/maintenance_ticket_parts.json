@@ -12,14 +12,15 @@
     "fields": [
         {
             "fieldname": "part_name",
-            "fieldtype": "Data",
+            "fieldtype": "Link",
             "in_list_view": 1,
-            "label": "Part Name",
+            "label": "Part / Item",
+            "options": "PMS Item",
             "reqd": 1
         },
         {
             "fieldname": "quantity",
-            "fieldtype": "Int",
+            "fieldtype": "Float",
             "in_list_view": 1,
             "label": "Quantity",
             "reqd": 1

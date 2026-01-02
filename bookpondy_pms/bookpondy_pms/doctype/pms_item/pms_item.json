@@ -1,0 +1,105 @@
+{
+    "actions": [],
+    "allow_rename": 1,
+    "autoname": "field:item_code",
+    "creation": "2026-01-02 12:40:00",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "item_code",
+        "item_name",
+        "category",
+        "unit",
+        "column_break_stock",
+        "current_stock",
+        "reorder_level",
+        "section_break_financials",
+        "valuation_rate"
+    ],
+    "fields": [
+        {
+            "fieldname": "item_code",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "Item Code",
+            "reqd": 1,
+            "unique": 1
+        },
+        {
+            "fieldname": "item_name",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "Item Name",
+            "reqd": 1
+        },
+        {
+            "fieldname": "category",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "label": "Category",
+            "options": "Consumable\nPart\nAsset\nOther",
+            "reqd": 1
+        },
+        {
+            "fieldname": "unit",
+            "fieldtype": "Select",
+            "label": "Unit",
+            "options": "Pcs\nKg\nLitre\nBox\nSet\nMeters",
+            "reqd": 1
+        },
+        {
+            "fieldname": "column_break_stock",
+            "fieldtype": "Column Break"
+        },
+        {
+            "default": "0",
+            "fieldname": "current_stock",
+            "fieldtype": "Float",
+            "in_list_view": 1,
+            "label": "Current Stock",
+            "read_only": 1
+        },
+        {
+            "default": "0",
+            "fieldname": "reorder_level",
+            "fieldtype": "Float",
+            "label": "Reorder Level"
+        },
+        {
+            "fieldname": "section_break_financials",
+            "fieldtype": "Section Break",
+            "label": "Financials"
+        },
+        {
+            "default": "0",
+            "fieldname": "valuation_rate",
+            "fieldtype": "Currency",
+            "label": "Valuation Rate"
+        }
+    ],
+    "index_web_pages_for_search": 1,
+    "links": [],
+    "modified": "2026-01-02 12:40:00",
+    "modified_by": "Administrator",
+    "module": "Bookpondy Pms",
+    "name": "PMS Item",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "System Manager",
+            "share": 1,
+            "write": 1
+        }
+    ],
+    "sort_field": "modified",
+    "sort_order": "DESC",
+    "states": [],
+    "track_changes": 1
+}
