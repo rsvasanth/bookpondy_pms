@@ -53,27 +53,27 @@ function PropertyDetailsContent({ onClose, initialProperty }: { onClose: () => v
     return (
         <div className="flex flex-col h-full bg-background rounded-lg overflow-hidden shadow-sm border border-border">
             {/* Sticky Header */}
-            <div className="sticky top-0 z-20 bg-background/80 backdrop-blur-md border-b border-border px-6 py-4 flex items-center justify-between">
+            <div className="sticky top-0 z-20 bg-background/50 backdrop-blur-md border-b border-border px-6 py-4 flex items-center justify-between -mx-6 mb-6">
                 <div className="flex items-center gap-4">
                     <Button
                         variant="ghost"
                         size="icon"
                         onClick={onClose}
-                        className="rounded-lg hover:bg-muted h-9 w-9 flex-shrink-0 text-muted-foreground"
+                        className="rounded-lg hover:bg-muted h-9 w-9 flex-shrink-0 text-muted-foreground border border-border/50"
                     >
-                        <ArrowLeft className="h-5 w-5" />
+                        <ArrowLeft className="h-4 w-4" />
                     </Button>
                     <div>
                         <div className="flex items-center gap-2 mb-0.5">
-                            <h2 className="text-lg font-bold text-foreground tracking-tight">{property.property_name}</h2>
+                            <h2 className="text-xl font-semibold text-foreground tracking-tight">{property.property_name}</h2>
                             <Badge className={cn(
-                                "rounded-sm px-2 py-0.5 font-bold text-[10px] uppercase tracking-widest border-none shadow-none",
-                                property.status === "active" ? "bg-emerald-500/10 text-emerald-500" : "bg-muted text-muted-foreground"
+                                "rounded-md px-2 py-0.5 font-bold text-[10px] uppercase tracking-wider border-none shadow-none",
+                                property.status === "active" ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
                             )}>
                                 {property.status}
                             </Badge>
                         </div>
-                        <div className="flex items-center gap-3 text-[10px] text-muted-foreground font-bold uppercase tracking-widest">
+                        <div className="flex items-center gap-3 text-[10px] text-muted-foreground font-bold uppercase tracking-widest opacity-70">
                             <div className="flex items-center gap-1">
                                 <Building2 className="h-3 w-3" />
                                 {property.property_type}
@@ -86,11 +86,11 @@ function PropertyDetailsContent({ onClose, initialProperty }: { onClose: () => v
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" className="rounded-lg gap-2 font-bold text-[10px] h-9 px-4 border-border text-foreground uppercase tracking-wider">
+                    <Button variant="outline" size="sm" className="rounded-md gap-2 font-semibold text-xs h-9 px-4 border-border bg-background shadow-sm hover:bg-muted transition-all">
                         <Share2 className="h-3.5 w-3.5" />
-                        Share
+                        Share Property
                     </Button>
-                    <Button variant="ghost" size="icon" className="rounded-lg h-9 w-9 border border-transparent hover:bg-muted text-muted-foreground">
+                    <Button variant="ghost" size="icon" className="rounded-lg h-9 w-9 border border-border/50 hover:bg-muted text-muted-foreground">
                         <MoreVertical className="h-4 w-4" />
                     </Button>
                 </div>
@@ -158,12 +158,12 @@ function PropertyDetailsContent({ onClose, initialProperty }: { onClose: () => v
 
                     {/* Main Content Tabs */}
                     <Tabs defaultValue="inventory" className="w-full">
-                        <TabsList className="bg-muted p-1 rounded-lg mb-6 h-11 w-fit border border-border">
-                            <TabsTrigger value="inventory" className="rounded-md h-9 px-6 font-bold text-[10px] gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm text-muted-foreground data-[state=active]:text-foreground uppercase tracking-widest">
+                        <TabsList className="bg-muted/50 p-1 rounded-md mb-6 h-11 w-fit border border-border/50">
+                            <TabsTrigger value="inventory" className="rounded-sm h-9 px-6 font-bold text-[10px] gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm text-muted-foreground data-[state=active]:text-foreground uppercase tracking-widest">
                                 <LayoutGrid className="h-4 w-4" />
                                 Inventory & Units
                             </TabsTrigger>
-                            <TabsTrigger value="about" className="rounded-md h-9 px-6 font-bold text-[10px] gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm text-muted-foreground data-[state=active]:text-foreground uppercase tracking-widest">
+                            <TabsTrigger value="about" className="rounded-sm h-9 px-6 font-bold text-[10px] gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm text-muted-foreground data-[state=active]:text-foreground uppercase tracking-widest">
                                 <Building2 className="h-4 w-4" />
                                 Property Details
                             </TabsTrigger>
@@ -310,11 +310,15 @@ function PropertyDetailsContent({ onClose, initialProperty }: { onClose: () => v
                         <TabsContent value="about" className="space-y-6 focus-visible:outline-none mt-0">
                             <div className="grid lg:grid-cols-3 gap-6">
                                 <div className="lg:col-span-2 space-y-6">
-                                    <Card className="border border-border shadow-sm rounded-lg bg-card p-6">
-                                        <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4">About Property</h3>
-                                        <p className="text-xs leading-relaxed text-foreground font-bold whitespace-pre-wrap uppercase tracking-tight">
-                                            {property.description || "No description provided for this property."}
-                                        </p>
+                                    <Card className="border border-border/50 shadow-sm rounded-lg bg-card overflow-hidden">
+                                        <div className="bg-muted/20 px-6 py-3 border-b border-border">
+                                            <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">About Property</h3>
+                                        </div>
+                                        <CardContent className="p-6">
+                                            <p className="text-sm leading-relaxed text-foreground font-medium whitespace-pre-wrap">
+                                                {property.description || "No description provided for this property."}
+                                            </p>
+                                        </CardContent>
                                     </Card>
                                 </div>
 

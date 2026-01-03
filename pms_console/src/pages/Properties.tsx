@@ -155,12 +155,17 @@ export default function PropertiesPage() {
           />
         </div>
       ) : (
-        <div className="flex flex-col gap-4">
-          {/* Header */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h1 className="text-xl font-bold tracking-tight text-foreground">Properties</h1>
-              <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
+        <div className="flex flex-col gap-6 pb-12 px-6">
+          {/* Header Area */}
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-border pb-4 -mx-6 px-6 bg-background/50 backdrop-blur-sm sticky top-0 z-10">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
+                  <Building2 className="h-4 w-4 text-primary" />
+                </div>
+                <h1 className="text-xl font-semibold tracking-tight text-foreground">Properties</h1>
+              </div>
+              <p className="text-sm font-medium text-muted-foreground">
                 Manage your real estate assets
               </p>
             </div>
@@ -176,7 +181,7 @@ export default function PropertiesPage() {
               </div>
               <Button
                 onClick={handleAddNew}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-9 px-4 text-xs font-bold gap-1.5 shadow-sm transition-all"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-9 px-4 font-semibold text-xs gap-1.5 shadow-lg transition-all active:scale-95"
               >
                 <Plus className="h-3.5 w-3.5" /> Add Property
               </Button>
@@ -184,19 +189,16 @@ export default function PropertiesPage() {
           </div>
 
           {/* Stats Row */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-0">
             {stats.map((stat) => (
-              <Card key={stat.label} className="border border-border shadow-sm rounded-lg bg-card overflow-hidden">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{stat.label}</span>
-                    <div className={cn("p-1.5 rounded-md border border-border", stat.bg)}>
-                      <stat.icon className={cn("h-3.5 w-3.5", stat.color)} />
-                    </div>
-                  </div>
-                  <p className="text-2xl font-black text-foreground tracking-tight">{stat.value}</p>
-                </CardContent>
-              </Card>
+              <DashboardStatsCard
+                key={stat.label}
+                title={stat.label}
+                value={String(stat.value)}
+                icon={stat.icon}
+                trend="neutral"
+                trendValue={stat.label === "Active" ? "In Use" : stat.label === "Maintenance" ? "Repairs" : ""}
+              />
             ))}
           </div>
 
@@ -283,9 +285,9 @@ export default function PropertiesPage() {
                             </td>
                             <td className="py-2.5 px-4">
                               <Badge className={cn(
-                                "text-[9px] font-bold uppercase px-1.5 py-0 border-none shadow-none rounded-sm",
-                                property.status === "active" ? "bg-emerald-500/10 text-emerald-500" :
-                                  property.status === "maintenance" ? "bg-amber-500/10 text-amber-500" : "bg-muted text-muted-foreground"
+                                "text-[9px] font-bold uppercase px-1.5 py-0.5 border-none shadow-none rounded-md tracking-wider",
+                                property.status === "active" ? "bg-emerald-500 text-white" :
+                                  property.status === "maintenance" ? "bg-amber-500 text-white" : "bg-muted text-muted-foreground"
                               )}>
                                 {property.status}
                               </Badge>
