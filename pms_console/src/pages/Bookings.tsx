@@ -84,17 +84,15 @@ const columns: ColumnDef<any>[] = [
     header: "Status",
     cell: ({ row }) => {
       const status = row.original.reservation_status
-      const getStatusStyles = (s: string) => {
-        switch (s) {
-          case "Confirmed": return "bg-success text-white"
-          case "Checked-In": return "bg-info text-white"
-          case "Checked-Out": return "bg-muted text-muted-foreground"
-          case "Cancelled": return "bg-error text-white"
-          default: return "bg-muted text-muted-foreground"
-        }
-      }
       return (
-        <Badge className={cn("text-[10px] font-medium px-2 py-0 rounded-md border-none shadow-none", getStatusStyles(status))}>
+        <Badge className={cn(
+          "text-[10px] font-bold px-2 py-0.5 rounded-md border-none shadow-none uppercase tracking-wider",
+          status === "Confirmed" ? "bg-success text-white" :
+            status === "Checked-In" ? "bg-info text-white" :
+              status === "Checked-Out" ? "bg-muted text-muted-foreground" :
+                status === "Cancelled" ? "bg-error text-white" :
+                  "bg-muted text-muted-foreground"
+        )}>
           {status}
         </Badge>
       )
@@ -136,7 +134,7 @@ const columns: ColumnDef<any>[] = [
       const status = row.original.payment_status || "Pending"
       return (
         <Badge variant="outline" className={cn(
-          "text-[10px] font-medium px-2 py-0.5 rounded-md border shadow-none",
+          "text-[10px] font-bold px-2 py-0.5 rounded-md border shadow-none uppercase tracking-tighter",
           status === "Received" ? "bg-success/10 text-success border-success/20" :
             status === "Refunded" ? "bg-muted text-muted-foreground border-border" :
               "bg-warning/10 text-warning border-warning/20"
@@ -295,9 +293,9 @@ export default function BookingsPage() {
 
   return (
     <>
-      <div className="flex flex-col gap-6 pb-12">
+      <div className="flex flex-col gap-6 pb-12 px-6">
         {/* Header Area */}
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between px-2">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-border pb-4 -mx-6 px-6 bg-background/50 backdrop-blur-sm sticky top-0 z-10">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
@@ -305,7 +303,7 @@ export default function BookingsPage() {
               </div>
               <h1 className="text-xl font-semibold tracking-tight text-foreground">Property Ledger</h1>
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm font-medium text-muted-foreground">
               Manage stays, arrivals, and guest enquiries
             </p>
           </div>
@@ -321,7 +319,7 @@ export default function BookingsPage() {
             </Button>
             <Button
               onClick={() => navigate("/bookings/new")}
-              className="h-9 px-4 gap-2 rounded-md"
+              className="h-9 px-4 font-semibold text-xs gap-2 rounded-md shadow-lg transition-all active:scale-95 bg-primary text-white"
             >
               <Plus className="h-4 w-4" /> New Reservation
             </Button>
@@ -360,17 +358,19 @@ export default function BookingsPage() {
           />
         </div>
 
-        <DashboardFilters
-          properties={properties}
-          selectedProperty={selectedProperty}
-          onPropertyChange={(val) => { setSelectedProperty(val); setCurrentPage(1); }}
-          selectedStatus={selectedStatus}
-          onStatusChange={(val) => { setSelectedStatus(val); setCurrentPage(1); }}
-          selectedDateRange={selectedDateRange}
-          onDateRangeChange={(val) => { setSelectedDateRange(val); setCurrentPage(1); }}
-          searchTerm={searchTerm}
-          onSearchChange={(val) => { setSearchTerm(val); setCurrentPage(1); }}
-        />
+        <div className="px-0">
+          <DashboardFilters
+            properties={properties}
+            selectedProperty={selectedProperty}
+            onPropertyChange={(val) => { setSelectedProperty(val); setCurrentPage(1); }}
+            selectedStatus={selectedStatus}
+            onStatusChange={(val) => { setSelectedStatus(val); setCurrentPage(1); }}
+            selectedDateRange={selectedDateRange}
+            onDateRangeChange={(val) => { setSelectedDateRange(val); setCurrentPage(1); }}
+            searchTerm={searchTerm}
+            onSearchChange={(val) => { setSearchTerm(val); setCurrentPage(1); }}
+          />
+        </div>
 
         {/* Unified Layout: 3/4 Table + 1/4 Enquiries */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 px-2">
@@ -383,7 +383,7 @@ export default function BookingsPage() {
                     <Table2 className="h-3.5 w-3.5" />
                   </div>
                   <span>Reservation Discovery</span>
-                  <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[10px] font-medium">
+                  <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[10px] font-bold bg-muted/50 text-muted-foreground border-none">
                     {totalItems} RECORDS
                   </Badge>
                 </CardTitle>

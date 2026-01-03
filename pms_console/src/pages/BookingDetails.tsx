@@ -108,10 +108,10 @@ export default function BookingDetailsPage() {
                             {booking.guest_name}
                         </h1>
                         <Badge className={cn(
-                            "text-xs font-semibold px-2 py-0.5 rounded-md border shadow-none",
+                            "text-[10px] font-bold px-2 py-0.5 rounded-md border-none shadow-none uppercase tracking-wider",
                             booking.reservation_status === "Confirmed" ? "bg-success text-white" :
                                 booking.reservation_status === "Checked-In" ? "bg-info text-white" :
-                                    "bg-muted text-muted-foreground border-border"
+                                    "bg-muted text-muted-foreground"
                         )}>
                             {booking.reservation_status}
                         </Badge>
