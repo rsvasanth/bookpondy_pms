@@ -2,7 +2,10 @@
 
 import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
     MapPin,
     Bed,
@@ -17,33 +20,29 @@ import {
     LayoutGrid,
     ArrowLeft,
     Share2,
-    MoreVertical,
-    CheckCircle2
+    MoreVertical
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { PropertyProvider, useProperty } from "@/context/property-context"
 import { UnitCategoryDialog } from "./unit-category-dialog"
 import { UnitDialog } from "./unit-dialog"
 import { UnitCategoryCalendar } from "./unit-category-calendar"
-
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 
 interface PropertyDetailsViewProps {
     property: any
     onClose: () => void
 }
 
-import { PropertyProvider, useProperty } from "@/context/property-context"
-
 function PropertyDetailsContent({ onClose, initialProperty }: { onClose: () => void, initialProperty: any }) {
     const { property: contextProperty, unitCategories, units, occupancy, refresh, isLoading } = useProperty()
 
-    // Use context property if available (has more data), otherwise fall back to initial property
+    // Safety fallback
     const property = contextProperty || initialProperty
-
-    // Safety check if property is null
-    if (!property) return null
+    if (!property) return (
+        <div className="flex items-center justify-center h-full p-20">
+            <p className="text-muted-foreground animate-pulse">Loading property details...</p>
+        </div>
+    )
 
     const [categoryDialogOpen, setCategoryDialogOpen] = useState(false)
     const [unitDialogOpen, setUnitDialogOpen] = useState(false)
@@ -51,29 +50,29 @@ function PropertyDetailsContent({ onClose, initialProperty }: { onClose: () => v
     const [selectedUnit, setSelectedUnit] = useState<any>(null)
 
     return (
-        <div className="flex flex-col h-full bg-background rounded-lg overflow-hidden shadow-sm border border-border">
-            {/* Sticky Header */}
-            <div className="sticky top-0 z-20 bg-background/50 backdrop-blur-md border-b border-border px-6 py-4 flex items-center justify-between -mx-6 mb-6">
+        <div className="flex flex-col h-full bg-background min-h-[calc(100vh-180px)]">
+            {/* Header section - Sticky with backdrop blur */}
+            <div className="sticky top-0 z-20 bg-background/80 backdrop-blur-md border-b border-border py-4 px-6 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Button
                         variant="ghost"
                         size="icon"
                         onClick={onClose}
-                        className="rounded-lg hover:bg-muted h-9 w-9 flex-shrink-0 text-muted-foreground border border-border/50"
+                        className="h-9 w-9 border border-border/50 rounded-lg text-muted-foreground hover:bg-muted"
                     >
                         <ArrowLeft className="h-4 w-4" />
                     </Button>
                     <div>
                         <div className="flex items-center gap-2 mb-0.5">
-                            <h2 className="text-xl font-semibold text-foreground tracking-tight">{property.property_name}</h2>
+                            <h2 className="text-xl font-semibold tracking-tight text-foreground">{property.property_name}</h2>
                             <Badge className={cn(
-                                "rounded-md px-2 py-0.5 font-bold text-[10px] uppercase tracking-wider border-none shadow-none",
-                                property.status === "active" ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
+                                "text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 border-none shadow-none rounded-md",
+                                property.status === "active" ? "bg-success text-white" : "bg-muted text-muted-foreground"
                             )}>
                                 {property.status}
                             </Badge>
                         </div>
-                        <div className="flex items-center gap-3 text-[10px] text-muted-foreground font-bold uppercase tracking-widest opacity-70">
+                        <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-70">
                             <div className="flex items-center gap-1">
                                 <Building2 className="h-3 w-3" />
                                 {property.property_type}
@@ -86,270 +85,229 @@ function PropertyDetailsContent({ onClose, initialProperty }: { onClose: () => v
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" className="rounded-md gap-2 font-semibold text-xs h-9 px-4 border-border bg-background shadow-sm hover:bg-muted transition-all">
+                    <Button variant="outline" size="sm" className="hidden sm:flex h-9 px-4 gap-2 font-semibold text-xs border-border bg-background shadow-sm hover:bg-muted">
                         <Share2 className="h-3.5 w-3.5" />
-                        Share Property
+                        Share
                     </Button>
-                    <Button variant="ghost" size="icon" className="rounded-lg h-9 w-9 border border-border/50 hover:bg-muted text-muted-foreground">
+                    <Button variant="ghost" size="icon" className="h-9 w-9 border border-border/50 rounded-lg text-muted-foreground">
                         <MoreVertical className="h-4 w-4" />
                     </Button>
                 </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto custom-scrollbar bg-muted/30">
-                {/* Banner Image */}
-                <div className="relative h-56 w-full bg-muted">
+            {/* Scrollable area */}
+            <div className="flex-1 overflow-y-auto">
+                {/* Banner */}
+                <div className="relative h-48 w-full bg-muted overflow-hidden">
                     <img
                         src={property.banner_image || property.images?.[0]?.image || "/placeholder.svg"}
                         alt={property.property_name}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover opacity-80"
                     />
-                    <div className="absolute inset-0 bg-black/40" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
                 </div>
 
-                <div className="max-w-7xl mx-auto p-6 space-y-6 pb-20 -mt-16 relative z-10">
-                    {/* Quick Stats Grid */}
+                <div className="max-w-7xl mx-auto px-6 py-8 space-y-8 -mt-20 relative z-10">
+                    {/* Key Metrics */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden">
-                            <CardContent className="p-5 flex items-center justify-between">
-                                <div>
-                                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1 block">Total Units</span>
-                                    <span className="font-black text-2xl text-foreground">{property.total_units || property.total_rooms || 0}</span>
-                                </div>
-                                <div className="h-10 w-10 rounded-md bg-primary/10 text-primary flex items-center justify-center border border-border">
-                                    <Bed className="h-5 w-5" />
-                                </div>
-                            </CardContent>
-                        </Card>
-                        <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden">
-                            <CardContent className="p-5 flex items-center justify-between">
-                                <div>
-                                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1 block">Rating</span>
-                                    <span className="font-black text-2xl text-foreground">{property.average_rating || "New"}</span>
-                                </div>
-                                <div className="h-10 w-10 rounded-md bg-amber-500/10 text-amber-500 flex items-center justify-center border border-border">
-                                    <Star className="h-5 w-5 fill-amber-500" />
-                                </div>
-                            </CardContent>
-                        </Card>
-                        <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden">
-                            <CardContent className="p-5 flex items-center justify-between">
-                                <div>
-                                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1 block">Check-in</span>
-                                    <span className="font-black text-xl text-foreground">{property.check_in_time || "12:00 PM"}</span>
-                                </div>
-                                <div className="h-10 w-10 rounded-md bg-emerald-500/10 text-emerald-500 flex items-center justify-center border border-border">
-                                    <Clock className="h-5 w-5" />
-                                </div>
-                            </CardContent>
-                        </Card>
-                        <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden">
-                            <CardContent className="p-5 flex items-center justify-between">
-                                <div>
-                                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1 block">Check-out</span>
-                                    <span className="font-black text-xl text-foreground">{property.check_out_time || "10:00 AM"}</span>
-                                </div>
-                                <div className="h-10 w-10 rounded-md bg-purple-500/10 text-purple-500 flex items-center justify-center border border-border">
-                                    <Clock className="h-5 w-5" />
-                                </div>
-                            </CardContent>
-                        </Card>
+                        {[
+                            { label: "Total Units", value: property.total_units || property.total_rooms || 0, icon: Bed, color: "text-primary", bg: "bg-primary/10" },
+                            { label: "Guest Rating", value: property.average_rating || "New", icon: Star, color: "text-warning", bg: "bg-warning/10" },
+                            { label: "Check-in", value: property.check_in_time || "12:00 PM", icon: Clock, color: "text-success", bg: "bg-success/10" },
+                            { label: "Check-out", value: property.check_out_time || "10:00 AM", icon: Clock, color: "text-info", bg: "bg-info/10" },
+                        ].map((stat, i) => (
+                            <Card key={i} className="border border-border/50 shadow-sm bg-card/80 backdrop-blur-sm">
+                                <CardContent className="p-4 flex items-center justify-between">
+                                    <div>
+                                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">{stat.label}</p>
+                                        <p className="text-xl font-bold tracking-tight text-foreground">{stat.value}</p>
+                                    </div>
+                                    <div className={cn("h-9 w-9 rounded-lg flex items-center justify-center border border-border/50", stat.bg)}>
+                                        <stat.icon className={cn("h-4 w-4", stat.color)} />
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
                     </div>
 
-                    {/* Main Content Tabs */}
+                    {/* Content Tabs */}
                     <Tabs defaultValue="inventory" className="w-full">
-                        <TabsList className="bg-muted/50 p-1 rounded-md mb-6 h-11 w-fit border border-border/50">
-                            <TabsTrigger value="inventory" className="rounded-sm h-9 px-6 font-bold text-[10px] gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm text-muted-foreground data-[state=active]:text-foreground uppercase tracking-widest">
-                                <LayoutGrid className="h-4 w-4" />
-                                Inventory & Units
+                        <TabsList className="bg-muted/50 p-1 border border-border/50 mb-6 h-11">
+                            <TabsTrigger value="inventory" className="gap-2 px-6 font-bold text-[10px] uppercase tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                                <LayoutGrid className="h-3.5 w-3.5" />
+                                Inventory
                             </TabsTrigger>
-                            <TabsTrigger value="about" className="rounded-sm h-9 px-6 font-bold text-[10px] gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm text-muted-foreground data-[state=active]:text-foreground uppercase tracking-widest">
-                                <Building2 className="h-4 w-4" />
-                                Property Details
+                            <TabsTrigger value="about" className="gap-2 px-6 font-bold text-[10px] uppercase tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                                <Building2 className="h-3.5 w-3.5" />
+                                Property Info
                             </TabsTrigger>
                         </TabsList>
 
-                        <TabsContent value="inventory" className="space-y-6 focus-visible:outline-none mt-0">
+                        <TabsContent value="inventory" className="space-y-6 focus-visible:outline-none">
                             <div className="flex items-center justify-between">
-                                <div className="space-y-0.5">
-                                    <h3 className="text-lg font-bold text-foreground tracking-tight">Unit Categories</h3>
-                                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Manage room types and inventory</p>
+                                <div>
+                                    <h3 className="text-lg font-semibold tracking-tight text-foreground">Unit Categories</h3>
+                                    <p className="text-xs text-muted-foreground font-medium">Manage your room types and physical inventory</p>
                                 </div>
                                 <Button
                                     onClick={() => { setSelectedCategory(null); setCategoryDialogOpen(true); }}
-                                    className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-9 px-4 font-bold text-[10px] gap-2 shadow-sm uppercase tracking-widest"
+                                    className="gap-2 font-bold text-[10px] uppercase tracking-widest px-4 h-9 shadow-lg bg-primary text-white"
                                 >
                                     <Plus className="h-3.5 w-3.5" />
                                     Add Category
                                 </Button>
                             </div>
 
-                            {isLoading && !unitCategories.length ? (
-                                <div className="text-center py-10 text-slate-400">Loading categories...</div>
-                            ) : (
-                                <div className="grid gap-4">
-                                    {unitCategories?.map((cat) => (
-                                        <Card key={cat.name} className="border border-border shadow-sm rounded-lg bg-card overflow-hidden group">
-                                            <div className="p-5 flex flex-col md:flex-row gap-6">
-                                                {/* Category Image */}
-                                                <div className="h-24 w-32 rounded-lg overflow-hidden bg-muted flex-shrink-0 border border-border">
-                                                    {cat.images?.[0]?.image ? (
-                                                        <img src={cat.images[0].image} alt={cat.category_name} className="w-full h-full object-cover" />
-                                                    ) : (
-                                                        <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                                                            <ImageIcon className="h-8 w-8" />
-                                                        </div>
-                                                    )}
-                                                </div>
-
-                                                {/* Category Info */}
-                                                <div className="flex-1 space-y-2">
-                                                    <div className="flex items-center justify-between">
-                                                        <div className="flex items-center gap-2">
-                                                            <h4 className="font-bold text-lg text-foreground">{cat.category_name}</h4>
-                                                            <Badge variant="outline" className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground border-border bg-muted/50 px-2 rounded-sm">
-                                                                {cat.unit_type}
-                                                            </Badge>
-                                                        </div>
-                                                        <div className="flex gap-2">
-                                                            <Button
-                                                                onClick={() => { setSelectedCategory(cat); setCategoryDialogOpen(true); }}
-                                                                variant="ghost" size="icon" className="h-8 w-8 rounded-md hover:bg-muted text-muted-foreground"
-                                                            >
-                                                                <Edit2 className="h-3.5 w-3.5" />
-                                                            </Button>
-                                                            <Button
-                                                                onClick={() => { setSelectedCategory(cat); setUnitDialogOpen(true); }}
-                                                                variant="outline"
-                                                                className="h-8 rounded-md border-border font-bold text-[10px] uppercase tracking-widest text-primary hover:bg-primary/10 hover:text-primary gap-1.5"
-                                                            >
-                                                                <Plus className="h-3 w-3" />
-                                                                Unit
-                                                            </Button>
-                                                        </div>
+                            <div className="grid gap-4">
+                                {unitCategories?.map((cat) => (
+                                    <Card key={cat.name} className="border border-border/50 group overflow-hidden">
+                                        <div className="p-5 flex flex-col md:flex-row gap-6">
+                                            <div className="h-24 w-32 rounded-lg bg-muted border border-border/50 flex-shrink-0 relative overflow-hidden">
+                                                {cat.images?.[0]?.image ? (
+                                                    <img src={cat.images[0].image} alt={cat.category_name} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                                                        <ImageIcon className="h-6 w-6" />
                                                     </div>
-
-                                                    <div className="flex items-center gap-4 text-xs font-bold text-muted-foreground uppercase tracking-widest">
-                                                        <span className="flex items-center gap-1 text-foreground">
-                                                            ₹{cat.base_rate_per_night?.toLocaleString()} <span className="text-[9px] text-muted-foreground font-bold uppercase">/ night</span>
-                                                        </span>
-                                                        <Separator orientation="vertical" className="h-3 bg-border" />
-                                                        <span className="flex items-center gap-1.5">
-                                                            <LayoutGrid className="h-3.5 w-3.5" />
-                                                            {units?.filter(u => u.unit_category === cat.name).length} Units
-                                                        </span>
-                                                    </div>
-
-                                                    <p className="text-[11px] text-muted-foreground font-bold uppercase tracking-tight line-clamp-1">{cat.description || "No description provided."}</p>
-                                                </div>
-
-                                                {/* Calendar Preview - Hidden on small screens */}
-                                                <div className="hidden lg:block w-1/3 pl-6 border-l border-slate-50">
-                                                    <UnitCategoryCalendar
-                                                        categoryId={cat.name}
-                                                        totalUnits={units?.filter(u => u.unit_category === cat.name).length || 0}
-                                                        occupancyData={occupancy?.[cat.name] || {}}
-                                                    />
-                                                </div>
+                                                )}
                                             </div>
-
-                                            {/* Units Grid */}
-                                            <div className="bg-muted/30 p-4 border-t border-border">
-                                                <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">
-                                                    {units?.filter(u => u.unit_category === cat.name).map(unit => (
-                                                        <div
-                                                            key={unit.name}
-                                                            onClick={() => { setSelectedUnit(unit); setUnitDialogOpen(true); }}
-                                                            className={cn(
-                                                                "group relative flex flex-col items-center justify-center p-2 rounded-md border cursor-pointer transition-all hover:scale-105",
-                                                                unit.status === "Available" ? "bg-card border-border hover:border-emerald-300 hover:shadow-sm" :
-                                                                    unit.status === "Dirty" ? "bg-amber-500/10 border-amber-500/20 hover:border-amber-300" :
-                                                                        "bg-primary/10 border-primary/20 hover:border-primary/30"
-                                                            )}
+                                            <div className="flex-1 space-y-3">
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-2">
+                                                        <h4 className="font-semibold text-lg">{cat.category_name}</h4>
+                                                        <Badge variant="secondary" className="text-[10px] font-bold bg-muted/50 border-none uppercase tracking-widest">
+                                                            {cat.unit_type}
+                                                        </Badge>
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="h-8 w-8 text-muted-foreground"
+                                                            onClick={() => { setSelectedCategory(cat); setCategoryDialogOpen(true); }}
                                                         >
-                                                            <span className="text-[10px] font-black text-foreground group-hover:text-primary">{unit.unit_no}</span>
-                                                            <div className={cn(
-                                                                "mt-1.5 h-1.5 w-1.5 rounded-full",
-                                                                unit.status === "Available" ? "bg-emerald-500" :
-                                                                    unit.status === "Occupied" ? "bg-primary" :
-                                                                        "bg-amber-500"
-                                                            )} />
-                                                        </div>
-                                                    ))}
-                                                    {units?.filter(u => u.unit_category === cat.name).length === 0 && (
-                                                        <div className="col-span-full py-3 text-center">
-                                                            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">No units assigned</p>
-                                                        </div>
-                                                    )}
+                                                            <Edit2 className="h-3.5 w-3.5" />
+                                                        </Button>
+                                                        <Button
+                                                            variant="outline"
+                                                            className="h-8 gap-2 font-bold text-[10px] uppercase tracking-widest text-primary border-primary/20 hover:bg-primary/5"
+                                                            onClick={() => { setSelectedCategory(cat); setUnitDialogOpen(true); }}
+                                                        >
+                                                            <Plus className="h-3 w-3" />
+                                                            Add Unit
+                                                        </Button>
+                                                    </div>
                                                 </div>
+                                                <div className="flex items-center gap-4 text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                                                    <span className="text-foreground">₹{cat.base_rate_per_night?.toLocaleString() || 0} / night</span>
+                                                    <Separator orientation="vertical" className="h-3" />
+                                                    <span className="flex items-center gap-1.5">
+                                                        <LayoutGrid className="h-3 w-3" />
+                                                        {units?.filter(u => u.unit_category === cat.name).length || 0} Total Units
+                                                    </span>
+                                                </div>
+                                                <p className="text-xs text-muted-foreground font-medium line-clamp-2 uppercase tracking-tight opacity-70">
+                                                    {cat.description || "No description provided."}
+                                                </p>
                                             </div>
-                                        </Card>
-                                    ))}
-
-                                    {unitCategories?.length === 0 && (
-                                        <div className="flex flex-col items-center justify-center py-16 border-2 border-dashed border-slate-200 rounded-3xl space-y-4 bg-slate-50/50">
-                                            <div className="h-16 w-16 rounded-2xl bg-white shadow-sm flex items-center justify-center text-slate-300 border border-slate-100">
-                                                <LayoutGrid className="h-8 w-8" />
+                                            <div className="hidden lg:block w-1/3 pl-6 border-l border-border/30">
+                                                <UnitCategoryCalendar
+                                                    categoryId={cat.name}
+                                                    totalUnits={units?.filter(u => u.unit_category === cat.name).length || 0}
+                                                    occupancyData={occupancy?.[cat.name] || {}}
+                                                />
                                             </div>
-                                            <div className="text-center space-y-1">
-                                                <p className="text-sm font-bold text-slate-600">No inventory defined</p>
-                                                <p className="text-xs text-slate-400 max-w-xs mx-auto">Create unit categories to start managing inventory.</p>
-                                            </div>
-                                            <Button
-                                                onClick={() => { setSelectedCategory(null); setCategoryDialogOpen(true); }}
-                                                className="rounded-xl font-bold h-9 px-6 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm text-xs uppercase tracking-wide"
-                                            >
-                                                Create Category
-                                            </Button>
                                         </div>
-                                    )}
-                                </div>
-                            )}
+                                        <div className="bg-muted/20 p-4 border-t border-border/30">
+                                            <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">
+                                                {units?.filter(u => u.unit_category === cat.name).map(unit => (
+                                                    <div
+                                                        key={unit.name}
+                                                        className={cn(
+                                                            "group flex flex-col items-center justify-center p-2 rounded-md border cursor-pointer transition-all hover:scale-105 active:scale-95",
+                                                            unit.status === "Available" ? "bg-card border-border hover:border-success/30" :
+                                                                unit.status === "Dirty" ? "bg-warning/10 border-warning/20 hover:border-warning/40" :
+                                                                    "bg-primary/10 border-primary/20"
+                                                        )}
+                                                        onClick={() => { setSelectedUnit(unit); setUnitDialogOpen(true); }}
+                                                    >
+                                                        <span className="text-[10px] font-bold text-foreground group-hover:text-primary transition-colors">{unit.unit_no}</span>
+                                                        <div className={cn(
+                                                            "mt-1.5 h-1.5 w-1.5 rounded-full ring-1 ring-offset-1 ring-offset-background",
+                                                            unit.status === "Available" ? "bg-success ring-success/20" :
+                                                                unit.status === "Occupied" ? "bg-primary ring-primary/20" :
+                                                                    "bg-warning ring-warning/20"
+                                                        )} />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </Card>
+                                ))}
+                                {(!isLoading && unitCategories?.length === 0) && (
+                                    <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-border rounded-xl space-y-4 bg-muted/10">
+                                        <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
+                                            <LayoutGrid className="h-6 w-6" />
+                                        </div>
+                                        <div className="text-center">
+                                            <p className="font-semibold text-sm">No unit categories found</p>
+                                            <p className="text-xs text-muted-foreground max-w-xs mx-auto">Start by adding your first unit category.</p>
+                                        </div>
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => { setSelectedCategory(null); setCategoryDialogOpen(true); }}
+                                            className="h-9 px-6 font-bold text-[10px] uppercase tracking-widest border-border"
+                                        >
+                                            Create First Category
+                                        </Button>
+                                    </div>
+                                )}
+                            </div>
                         </TabsContent>
 
-                        <TabsContent value="about" className="space-y-6 focus-visible:outline-none mt-0">
+                        <TabsContent value="about" className="focus-visible:outline-none">
                             <div className="grid lg:grid-cols-3 gap-6">
                                 <div className="lg:col-span-2 space-y-6">
-                                    <Card className="border border-border/50 shadow-sm rounded-lg bg-card overflow-hidden">
-                                        <div className="bg-muted/20 px-6 py-3 border-b border-border">
-                                            <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">About Property</h3>
-                                        </div>
+                                    <Card className="border border-border/50">
+                                        <CardHeader className="bg-muted/20 border-b border-border/30 py-3 px-6">
+                                            <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Property Description</CardTitle>
+                                        </CardHeader>
                                         <CardContent className="p-6">
-                                            <p className="text-sm leading-relaxed text-foreground font-medium whitespace-pre-wrap">
+                                            <p className="text-sm leading-relaxed font-medium text-foreground whitespace-pre-wrap">
                                                 {property.description || "No description provided for this property."}
                                             </p>
                                         </CardContent>
                                     </Card>
                                 </div>
-
-                                <div className="space-y-4">
-                                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground pl-1">Contact Info</h3>
-                                    <Card className="border border-border shadow-sm rounded-lg bg-card p-1">
-                                        <div className="flex items-center gap-3 p-4 border-b border-border">
-                                            <div className="h-10 w-10 rounded-md bg-primary/10 text-primary flex items-center justify-center border border-border">
-                                                <Mail className="h-5 w-5" />
+                                <div className="space-y-6">
+                                    <Card className="border border-border/50">
+                                        <CardHeader className="bg-muted/20 border-b border-border/30 py-3 px-6">
+                                            <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Contact Details</CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="p-0">
+                                            <div className="flex items-center gap-4 p-4 border-b border-border/30">
+                                                <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary border border-primary/10">
+                                                    <Mail className="h-4 w-4" />
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Email</p>
+                                                    <p className="text-sm font-semibold truncate">{property.email || "N/A"}</p>
+                                                </div>
                                             </div>
-                                            <div className="space-y-0.5">
-                                                <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest block">Email</span>
-                                                <p className="text-xs font-bold text-foreground">{property.email || "N/A"}</p>
+                                            <div className="flex items-center gap-4 p-4">
+                                                <div className="h-9 w-9 rounded-lg bg-success/10 flex items-center justify-center text-success border border-success/10">
+                                                    <Phone className="h-4 w-4" />
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Phone</p>
+                                                    <p className="text-sm font-semibold truncate">{property.phone || "N/A"}</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="flex items-center gap-3 p-4">
-                                            <div className="h-10 w-10 rounded-md bg-emerald-500/10 text-emerald-500 flex items-center justify-center border border-border">
-                                                <Phone className="h-5 w-5" />
-                                            </div>
-                                            <div className="space-y-0.5">
-                                                <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest block">Phone</span>
-                                                <p className="text-xs font-bold text-foreground">{property.phone || "N/A"}</p>
-                                            </div>
-                                        </div>
+                                        </CardContent>
                                     </Card>
-
-                                    <Card className="border border-border shadow-sm rounded-lg bg-muted/50 overflow-hidden h-40 flex items-center justify-center">
-                                        <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                                            <MapPin className="h-8 w-8 opacity-50" />
-                                            <span className="text-[10px] font-bold uppercase tracking-widest opacity-70">Map View Unavailable</span>
-                                        </div>
+                                    <Card className="h-40 bg-muted/20 border border-border/50 border-dashed rounded-lg flex flex-col items-center justify-center text-muted-foreground gap-2">
+                                        <MapPin className="h-6 w-6 opacity-30" />
+                                        <span className="text-[10px] font-bold uppercase tracking-widest opacity-50">Maps Integration Pending</span>
                                     </Card>
                                 </div>
                             </div>
@@ -358,6 +316,7 @@ function PropertyDetailsContent({ onClose, initialProperty }: { onClose: () => v
                 </div>
             </div>
 
+            {/* Dialogs */}
             <UnitCategoryDialog
                 open={categoryDialogOpen}
                 onOpenChange={setCategoryDialogOpen}
@@ -377,8 +336,9 @@ function PropertyDetailsContent({ onClose, initialProperty }: { onClose: () => v
 }
 
 export function PropertyDetailsView({ property, onClose }: PropertyDetailsViewProps) {
+    if (!property?.name) return null;
     return (
-        <PropertyProvider propertyId={property?.name}>
+        <PropertyProvider propertyId={property.name}>
             <PropertyDetailsContent onClose={onClose} initialProperty={property} />
         </PropertyProvider>
     )
