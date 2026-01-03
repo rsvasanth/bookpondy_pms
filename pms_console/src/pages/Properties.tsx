@@ -15,6 +15,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { PropertyDialog } from "@/components/properties/property-dialog"
 import { PropertyDetailsView } from "@/components/properties/property-details-view"
+import { DashboardStatsCard } from "@/components/dashboard/dashboard-stats-card"
 import {
   Plus,
   Search,
