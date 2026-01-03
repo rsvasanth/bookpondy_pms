@@ -63,10 +63,10 @@ export default function ReportsPage() {
     ]
 
     const channelData = [
-        { name: 'BookPondy', value: 45, color: '#D81B60' },
-        { name: 'Airbnb', value: 25, color: '#FF5A5F' },
-        { name: 'Booking.com', value: 20, color: '#003580' },
-        { name: 'Direct', value: 10, color: '#10b981' },
+        { name: 'BookPondy', value: 45, color: 'hsl(var(--chart-1))' },
+        { name: 'Airbnb', value: 25, color: 'hsl(var(--chart-2))' },
+        { name: 'Booking.com', value: 20, color: 'hsl(var(--chart-3))' },
+        { name: 'Direct', value: 10, color: 'hsl(var(--chart-4))' },
     ]
 
     return (
@@ -75,16 +75,16 @@ export default function ReportsPage() {
                 {/* Header */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-2">
                     <div className="space-y-1">
-                        <h1 className="text-xl font-bold tracking-tight text-foreground uppercase tracking-tight">Revenue Analytics</h1>
-                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                        <h1 className="text-xl font-semibold tracking-tight text-foreground">Revenue Analytics</h1>
+                        <p className="text-sm text-muted-foreground">
                             Financial performance and distribution multi-channel insights.
                         </p>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm" className="rounded-lg border-border h-10 px-4 font-bold text-[10px] uppercase tracking-widest gap-2 bg-card">
+                        <Button variant="outline" size="sm" className="h-10 px-4 gap-2">
                             <Filter className="h-4 w-4" /> Filter
                         </Button>
-                        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-10 px-4 font-bold text-[10px] uppercase tracking-widest gap-2 shadow-sm">
+                        <Button className="h-10 px-4 gap-2">
                             <Download className="h-4 w-4" /> Export PDF
                         </Button>
                     </div>
@@ -131,8 +131,8 @@ export default function ReportsPage() {
                     <Card className="lg:col-span-2 border border-border shadow-sm rounded-lg bg-card overflow-hidden">
                         <CardHeader className="flex flex-row items-center justify-between bg-muted/30 px-4 py-3">
                             <div className="space-y-1">
-                                <CardTitle className="text-sm font-bold uppercase tracking-tight">Revenue Trendline</CardTitle>
-                                <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Monthly performance across all units</CardDescription>
+                                <CardTitle className="text-sm font-semibold">Revenue Trendline</CardTitle>
+                                <CardDescription className="text-xs text-muted-foreground">Monthly performance across all units</CardDescription>
                             </div>
                             <div className="flex gap-1 bg-background p-1 rounded-md border border-border">
                                 {['7d', '30d', '90d'].map(r => (
@@ -140,7 +140,7 @@ export default function ReportsPage() {
                                         key={r}
                                         variant={timeRange === r ? "secondary" : "ghost"}
                                         size="sm"
-                                        className="h-7 px-3 text-[9px] font-black uppercase rounded-sm"
+                                        className="h-7 px-3 text-[10px] font-semibold rounded-sm"
                                         onClick={() => setTimeRange(r)}
                                     >
                                         {r}
@@ -154,20 +154,20 @@ export default function ReportsPage() {
                                     <AreaChart data={revenueData}>
                                         <defs>
                                             <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor="#D81B60" stopOpacity={0.1} />
-                                                <stop offset="95%" stopColor="#D81B60" stopOpacity={0} />
+                                                <stop offset="5%" stopColor="hsl(var(--chart-1))" stopOpacity={0.1} />
+                                                <stop offset="95%" stopColor="hsl(var(--chart-1))" stopOpacity={0} />
                                             </linearGradient>
                                         </defs>
                                         <XAxis
                                             dataKey="date"
                                             axisLine={false}
                                             tickLine={false}
-                                            tick={{ fontSize: 10, fontWeight: 700, fill: '#64748b' }}
+                                            tick={{ fontSize: 10, fontWeight: 500, fill: 'hsl(var(--muted-foreground))' }}
                                         />
                                         <YAxis
                                             axisLine={false}
                                             tickLine={false}
-                                            tick={{ fontSize: 10, fontWeight: 700, fill: '#64748b' }}
+                                            tick={{ fontSize: 10, fontWeight: 500, fill: 'hsl(var(--muted-foreground))' }}
                                             tickFormatter={(val) => `₹${val / 1000}k`}
                                         />
                                         <Tooltip
@@ -176,7 +176,7 @@ export default function ReportsPage() {
                                         <Area
                                             type="monotone"
                                             dataKey="value"
-                                            stroke="#D81B60"
+                                            stroke="hsl(var(--chart-1))"
                                             strokeWidth={3}
                                             fillOpacity={1}
                                             fill="url(#colorValue)"
@@ -189,8 +189,8 @@ export default function ReportsPage() {
 
                     <Card className="lg:col-span-1 border border-border shadow-sm rounded-lg bg-card overflow-hidden">
                         <CardHeader className="bg-muted/30 px-4 py-3">
-                            <CardTitle className="text-sm font-bold uppercase tracking-tight">Channel Share</CardTitle>
-                            <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Booking volume by source</CardDescription>
+                            <CardTitle className="text-sm font-semibold">Channel Share</CardTitle>
+                            <CardDescription className="text-xs text-muted-foreground">Booking volume by source</CardDescription>
                         </CardHeader>
                         <CardContent className="p-4">
                             <div className="h-[250px] w-full">
@@ -202,7 +202,7 @@ export default function ReportsPage() {
                                             type="category"
                                             axisLine={false}
                                             tickLine={false}
-                                            tick={{ fontSize: 10, fontWeight: 700, fill: '#64748b' }}
+                                            tick={{ fontSize: 10, fontWeight: 500, fill: 'hsl(var(--muted-foreground))' }}
                                             width={80}
                                         />
                                         <Tooltip
@@ -222,9 +222,9 @@ export default function ReportsPage() {
                                     <div key={item.name} className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                             <div className="h-2 w-2 rounded-full" style={{ backgroundColor: item.color }} />
-                                            <span className="text-[10px] font-bold uppercase text-foreground">{item.name}</span>
+                                            <span className="text-xs font-medium text-foreground">{item.name}</span>
                                         </div>
-                                        <span className="text-[10px] font-black text-muted-foreground">{item.value}%</span>
+                                        <span className="text-xs font-semibold text-muted-foreground">{item.value}%</span>
                                     </div>
                                 ))}
                             </div>
@@ -236,10 +236,10 @@ export default function ReportsPage() {
                 <Card className="border border-border shadow-sm rounded-lg bg-card overflow-hidden">
                     <CardHeader className="bg-muted/30 px-4 py-3 flex flex-row items-center justify-between">
                         <div className="space-y-1">
-                            <CardTitle className="text-sm font-bold uppercase tracking-tight">Channel Payouts & Commissions</CardTitle>
-                            <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Detailed breakdown of marketplace liabilities</CardDescription>
+                            <CardTitle className="text-sm font-semibold">Channel Payouts & Commissions</CardTitle>
+                            <CardDescription className="text-xs text-muted-foreground">Detailed breakdown of marketplace liabilities</CardDescription>
                         </div>
-                        <Button variant="ghost" className="text-[10px] font-black uppercase text-primary tracking-widest gap-1">
+                        <Button variant="ghost" className="text-xs font-semibold text-primary gap-1">
                             Full Ledger <ArrowUpRight className="h-3 w-3" />
                         </Button>
                     </CardHeader>
@@ -248,35 +248,35 @@ export default function ReportsPage() {
                             <table className="w-full text-left">
                                 <thead className="bg-muted/50 border-b border-border">
                                     <tr>
-                                        <th className="px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Booking / ID</th>
-                                        <th className="px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Channel</th>
-                                        <th className="px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Revenue</th>
-                                        <th className="px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Commission</th>
-                                        <th className="px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Status</th>
+                                        <th className="px-4 py-3 text-xs font-semibold text-muted-foreground">Booking / ID</th>
+                                        <th className="px-4 py-3 text-xs font-semibold text-muted-foreground">Channel</th>
+                                        <th className="px-4 py-3 text-xs font-semibold text-muted-foreground">Revenue</th>
+                                        <th className="px-4 py-3 text-xs font-semibold text-muted-foreground">Commission</th>
+                                        <th className="px-4 py-3 text-xs font-semibold text-muted-foreground">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border">
                                     {(commissions || []).slice(0, 5).map((c: any) => (
                                         <tr key={c.name} className="hover:bg-muted/30 transition-colors">
-                                            <td className="px-4 py-3 font-bold text-xs uppercase tracking-tight">{c.booking}</td>
+                                            <td className="px-4 py-3 font-semibold text-xs">{c.booking}</td>
                                             <td className="px-4 py-3">
-                                                <Badge variant="outline" className="text-[9px] font-bold uppercase px-2 py-0 border-border text-muted-foreground tracking-widest">
+                                                <Badge variant="outline" className="text-[10px] font-medium px-2 py-0 border-border text-muted-foreground">
                                                     {c.channel}
                                                 </Badge>
                                             </td>
-                                            <td className="px-4 py-3 text-xs font-bold text-foreground">₹{(c.commission_amount / (c.commission_percentage / 100)).toLocaleString()}</td>
-                                            <td className="px-4 py-3 text-xs font-black text-rose-500">₹{c.commission_amount.toLocaleString()}</td>
+                                            <td className="px-4 py-3 text-xs font-semibold text-foreground">₹{(c.commission_amount / (c.commission_percentage / 100)).toLocaleString()}</td>
+                                            <td className="px-4 py-3 text-xs font-bold text-error">₹{c.commission_amount.toLocaleString()}</td>
                                             <td className="px-4 py-3">
                                                 <div className="flex items-center gap-1.5">
-                                                    <div className={cn("h-1.5 w-1.5 rounded-full", c.status === "Paid" ? "bg-emerald-500" : "bg-amber-400")} />
-                                                    <span className="text-[10px] font-bold uppercase tracking-widest text-foreground">{c.status}</span>
+                                                    <div className={cn("h-1.5 w-1.5 rounded-full", c.status === "Paid" ? "bg-success" : "bg-warning")} />
+                                                    <span className="text-xs font-medium text-foreground">{c.status}</span>
                                                 </div>
                                             </td>
                                         </tr>
                                     ))}
                                     {(!commissions || commissions.length === 0) && (
                                         <tr>
-                                            <td colSpan={5} className="px-6 py-12 text-center text-[10px] font-bold uppercase text-muted-foreground tracking-widest">
+                                            <td colSpan={5} className="px-6 py-12 text-center text-xs font-medium text-muted-foreground italic">
                                                 No commission records found for this period.
                                             </td>
                                         </tr>

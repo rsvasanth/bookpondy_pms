@@ -50,12 +50,12 @@ const columns: ColumnDef<any>[] = [
       const initials = b.guest_name ? b.guest_name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() : "G"
       return (
         <div className="flex items-center gap-3 py-1">
-          <div className="h-8 w-8 rounded-md bg-muted/50 flex items-center justify-center text-primary font-black text-[10px] border border-border/50 shadow-sm group-hover:scale-105 transition-transform">
+          <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center text-primary font-semibold text-xs border border-border">
             {initials}
           </div>
           <div className="flex flex-col leading-tight">
-            <span className="font-black text-foreground text-[11px] uppercase tracking-tight leading-none">{b.guest_name}</span>
-            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest opacity-40 mt-0.5 leading-none">#{(b.name || b.id || "").split("-").pop()}</span>
+            <span className="font-semibold text-foreground text-sm leading-none">{b.guest_name}</span>
+            <span className="text-xs font-medium text-muted-foreground mt-0.5 leading-none">#{(b.name || b.id || "").split("-").pop()}</span>
           </div>
         </div>
       )
@@ -68,12 +68,12 @@ const columns: ColumnDef<any>[] = [
       const b = row.original
       return (
         <div className="flex flex-col gap-1 leading-tight">
-          <div className="flex items-center gap-1.5 font-black text-foreground text-[10px] uppercase tracking-tight">
-            <Building2 className="h-3 w-3 text-muted-foreground opacity-30" />
+          <div className="flex items-center gap-1.5 font-semibold text-foreground text-sm">
+            <Building2 className="h-3.5 w-3.5 text-muted-foreground" />
             <span className="truncate max-w-[120px]">{b.property}</span>
           </div>
-          <div className="text-[8px] font-black uppercase tracking-[0.1em] text-muted-foreground/60 flex items-center gap-1">
-            <span className="px-1 py-0.5 bg-muted/40 rounded border border-border/30">{b.unit || "STANDARD"}</span>
+          <div className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+            <span className="px-1.5 py-0.5 bg-muted rounded border border-border">{b.unit || "Standard Unit"}</span>
           </div>
         </div>
       )
@@ -86,15 +86,15 @@ const columns: ColumnDef<any>[] = [
       const status = row.original.reservation_status
       const getStatusStyles = (s: string) => {
         switch (s) {
-          case "Confirmed": return "bg-emerald-500 text-white border-emerald-600"
-          case "Checked-In": return "bg-blue-600 text-white border-blue-700"
-          case "Checked-Out": return "bg-muted text-muted-foreground border-border/50"
-          case "Cancelled": return "bg-rose-500 text-white border-rose-600"
-          default: return "bg-muted text-muted-foreground border-border/50"
+          case "Confirmed": return "bg-success text-white"
+          case "Checked-In": return "bg-info text-white"
+          case "Checked-Out": return "bg-muted text-muted-foreground"
+          case "Cancelled": return "bg-error text-white"
+          default: return "bg-muted text-muted-foreground"
         }
       }
       return (
-        <Badge className={cn("text-[8px] font-black uppercase px-1.5 py-0 rounded-sm border shadow-none tracking-tight transition-all", getStatusStyles(status))}>
+        <Badge className={cn("text-[10px] font-medium px-2 py-0 rounded-md border-none shadow-none", getStatusStyles(status))}>
           {status}
         </Badge>
       )
@@ -107,12 +107,12 @@ const columns: ColumnDef<any>[] = [
       const b = row.original
       return (
         <div className="flex flex-col gap-0.5 leading-none">
-          <div className="flex items-center gap-1 text-[10px] font-black text-foreground uppercase tracking-tighter">
+          <div className="flex items-center gap-1 text-xs font-semibold text-foreground">
             {b.check_in_date}
-            <ArrowRight className="h-2.5 w-2.5 text-muted-foreground opacity-30" />
+            <ArrowRight className="h-3 w-3 text-muted-foreground" />
             {b.check_out_date}
           </div>
-          <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest opacity-40">Standard Stay</span>
+          <span className="text-[10px] font-medium text-muted-foreground">Standard Stay</span>
         </div>
       )
     },
@@ -124,7 +124,7 @@ const columns: ColumnDef<any>[] = [
       const b = row.original
       return (
         <div className="flex items-center gap-1.5">
-          <span className="font-black text-foreground text-sm tracking-tighter">₹{b.total_amount?.toLocaleString() || "0"}</span>
+          <span className="font-bold text-foreground text-sm">₹{b.total_amount?.toLocaleString() || "0"}</span>
         </div>
       )
     },
@@ -136,10 +136,10 @@ const columns: ColumnDef<any>[] = [
       const status = row.original.payment_status || "Pending"
       return (
         <Badge variant="outline" className={cn(
-          "text-[9px] font-black uppercase px-2 py-0.5 rounded-md border shadow-none tracking-tight",
-          status === "Received" ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" :
+          "text-[10px] font-medium px-2 py-0.5 rounded-md border shadow-none",
+          status === "Received" ? "bg-success/10 text-success border-success/20" :
             status === "Refunded" ? "bg-muted text-muted-foreground border-border" :
-              "bg-amber-500/10 text-amber-500 border-amber-500/20"
+              "bg-warning/10 text-warning border-warning/20"
         )}>
           {status}
         </Badge>
@@ -152,7 +152,7 @@ const columns: ColumnDef<any>[] = [
     cell: ({ row }) => {
       const source = row.original.reservation_source || "Direct"
       return (
-        <Badge variant="outline" className="text-[9px] font-bold text-muted-foreground border-border bg-card uppercase tracking-[0.1em] px-2 py-0.5 rounded-md">
+        <Badge variant="outline" className="text-[10px] font-medium text-muted-foreground border-border bg-card px-2 py-0.5 rounded-md">
           {source}
         </Badge>
       )
@@ -269,7 +269,7 @@ export default function BookingsPage() {
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 rounded-lg text-slate-400 hover:text-[#ff3924] hover:bg-slate-50"
+            className="h-8 w-8 rounded-lg text-muted-foreground hover:text-primary hover:bg-muted"
             onClick={() => navigate(`/bookings/${row.original.name}`)}
           >
             <ChevronRight className="h-4 w-4" />
@@ -303,9 +303,9 @@ export default function BookingsPage() {
               <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
                 <CalendarDays className="h-4 w-4 text-primary" />
               </div>
-              <h1 className="text-xl font-black tracking-tight text-foreground uppercase">Property Ledger</h1>
+              <h1 className="text-xl font-semibold tracking-tight text-foreground">Property Ledger</h1>
             </div>
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] decoration-primary/30 underline-offset-4 decoration-2">
+            <p className="text-sm text-muted-foreground">
               Manage stays, arrivals, and guest enquiries
             </p>
           </div>
@@ -314,16 +314,16 @@ export default function BookingsPage() {
             <Button
               variant="outline"
               size="sm"
-              className="h-9 px-4 rounded-md text-[10px] font-black uppercase tracking-widest border-border/50 bg-background/50 shadow-sm hover:bg-muted transition-all"
+              className="h-9 px-4 rounded-md text-xs font-semibold border-border bg-background shadow-sm hover:bg-muted transition-all"
               onClick={() => downloadCSV(reservations || [])}
             >
               Export Records
             </Button>
             <Button
               onClick={() => navigate("/bookings/new")}
-              className="h-9 px-4 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-[10px] uppercase tracking-[0.2em] gap-2 rounded-md shadow-lg shadow-primary/10 transition-all active:scale-95"
+              className="h-9 px-4 gap-2 rounded-md"
             >
-              <Plus className="h-3.5 w-3.5" /> NEW RESERVATION
+              <Plus className="h-4 w-4" /> New Reservation
             </Button>
           </div>
         </div>
@@ -377,13 +377,13 @@ export default function BookingsPage() {
 
           <div className="lg:col-span-3">
             <Card className="border border-border/50 shadow-sm bg-card/40 backdrop-blur-md overflow-hidden flex flex-col h-full">
-              <CardHeader className="flex flex-row items-center justify-between pb-3 border-b border-border/50 p-4 bg-muted/20">
-                <CardTitle className="text-[10px] font-black text-muted-foreground flex items-center gap-2 uppercase tracking-[0.2em]">
-                  <div className="w-6 h-6 rounded-md flex items-center justify-center bg-background border border-border/50 text-foreground shadow-sm group-hover:text-primary transition-all">
+              <CardHeader className="flex flex-row items-center justify-between pb-3 border-b border-border p-4 bg-muted/20">
+                <CardTitle className="text-xs font-semibold text-muted-foreground flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-md flex items-center justify-center bg-background border border-border text-foreground shadow-sm">
                     <Table2 className="h-3.5 w-3.5" />
                   </div>
                   <span>Reservation Discovery</span>
-                  <Badge variant="outline" className="ml-1 rounded-sm px-1 py-0 text-[9px] font-black bg-background/50 text-muted-foreground/70 border-border/50 shadow-none">
+                  <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[10px] font-medium">
                     {totalItems} RECORDS
                   </Badge>
                 </CardTitle>
@@ -395,7 +395,7 @@ export default function BookingsPage() {
                     {table.getHeaderGroups().map((headerGroup) => (
                       <TableRow key={headerGroup.id} className="hover:bg-transparent border-b border-border/50">
                         {headerGroup.headers.map((header) => (
-                          <TableHead key={header.id} className="text-[9px] font-black uppercase tracking-[0.1em] text-muted-foreground/70 px-4 py-2.5 h-auto">
+                          <TableHead key={header.id} className="text-xs font-semibold text-muted-foreground px-4 py-2.5 h-auto">
                             {header.isPlaceholder
                               ? null
                               : flexRender(
@@ -413,7 +413,7 @@ export default function BookingsPage() {
                         <TableCell colSpan={columns.length} className="h-32 text-center py-10">
                           <div className="flex flex-col items-center gap-2">
                             <div className="h-5 w-5 animate-spin border-2 border-primary border-t-transparent rounded-full" />
-                            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40">Loading Ledger...</span>
+                            <span className="text-xs font-medium text-muted-foreground/60">Loading Ledger...</span>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -436,7 +436,7 @@ export default function BookingsPage() {
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={columns.length} className="h-32 text-center text-muted-foreground/30 text-[9px] font-black uppercase tracking-[0.4em] italic">
+                        <TableCell colSpan={columns.length} className="h-32 text-center text-muted-foreground/40 text-xs italic">
                           No reservations found
                         </TableCell>
                       </TableRow>
@@ -447,14 +447,14 @@ export default function BookingsPage() {
 
               {/* Pagination Controls */}
               <div className="mt-auto p-3 border-t border-border/50 bg-muted/10 flex items-center justify-between">
-                <p className="text-[9px] text-muted-foreground font-black uppercase tracking-wider opacity-60">
-                  Showing {Math.min((currentPage - 1) * pageSize + 1, totalItems)} - {Math.min(currentPage * pageSize, totalItems)} OF {totalItems}
+                <p className="text-xs text-muted-foreground font-medium">
+                  Showing {Math.min((currentPage - 1) * pageSize + 1, totalItems)} - {Math.min(currentPage * pageSize, totalItems)} of {totalItems}
                 </p>
                 <div className="flex items-center gap-1.5 focus-visible:ring-primary/20">
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-7 px-3 rounded-md text-[9px] font-black uppercase tracking-widest hover:bg-primary/5 hover:text-primary transition-all disabled:opacity-30"
+                    className="h-7 px-3 rounded-md text-xs font-semibold hover:bg-primary/5 hover:text-primary transition-all disabled:opacity-30"
                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
                   >
@@ -467,8 +467,8 @@ export default function BookingsPage() {
                         variant={currentPage === page ? "default" : "ghost"}
                         size="sm"
                         className={cn(
-                          "h-7 w-7 rounded-md text-[9px] font-black uppercase shadow-none transition-all",
-                          currentPage === page ? "bg-primary text-primary-foreground shadow-md shadow-primary/10" : "text-muted-foreground hover:bg-primary/5"
+                          "h-7 w-7 rounded-md text-xs font-semibold shadow-none transition-all",
+                          currentPage === page ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-primary/5"
                         )}
                         onClick={() => setCurrentPage(page)}
                       >
@@ -476,12 +476,12 @@ export default function BookingsPage() {
                       </Button>
                     ))
                   ) : (
-                    <span className="text-[10px] font-black text-primary px-2 uppercase tracking-tighter">Page {currentPage} of {totalPages}</span>
+                    <span className="text-xs font-semibold text-primary px-2">Page {currentPage} of {totalPages}</span>
                   )}
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-7 px-3 rounded-md text-[9px] font-black uppercase tracking-widest hover:bg-primary/5 hover:text-primary transition-all disabled:opacity-30"
+                    className="h-7 px-3 rounded-md text-xs font-semibold hover:bg-primary/5 hover:text-primary transition-all disabled:opacity-30"
                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                     disabled={currentPage === totalPages || totalPages === 0}
                   >

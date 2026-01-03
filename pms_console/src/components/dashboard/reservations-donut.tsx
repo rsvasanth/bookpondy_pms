@@ -4,21 +4,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts"
 
 const statusColors: Record<string, string> = {
-    "Confirmed": "#00A79D",
-    "Checked-In": "#2E7D32",
-    "Checked-Out": "#D81B60",
-    "Cancelled": "#94a3b8"
+    "Confirmed": "hsl(var(--success))",
+    "Checked-In": "hsl(var(--info))",
+    "Checked-Out": "hsl(var(--error))",
+    "Cancelled": "hsl(var(--muted-foreground))"
 }
 
 export function ReservationsDonut({ data = [], total = 0 }: { data?: any[], total?: number }) {
     const displayData = data.length > 0 ? data.map(d => ({
         name: d.name,
         value: d.value,
-        color: statusColors[d.name] || "#CBD5E1"
+        color: statusColors[d.name] || "hsl(var(--muted))"
     })) : [
-        { name: "Confirmed", value: 45, color: "#00A79D" },
-        { name: "Checked In", value: 35, color: "#2E7D32" },
-        { name: "Checked Out", value: 20, color: "#D81B60" },
+        { name: "Confirmed", value: 45, color: "hsl(var(--success))" },
+        { name: "Checked In", value: 35, color: "hsl(var(--info))" },
+        { name: "Checked Out", value: 20, color: "hsl(var(--error))" },
     ]
 
     const totalValue = total || displayData.reduce((acc, curr) => acc + curr.value, 0)
@@ -58,7 +58,7 @@ export function ReservationsDonut({ data = [], total = 0 }: { data?: any[], tota
                     {displayData.map((item) => (
                         <div key={item.name} className="flex items-center gap-1.5">
                             <div className="h-2 w-2 rounded-full" style={{ backgroundColor: item.color }} />
-                            <span className="text-[10px] font-bold text-muted-foreground uppercase">{item.name}</span>
+                            <span className="text-xs font-medium text-muted-foreground">{item.name}</span>
                         </div>
                     ))}
                 </div>

@@ -126,17 +126,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <div className="w-full flex justify-center">
           <Select value={selectedPortfolio} onValueChange={setSelectedPortfolio}>
             <SelectTrigger
-              className="w-full h-10 rounded-xl border-muted bg-muted/30 focus:ring-primary/20 hover:bg-muted/40 transition-all font-bold text-foreground px-4 group-data-[collapsible=icon]:h-10 group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:border-none group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:[&>svg:last-child]:hidden"
+              className="w-full h-10 rounded-md border-input bg-muted/50 focus:ring-1 focus:ring-ring hover:bg-muted/80 transition-all font-medium text-foreground px-4 group-data-[collapsible=icon]:h-10 group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:border-none group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:[&>svg:last-child]:hidden"
             >
               <div className="flex-1 flex items-center gap-2.5 min-w-0 group-data-[collapsible=icon]:hidden">
                 <Building2 className="h-4 w-4 text-primary shrink-0" />
                 <SelectValue placeholder="Select" className="text-sm truncate" />
               </div>
-              <div className="hidden group-data-[collapsible=icon]:flex items-center justify-center h-10 w-10 rounded-xl bg-primary/10 border border-primary/20">
+              <div className="hidden group-data-[collapsible=icon]:flex items-center justify-center h-10 w-10 rounded-md bg-primary/10 border border-primary/20">
                 <Building2 className="h-5 w-5 text-primary" />
               </div>
             </SelectTrigger>
-            <SelectContent className="rounded-xl border-muted shadow-xl">
+            <SelectContent className="rounded-md border-muted shadow-lg">
               {portfoliosList?.map((portfolio) => (
                 <SelectItem key={portfolio.name} value={portfolio.name} className="rounded-lg py-2.5 font-medium">
                   {portfolio.portfolio_name}

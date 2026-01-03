@@ -33,7 +33,7 @@ export default function Login() {
     };
 
     return (
-        <div className="min-h-screen relative flex flex-col font-sans overflow-hidden bg-[#FBFBFB]">
+        <div className="min-h-screen relative flex flex-col font-sans overflow-hidden bg-background">
             {/* Background Artwork moved higher up at the TOP */}
             <div className="absolute top-0 left-0 w-full z-0 pointer-events-none opacity-80 flex justify-center -mt-10 lg:-mt-16">
                 <img
@@ -50,12 +50,12 @@ export default function Login() {
                     <Card className="w-full max-w-md border-none shadow-none bg-transparent p-0">
                         <CardContent className="pt-4 space-y-6 sm:space-y-8">
                             <div className="space-y-1 text-center">
-                                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-secondary">Welcome Back</h2>
-                                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Enter credentials to access PMS</p>
+                                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">Welcome Back</h2>
+                                <p className="text-xs text-muted-foreground font-medium">Enter credentials to access PMS</p>
                             </div>
 
                             {error && (
-                                <Alert variant="destructive" className="rounded-xl border-none bg-red-50 text-red-600">
+                                <Alert variant="destructive" className="rounded-md border-none bg-error/10 text-error">
                                     <AlertDescription className="font-medium text-center">
                                         {(error as any).message || "Invalid email or password. Please try again."}
                                     </AlertDescription>
@@ -65,7 +65,7 @@ export default function Login() {
                             <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
                                 <div className="space-y-4">
                                     <div className="space-y-1.5">
-                                        <Label htmlFor="email" className="text-[9px] font-black uppercase tracking-[0.15em] text-muted-foreground ml-1">Email Address</Label>
+                                        <Label htmlFor="email" className="text-xs font-semibold text-muted-foreground ml-1">Email Address</Label>
                                         <div className="relative">
                                             <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                                             <Input
@@ -74,7 +74,7 @@ export default function Login() {
                                                 type="email"
                                                 value={email}
                                                 onChange={(e) => setEmail(e.target.value)}
-                                                className="pl-10 h-11 rounded-xl bg-muted/20 border-muted focus-visible:ring-2 focus-visible:ring-primary/20 text-sm transition-all"
+                                                className="pl-10 h-11 rounded-md bg-muted/20 border-muted focus-visible:ring-2 focus-visible:ring-primary/20 text-sm transition-all"
                                                 required
                                             />
                                         </div>
@@ -82,8 +82,8 @@ export default function Login() {
 
                                     <div className="space-y-1.5">
                                         <div className="flex justify-between items-center ml-1">
-                                            <Label htmlFor="password" className="text-[9px] font-black uppercase tracking-[0.15em] text-muted-foreground">Password</Label>
-                                            <a href="#" className="text-[9px] text-primary font-black uppercase tracking-wider hover:underline">Forgot?</a>
+                                            <Label htmlFor="password" className="text-xs font-semibold text-muted-foreground">Password</Label>
+                                            <a href="#" className="text-xs text-primary font-semibold hover:underline">Forgot?</a>
                                         </div>
                                         <div className="relative">
                                             <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
@@ -93,7 +93,7 @@ export default function Login() {
                                                 placeholder="••••••••"
                                                 value={password}
                                                 onChange={(e) => setPassword(e.target.value)}
-                                                className="pl-10 h-11 rounded-xl bg-muted/20 border-muted focus-visible:ring-2 focus-visible:ring-primary/20 text-sm transition-all"
+                                                className="pl-10 h-11 rounded-md bg-muted/20 border-muted focus-visible:ring-2 focus-visible:ring-primary/20 text-sm transition-all"
                                                 required
                                             />
                                         </div>
@@ -102,7 +102,7 @@ export default function Login() {
 
                                 <Button
                                     type="submit"
-                                    className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-white font-black transition-all shadow-lg shadow-primary/20 group text-sm uppercase tracking-widest px-8"
+                                    className="w-full h-12 rounded-md bg-primary hover:bg-primary/90 text-white font-semibold transition-all shadow-lg shadow-primary/10 group text-sm px-8"
                                     disabled={isLoading}
                                 >
                                     {isLoading ? (
@@ -127,7 +127,7 @@ export default function Login() {
             {/* Footer Branding with Discreet Logo */}
             <footer className="p-8 pb-10 flex flex-col items-center gap-2 z-10 w-full">
                 <BrandLogo className="scale-[0.35] opacity-70 origin-center -mb-2" />
-                <div className="text-[8px] text-muted-foreground tracking-[0.5em] font-bold uppercase opacity-50">
+                <div className="text-[10px] text-muted-foreground font-semibold opacity-50">
                     Powered by Bookpondy PMS
                 </div>
             </footer>

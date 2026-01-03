@@ -31,7 +31,11 @@
   --chart-4: 43 74% 66%;
   --chart-5: 27 87% 67%;
   --brand-primary: 6 100% 57%;
-  /* #ff3924 equivalent in HSL roughly, or strict conversion */
+
+  --success: 142.1 70.6% 45.3%;
+  --warning: 37.9 90.2% 51.2%;
+  --error: 0 84.2% 60.2%;
+  --info: 221.2 83.2% 53.3%;
 }
 
 .dark {
@@ -59,13 +63,17 @@
   --chart-3: 30 80% 55%;
   --chart-4: 280 65% 60%;
   --chart-5: 340 75% 55%;
+
+  --success: 142.1 70.6% 45.3%;
+  --warning: 37.9 90.2% 51.2%;
+  --error: 0 62.8% 30.6%;
+  --info: 221.2 83.2% 53.3%;
 }
 
 @theme inline {
-  --font-sans: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  --font-sans: "Inter", "Plus Jakarta Sans", system-ui, sans-serif;
   --font-mono: "Geist Mono", "Geist Mono Fallback";
 
-  /* Convert to hsl() format for Tailwind compatibility */
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-card: hsl(var(--card));
@@ -91,6 +99,12 @@
   --color-chart-4: hsl(var(--chart-4));
   --color-chart-5: hsl(var(--chart-5));
   --color-brand-primary: hsl(var(--brand-primary));
+
+  --color-success: hsl(var(--success));
+  --color-warning: hsl(var(--warning));
+  --color-error: hsl(var(--error));
+  --color-info: hsl(var(--info));
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

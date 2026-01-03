@@ -124,21 +124,21 @@ export function UnitCategoryDialog({ open, onOpenChange, propertyId, initialData
                 <div className="flex-1 overflow-y-auto px-8 py-4 space-y-6 custom-scrollbar">
                     <div className="grid gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
-                            <Label className="text-xs font-bold uppercase tracking-wider text-gray-400">Category Name *</Label>
+                            <Label className="text-xs font-semibold text-muted-foreground">Category Name *</Label>
                             <Input
                                 placeholder="e.g. Deluxe Sea View Suite"
                                 value={categoryName}
                                 onChange={e => setCategoryName(e.target.value)}
-                                className="rounded-xl bg-gray-50/50 border-gray-100 focus-visible:ring-red-500/20"
+                                className="rounded-md bg-muted/30 border-border focus-visible:ring-primary/20"
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-xs font-bold uppercase tracking-wider text-gray-400">Unit Type *</Label>
+                            <Label className="text-xs font-semibold text-muted-foreground">Unit Type *</Label>
                             <Select value={unitType} onValueChange={setUnitType}>
-                                <SelectTrigger className="rounded-xl bg-gray-50/50 border-gray-100">
+                                <SelectTrigger className="rounded-md bg-muted/30 border-border">
                                     <SelectValue placeholder="Select type" />
                                 </SelectTrigger>
-                                <SelectContent className="rounded-2xl border-gray-100 shadow-xl">
+                                <SelectContent className="rounded-md border-border shadow-md">
                                     {unitTypes.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
                                 </SelectContent>
                             </Select>
@@ -147,31 +147,31 @@ export function UnitCategoryDialog({ open, onOpenChange, propertyId, initialData
 
                     <div className="grid gap-4 sm:grid-cols-3">
                         <div className="space-y-2">
-                            <Label className="text-xs font-bold uppercase tracking-wider text-gray-400">Base Rate (₹) *</Label>
+                            <Label className="text-xs font-semibold text-muted-foreground">Base Rate (₹) *</Label>
                             <Input
                                 type="number"
                                 placeholder="8000"
                                 value={baseRate}
                                 onChange={e => setBaseRate(e.target.value)}
-                                className="rounded-xl bg-gray-50/50 border-gray-100"
+                                className="rounded-md bg-muted/30 border-border"
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-xs font-bold uppercase tracking-wider text-gray-400">Max Adults</Label>
+                            <Label className="text-xs font-semibold text-muted-foreground">Max Adults</Label>
                             <Input
                                 type="number"
                                 value={maxAdults}
                                 onChange={e => setMaxAdults(e.target.value)}
-                                className="rounded-xl bg-gray-50/50 border-gray-100"
+                                className="rounded-md bg-muted/30 border-border"
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-xs font-bold uppercase tracking-wider text-gray-400">Max Children</Label>
+                            <Label className="text-xs font-semibold text-muted-foreground">Max Children</Label>
                             <Input
                                 type="number"
                                 value={maxChildren}
                                 onChange={e => setMaxChildren(e.target.value)}
-                                className="rounded-xl bg-gray-50/50 border-gray-100"
+                                className="rounded-md bg-muted/30 border-border"
                             />
                         </div>
                     </div>
@@ -188,8 +188,8 @@ export function UnitCategoryDialog({ open, onOpenChange, propertyId, initialData
 
                     <div className="space-y-4">
                         <div className="flex items-center justify-between">
-                            <Label className="text-xs font-bold uppercase tracking-wider text-gray-400">Gallery Images</Label>
-                            <span className="text-[10px] font-bold text-[#FF3D2E] bg-red-50 px-2 py-0.5 rounded-full uppercase">Drag & Drop Enabled</span>
+                            <Label className="text-xs font-semibold text-muted-foreground">Gallery Images</Label>
+                            <span className="text-[10px] font-semibold text-error bg-error/10 px-2 py-0.5 rounded-full">Drag & Drop Enabled</span>
                         </div>
 
                         <ImageUploader
@@ -226,12 +226,12 @@ export function UnitCategoryDialog({ open, onOpenChange, propertyId, initialData
                     </div>
                 </div>
 
-                <DialogFooter className="p-8 pt-4 border-t border-gray-50 flex gap-2">
-                    <Button variant="outline" onClick={() => onOpenChange(false)} className="rounded-xl h-12 flex-1 border-gray-100 font-bold">
+                <DialogFooter className="p-8 pt-4 border-t border-border flex gap-2">
+                    <Button variant="outline" onClick={() => onOpenChange(false)} className="rounded-md h-12 flex-1 border-border font-semibold">
                         Cancel
                     </Button>
                     <Button
-                        className="rounded-xl h-12 flex-[2] bg-red-500 hover:bg-red-600 font-bold shadow-lg shadow-red-500/20"
+                        className="rounded-md h-12 flex-[2] bg-primary hover:bg-primary/90 font-semibold shadow-lg shadow-primary/10"
                         onClick={handleSubmit}
                         disabled={creating || updating}
                     >

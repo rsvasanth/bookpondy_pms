@@ -54,26 +54,28 @@ export function MetricsChart() {
                             <Line
                                 type="monotone"
                                 dataKey="p1"
-                                stroke="#E5E7EB"
+                                stroke="hsl(var(--chart-2))"
                                 strokeWidth={2}
                                 dot={false}
+                                opacity={0.5}
                                 activeDot={{ r: 4, strokeWidth: 0 }}
                             />
                             <Line
                                 type="monotone"
                                 dataKey="p2"
-                                stroke="#9CA3AF"
+                                stroke="hsl(var(--chart-3))"
                                 strokeWidth={2}
                                 dot={false}
+                                opacity={0.7}
                                 activeDot={{ r: 4, strokeWidth: 0 }}
                             />
                             <Line
                                 type="monotone"
                                 dataKey="p3"
-                                stroke="black"
-                                strokeWidth={2}
+                                stroke="hsl(var(--chart-1))"
+                                strokeWidth={2.5}
                                 dot={false}
-                                activeDot={{ r: 4, strokeWidth: 0, fill: "white", stroke: "black" }}
+                                activeDot={{ r: 5, strokeWidth: 0, fill: "hsl(var(--chart-1))" }}
                             />
                         </LineChart>
                     </ResponsiveContainer>

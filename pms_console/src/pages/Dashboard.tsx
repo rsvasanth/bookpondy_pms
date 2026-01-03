@@ -176,36 +176,38 @@ export default function DashboardPage() {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between px-2">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
-              <Activity className="h-4 w-4 text-primary" />
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
+                <Activity className="h-4 w-4 text-primary" />
+              </div>
+              <h1 className="text-xl font-semibold tracking-tight text-foreground">Property Insights</h1>
             </div>
-            <h1 className="text-xl font-black tracking-tight text-foreground uppercase">Property Insights</h1>
+            <p className="text-sm text-muted-foreground">
+              Live overview of property performance & operations
+            </p>
           </div>
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] decoration-primary/30 underline-offset-4 decoration-2">
-            Live overview of property performance & operations
-          </p>
+
+          <div className="flex items-center gap-2">
+            <Button className="h-9 px-4 gap-2 rounded-md">
+              <Plus className="h-4 w-4" /> New Reservation
+            </Button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button className="h-9 px-4 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-[10px] uppercase tracking-[0.2em] gap-2 rounded-md shadow-lg shadow-primary/10 transition-all active:scale-95">
-            <Plus className="h-3.5 w-3.5" /> NEW RESERVATION
-          </Button>
+        {/* Filters Row */}
+        <div className="px-2">
+          <DashboardFilters
+            properties={properties}
+            selectedProperty={selectedProperty}
+            onPropertyChange={setSelectedProperty}
+            selectedStatus={selectedStatus}
+            onStatusChange={setSelectedStatus}
+            selectedDateRange={selectedDateRange}
+            onDateRangeChange={setSelectedDateRange}
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+          />
         </div>
-      </div>
-
-      {/* Filters Row */}
-      <div className="px-2">
-        <DashboardFilters
-          properties={properties}
-          selectedProperty={selectedProperty}
-          onPropertyChange={setSelectedProperty}
-          selectedStatus={selectedStatus}
-          onStatusChange={setSelectedStatus}
-          selectedDateRange={selectedDateRange}
-          onDateRangeChange={setSelectedDateRange}
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-        />
       </div>
 
       {/* Stats Row */}
@@ -281,7 +283,7 @@ export default function DashboardPage() {
             icon={<MessageSquareMore className="h-4 w-4" />}
             items={enquiryItems.slice(0, 5)}
             isLoading={enquiryLoading}
-            renderItemActions={() => <Button size="sm" variant="ghost" className="h-7 text-xs font-bold">Reply</Button>}
+            renderItemActions={() => <Button size="sm" variant="ghost" className="h-7 text-xs font-medium">Reply</Button>}
             onViewAll={() => navigate('/communications')}
           />
           <DashboardListWidget
@@ -289,7 +291,7 @@ export default function DashboardPage() {
             icon={<FileText className="h-4 w-4" />}
             items={invoiceItems.slice(0, 5)}
             isLoading={invoiceLoading}
-            renderItemActions={() => <Button size="sm" variant="ghost" className="h-7 text-xs font-bold">View</Button>}
+            renderItemActions={() => <Button size="sm" variant="ghost" className="h-7 text-xs font-medium">View</Button>}
             onViewAll={() => navigate('/invoices')}
           />
         </div>
