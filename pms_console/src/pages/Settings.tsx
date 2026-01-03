@@ -24,9 +24,9 @@ import { useFrappeGetDoc, useFrappeUpdateDoc, useFrappePostCall } from "frappe-r
 import { toast } from "sonner"
 
 export default function SettingsPage() {
-    const { data: settings, mutate: refreshSettings, isLoading: loadingSettings } = useFrappeGetDoc("ERPNext Settings", "ERPNext Settings")
+    const { data: settings, mutate: refreshSettings, isLoading: loadingSettings } = useFrappeGetDoc("PMS ERPNext Settings", "PMS ERPNext Settings")
     const { updateDoc, loading: isSaving } = useFrappeUpdateDoc()
-    const { call: testConnection, loading: isTesting } = useFrappePostCall("bookpondy_pms.bookpondy_pms.doctype.erpnext_settings.erpnext_settings.test_connection")
+    const { call: testConnection, loading: isTesting } = useFrappePostCall("bookpondy_pms.bookpondy_pms.doctype.pms_erpnext_settings.pms_erpnext_settings.test_connection")
 
     const [form, setForm] = useState({
         erpnext_url: "",
@@ -59,7 +59,7 @@ export default function SettingsPage() {
             const payload: any = { ...form }
             if (!payload.api_secret) delete payload.api_secret // Don't overwrite if blank
 
-            await updateDoc("ERPNext Settings", "ERPNext Settings", payload)
+            await updateDoc("PMS ERPNext Settings", "PMS ERPNext Settings", payload)
             toast.success("Settings updated successfully")
             refreshSettings()
         } catch (e) {
@@ -69,7 +69,7 @@ export default function SettingsPage() {
 
     const handleTest = async () => {
         try {
-            const res = await testConnection()
+            const res = await testConnection({})
             if (res.status === "success") {
                 toast.success(res.message)
             } else {
