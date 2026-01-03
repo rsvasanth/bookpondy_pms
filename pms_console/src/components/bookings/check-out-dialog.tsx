@@ -73,15 +73,15 @@ export function CheckOutDialog({ open, onOpenChange, booking, onSuccess }: Check
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden rounded-xl border-none shadow-2xl">
-                <div className="bg-error p-6 text-white">
+            <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden rounded-lg border border-border shadow-2xl">
+                <div className="bg-error/5 p-6 border-b border-error/10">
                     <DialogHeader>
                         <div className="flex items-center gap-2 mb-2">
-                            <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-wider border-white/30 text-white">
+                            <Badge variant="outline" className="text-[10px] font-semibold uppercase tracking-tight border-error/20 text-error bg-error/5">
                                 Step {step} of 2
                             </Badge>
                         </div>
-                        <DialogTitle className="text-xl font-bold">
+                        <DialogTitle className="text-lg font-semibold text-error">
                             {step === 1 && "Final Settlement"}
                             {step === 2 && "Handover & Cleaning"}
                         </DialogTitle>
@@ -100,7 +100,7 @@ export function CheckOutDialog({ open, onOpenChange, booking, onSuccess }: Check
                                 </div>
                             </div>
 
-                            <div className="rounded-xl border border-border p-5 space-y-3 bg-muted/10">
+                            <div className="rounded-lg border border-border p-5 space-y-3 bg-muted/10">
                                 <div className="flex justify-between items-center text-xs">
                                     <span className="text-muted-foreground font-medium">Total Stay Value</span>
                                     <span className="font-semibold">₹{booking.total_amount?.toLocaleString()}</span>
@@ -119,7 +119,7 @@ export function CheckOutDialog({ open, onOpenChange, booking, onSuccess }: Check
                             </div>
 
                             {dueAmount > 0 ? (
-                                <div className="flex items-center space-x-3 space-y-0 rounded-md border p-4 shadow-sm bg-error/5 border-error/20">
+                                <div className="flex items-center space-x-3 space-y-0 rounded-md border p-4 shadow-sm bg-error/5 border-error/10">
                                     <Checkbox
                                         id="settle-payment"
                                         checked={isPaymentSettled}

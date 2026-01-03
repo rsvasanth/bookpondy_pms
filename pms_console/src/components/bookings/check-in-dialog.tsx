@@ -27,7 +27,7 @@ import {
     Upload,
     AlertCircle,
     Loader2,
-    CheckCircle
+    CheckCircle2
 } from "lucide-react"
 import { useLocalMutation, useLocalDocList } from "@/hooks/use-local-data"
 import { useFrappeFileUpload } from "frappe-react-sdk"
@@ -118,15 +118,15 @@ export function CheckInDialog({ open, onOpenChange, booking, onSuccess }: CheckI
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden rounded-xl border-none shadow-2xl">
-                <div className="bg-primary p-6 text-primary-foreground">
+            <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden rounded-lg border border-border shadow-2xl">
+                <div className="bg-primary/5 p-6 border-b border-primary/10">
                     <DialogHeader>
                         <div className="flex items-center gap-2 mb-2">
-                            <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-wider border-primary-foreground/30 text-primary-foreground">
+                            <Badge variant="outline" className="text-[10px] font-semibold uppercase tracking-tight border-primary/20 text-primary bg-primary/5">
                                 Step {step} of 3
                             </Badge>
                         </div>
-                        <DialogTitle className="text-xl font-bold">
+                        <DialogTitle className="text-lg font-semibold text-primary">
                             {step === 1 && "Guest Verification"}
                             {step === 2 && "Payment & Deposit"}
                             {step === 3 && "Unit Allocation"}
@@ -162,8 +162,8 @@ export function CheckInDialog({ open, onOpenChange, booking, onSuccess }: CheckI
 
                             <div
                                 className={cn(
-                                    "border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center gap-3 transition-all cursor-pointer",
-                                    isIdVerified ? "border-success bg-success/5" : "border-border bg-muted/10 hover:bg-muted/20",
+                                    "border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center gap-3 transition-all cursor-pointer",
+                                    isIdVerified ? "border-success/30 bg-success/5" : "border-border bg-muted/10 hover:bg-muted/20",
                                     isUploading && "opacity-50 pointer-events-none"
                                 )}
                                 onClick={() => fileInputRef.current?.click()}
@@ -176,13 +176,13 @@ export function CheckInDialog({ open, onOpenChange, booking, onSuccess }: CheckI
                                     className="hidden"
                                 />
                                 <div className={cn(
-                                    "h-10 w-10 rounded-full flex items-center justify-center border shadow-sm",
+                                    "h-9 w-9 rounded-full flex items-center justify-center border shadow-sm",
                                     isIdVerified ? "bg-success text-white border-success" : "bg-background text-muted-foreground"
                                 )}>
                                     {isUploading ? (
                                         <Loader2 className="h-5 w-5 animate-spin" />
                                     ) : isIdVerified ? (
-                                        <CheckCircle className="h-5 w-5" />
+                                        <CheckCircle2 className="h-5 w-5" />
                                     ) : (
                                         <Upload className="h-5 w-5" />
                                     )}
@@ -233,7 +233,7 @@ export function CheckInDialog({ open, onOpenChange, booking, onSuccess }: CheckI
                             <div className="p-4 rounded-lg bg-warning/5 border border-warning/20">
                                 <div className="flex items-center gap-2 text-warning mb-1">
                                     <AlertCircle className="h-4 w-4" />
-                                    <span className="text-xs font-bold uppercase tracking-wider">Pending Balance</span>
+                                    <span className="text-[10px] font-semibold uppercase tracking-tight">Pending Balance</span>
                                 </div>
                                 <p className="text-sm font-semibold">₹{(booking.total_amount - (booking.advance_paid || 0)).toLocaleString()} remaining</p>
                                 <p className="text-[10px] text-muted-foreground mt-1 font-medium">Please ensure full payment is settled before check-in if per policy.</p>
@@ -255,10 +255,10 @@ export function CheckInDialog({ open, onOpenChange, booking, onSuccess }: CheckI
                             <div className="space-y-2">
                                 <Label className="text-xs font-semibold text-muted-foreground">Select Unit/Room *</Label>
                                 <Select value={selectedUnit} onValueChange={setSelectedUnit}>
-                                    <SelectTrigger className="h-12 border-border shadow-none">
+                                    <SelectTrigger className="h-10 border-border shadow-none rounded-md">
                                         <SelectValue placeholder="Choose an available unit" />
                                     </SelectTrigger>
-                                    <SelectContent className="rounded-xl border-border shadow-xl">
+                                    <SelectContent className="rounded-md border-border shadow-xl">
                                         {availableUnits?.map((u: any) => (
                                             <SelectItem key={u.name} value={u.unit_no} className="rounded-lg py-2">
                                                 {u.unit_no} - {u.unit_category}

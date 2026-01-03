@@ -112,8 +112,8 @@ export default function BookingDetailsPage() {
                             {booking.reservation_status}
                         </Badge>
                     </div>
-                    <p className="text-xs font-medium text-muted-foreground">
-                        Booking Discovery & Control Panel • <span className="font-mono opacity-50">{booking.name}</span>
+                    <p className="text-sm font-medium text-muted-foreground">
+                        Reservation Details • <span className="font-mono opacity-50">{booking.name}</span>
                     </p>
                 </div>
 
@@ -139,14 +139,14 @@ export default function BookingDetailsPage() {
                         {booking.reservation_status === "Confirmed" ? (
                             <>
                                 <CheckCircle2 className="h-3.5 w-3.5" />
-                                CHECK-IN GUEST
+                                Check-in Guest
                             </>
                         ) : booking.reservation_status === "Checked-In" ? (
                             <>
                                 <LogOut className="h-3.5 w-3.5" />
-                                CHECK-OUT GUEST
+                                Check-out Guest
                             </>
-                        ) : "UPDATE STATUS"}
+                        ) : "Update Status"}
                     </Button>
                 </div>
             </div>
@@ -190,7 +190,7 @@ export default function BookingDetailsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
                 {/* Column 1: Guest Information */}
-                <Card className="border-border/50 shadow-sm bg-card/40 backdrop-blur-md overflow-hidden flex flex-col h-full">
+                <Card className="border-border/50 shadow-sm bg-card overflow-hidden flex flex-col h-full">
                     <CardHeader className="pb-3 border-b border-border p-4 bg-muted/20">
                         <CardTitle className="text-xs font-semibold text-muted-foreground flex items-center gap-2">
                             <div className="w-6 h-6 rounded-md flex items-center justify-center bg-background border border-border text-foreground shadow-sm">
@@ -207,7 +207,7 @@ export default function BookingDetailsPage() {
                             </Avatar>
                             <div className="flex flex-col leading-tight">
                                 <span className="font-semibold text-foreground text-sm">{booking.guest_name}</span>
-                                <span className="text-xs font-medium text-muted-foreground opacity-60">#{(booking.guest || "").split("-").pop()}</span>
+                                <span className="text-xs text-muted-foreground opacity-60">{booking.guest}</span>
                             </div>
                         </div>
 
@@ -242,9 +242,9 @@ export default function BookingDetailsPage() {
                                 <div key={idx} className="flex items-center justify-between p-2 rounded-md border border-border bg-muted/10 group hover:border-primary/20 transition-all">
                                     <span className="text-xs font-medium text-muted-foreground/70">{item.label}</span>
                                     {item.status ? (
-                                        <Badge className="bg-success/10 text-success border-none text-[10px] font-semibold p-1 h-auto">VERIFIED</Badge>
+                                        <Badge className="bg-success/10 text-success border-none text-[10px] font-semibold px-2 py-0.5 h-auto">Verified</Badge>
                                     ) : (
-                                        <Badge variant="outline" className="text-[10px] font-semibold p-1 h-auto opacity-40">PENDING</Badge>
+                                        <Badge variant="outline" className="text-[10px] font-semibold px-2 py-0.5 h-auto opacity-40">Pending</Badge>
                                     )}
                                 </div>
                             ))}
@@ -253,13 +253,13 @@ export default function BookingDetailsPage() {
                 </Card>
 
                 {/* Column 2: Stay Details */}
-                <Card className="border-border/50 shadow-sm bg-card/40 backdrop-blur-md overflow-hidden flex flex-col h-full">
+                <Card className="border-border/50 shadow-sm bg-card overflow-hidden flex flex-col h-full">
                     <CardHeader className="pb-3 border-b border-border p-4 bg-muted/20">
                         <CardTitle className="text-xs font-semibold text-muted-foreground flex items-center gap-2">
                             <div className="w-6 h-6 rounded-md flex items-center justify-center bg-background border border-border text-foreground shadow-sm">
                                 <Home className="h-3.5 w-3.5" />
                             </div>
-                            <span>Stay Control</span>
+                            <span>Stay Details</span>
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-4 space-y-6">
@@ -269,8 +269,8 @@ export default function BookingDetailsPage() {
                                 <span className="text-xs font-semibold text-foreground">{booking.property}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Badge variant="secondary" className="text-[10px] font-semibold px-1.5 py-0 rounded-md">{booking.unit_category}</Badge>
-                                <span className="text-xs font-medium text-muted-foreground">{booking.allocated_unit || "AUTO ALLOCATION"}</span>
+                                <Badge variant="secondary" className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md">{booking.unit_category}</Badge>
+                                <span className="text-xs font-medium text-muted-foreground">{booking.allocated_unit || "Auto Allocation"}</span>
                             </div>
                         </div>
 
@@ -318,13 +318,13 @@ export default function BookingDetailsPage() {
                 </Card>
 
                 {/* Column 3: Financial Details */}
-                <Card className="border-border/50 shadow-sm bg-card/40 backdrop-blur-md overflow-hidden flex flex-col h-full">
+                <Card className="border-border/50 shadow-sm bg-card overflow-hidden flex flex-col h-full">
                     <CardHeader className="pb-3 border-b border-border p-4 bg-muted/20">
                         <CardTitle className="text-xs font-semibold text-muted-foreground flex items-center gap-2">
                             <div className="w-6 h-6 rounded-md flex items-center justify-center bg-background border border-border text-foreground shadow-sm">
                                 <Banknote className="h-3.5 w-3.5" />
                             </div>
-                            <span>Folio Details</span>
+                            <span>Financials</span>
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-4 space-y-6">
@@ -359,8 +359,8 @@ export default function BookingDetailsPage() {
                             </div>
                             <div className="space-y-1.5">
                                 <Progress value={paymentProgress} className="h-1.5 bg-muted-foreground/10" />
-                                <span className="text-[10px] font-semibold text-muted-foreground/40 block text-right">
-                                    {Math.round(paymentProgress)}% RECONCILED
+                                <span className="text-[10px] font-semibold text-muted-foreground/40 block text-right uppercase tracking-wider">
+                                    {Math.round(paymentProgress)}% Reconciled
                                 </span>
                             </div>
                         </div>
@@ -378,21 +378,21 @@ export default function BookingDetailsPage() {
 
                 {/* Column 4: Quick Actions & Metadata */}
                 <div className="flex flex-col gap-6">
-                    <Card className="border-border shadow-sm bg-card/40 backdrop-blur-md overflow-hidden">
+                    <Card className="border-border shadow-sm bg-card overflow-hidden">
                         <CardHeader className="pb-3 border-b border-border p-4 bg-muted/20">
                             <CardTitle className="text-xs font-semibold text-muted-foreground flex items-center gap-2">
                                 <div className="w-6 h-6 rounded-md flex items-center justify-center bg-background border border-border text-foreground shadow-sm">
                                     <Activity className="h-3.5 w-3.5" />
                                 </div>
-                                <span>Engine Control</span>
+                                <span>Operations</span>
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-3 space-y-2">
                             {[
-                                { label: "CHECK-IN DOCS", icon: Mail },
-                                { label: "IDENTITY REQ", icon: Shield },
-                                { label: "AGREEMENT GEN", icon: FileText },
-                                { label: "CANCEL ORDER", icon: AlertTriangle, variant: "destructive" as const }
+                                { label: "Send Documents", icon: Mail },
+                                { label: "Request Identity", icon: Shield },
+                                { label: "Generate Agreement", icon: FileText },
+                                { label: "Kill Reservation", icon: AlertTriangle, variant: "destructive" as const }
                             ].map((action, idx) => (
                                 <Button
                                     key={idx}
